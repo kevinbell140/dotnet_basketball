@@ -22,33 +22,40 @@ namespace NBAMvc1._1.Controllers
             _service = service;
         }
 
-        public async Task<IActionResult> Fetch()
-        {
-            List<Team> teams = await _service.FetchTeams();
-
-            foreach (Team t in teams)
-            {
-
-                var exists = await _context.Team.AnyAsync(o => o.TeamID == t.TeamID);
-
-                if (!exists)
-                {
-                    await Create(t);
-                }
-                else
-                {
-                    await Edit(t.TeamID, t);
-                }
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
         // GET: Teams
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
 
-            List<Team> teams = await _context.Team.ToListAsync();
-            return View(teams);
+            ViewData["CitySortParam"] = String.IsNullOrEmpty(sortOrder) ? "city_desc" : " ";
+            ViewData["NameSortParam"] = sortOrder == "Name" ? "name_desc" : "Name";
+            ViewData["DivisionSortParam"] = sortOrder == "Divsion" ? "division_desc" : "Division";
+
+            var teams = from t in _context.Team
+                        select t;
+
+            switch (sortOrder)
+            {
+                case "city_desc":
+                    teams = teams.OrderByDescending(t => t.City);
+                    break;
+                case "Name":
+                    teams = teams.OrderBy(t => t.Name);
+                    break;
+                case "name_desc":
+                    teams = teams.OrderByDescending(t => t.Name);
+                    break;
+                case "Division":
+                    teams = teams.OrderBy(t => t.Division);
+                    break;
+                case "division_desc":
+                    teams = teams.OrderByDescending(t => t.Division);
+                    break;
+                default:
+                    teams = teams.OrderBy(t => t.City);
+                    break;
+            }
+
+            return View(await teams.ToListAsync());
 
         }
 
@@ -176,5 +183,29 @@ namespace NBAMvc1._1.Controllers
         {
             return _context.Team.Any(e => e.TeamID == id);
         }
+
+
+        //GET : Teams/Fetch()
+        public async Task<IActionResult> Fetch()
+        {
+            List<Team> teams = await _service.FetchTeams();
+
+            foreach (Team t in teams)
+            {
+
+                var exists = await _context.Team.AnyAsync(o => o.TeamID == t.TeamID);
+
+                if (!exists)
+                {
+                    await Create(t);
+                }
+                else
+                {
+                    await Edit(t.TeamID, t);
+                }
+            }
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

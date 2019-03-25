@@ -28,5 +28,11 @@ namespace NBAMvc1._1.Models
 
         public virtual ICollection<Player> Players { get; set; }
 
+        [InverseProperty("HomeTeamNav")]
+        public virtual ICollection<Game> HomeGamesNav { get; set; }
+
+        [InverseProperty("AwayTeamNav")]
+        public virtual ICollection<Game> AwayGamesNav { get; set; }
+
     }
 }

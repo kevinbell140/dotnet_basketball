@@ -1,0 +1,101 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.Game>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Season)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DateTime)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeTeamScore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AwayTeamScore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PointSpread)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OverUnder)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AwayTeamMoneyLine)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeTeamMoneyLine)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeTeamNav)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AwayTeamNav)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Season)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DateTime)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HomeTeamScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AwayTeamScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PointSpread)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OverUnder)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AwayTeamMoneyLine)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HomeTeamMoneyLine)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HomeTeamNav.Key)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AwayTeamNav.Key)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.GameID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.GameID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.GameID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

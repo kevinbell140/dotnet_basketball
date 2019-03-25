@@ -32,5 +32,7 @@ namespace NBAMvc1._1.Data
 
         public DbSet<NBAMvc1._1.Models.Standings> Standings { get; set; }
 
+        public DbSet<NBAMvc1._1.Models.Game> Game { get; set; }
+
     }
 }

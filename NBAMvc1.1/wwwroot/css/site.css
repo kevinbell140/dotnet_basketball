@@ -54,3 +54,20 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+.teamLogo {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 60px;
+    height: 60px;
+}
+
+.teamTable1{
+    float:left;
+    width: 40%;
+}
+.teamTable2 {
+    float: right;
+    width: 40%;
+}

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NBAMvc1._1.Data;
 
 namespace NBAMvc1._1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190325152841_Games")]
+    partial class Games
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -190,29 +192,29 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<int?>("AwayTeamID");
 
-                    b.Property<int?>("AwayTeamMoneyLine");
+                    b.Property<int>("AwayTeamMoneyLine");
 
-                    b.Property<int?>("AwayTeamScore");
+                    b.Property<int>("AwayTeamScore");
 
                     b.Property<DateTime>("DateTime");
 
                     b.Property<int?>("HomeTeamID");
 
-                    b.Property<int?>("HomeTeamMoneyLine");
+                    b.Property<int>("HomeTeamMoneyLine");
 
-                    b.Property<int?>("HomeTeamScore");
+                    b.Property<int>("HomeTeamScore");
 
-                    b.Property<decimal?>("OverUnder")
+                    b.Property<decimal>("OverUnder")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<decimal?>("PointSpread")
+                    b.Property<decimal>("PointSpread")
                         .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("Season");
 
                     b.Property<string>("Status");
 
-                    b.Property<DateTime?>("Updated");
+                    b.Property<DateTime>("Updated");
 
                     b.HasKey("GameID");
 
