@@ -25,6 +25,13 @@ namespace NBAMvc1._1.Models
         public string TertiaryColor { get; set; }
         public string WikipediaLogoUrl { get; set; }
 
+        public string FullName
+        {
+            get
+            {
+                return City + " " + Name;
+            }
+        }
 
         public virtual ICollection<Player> Players { get; set; }
 

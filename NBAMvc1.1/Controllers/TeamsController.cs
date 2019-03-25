@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -25,11 +26,12 @@ namespace NBAMvc1._1.Controllers
         // GET: Teams
         public async Task<IActionResult> Index(string sortOrder)
         {
-
+            //sort attributes
             ViewData["CitySortParam"] = String.IsNullOrEmpty(sortOrder) ? "city_desc" : " ";
             ViewData["NameSortParam"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["DivisionSortParam"] = sortOrder == "Divsion" ? "division_desc" : "Division";
 
+            //LINQ for sorting
             var teams = from t in _context.Team
                         select t;
 
@@ -67,14 +69,27 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var team = await _context.Team
-                .FirstOrDefaultAsync(m => m.TeamID == id);
-            if (team == null)
-            {
-                return NotFound();
-            }
+            //get team
+            var viewModel = new TeamDetailsViewModel();
 
-            return View(team);
+
+            viewModel.Team = await _context.Team
+                .Where(t => t.TeamID == id)
+                .Include(t => t.Players)
+                .Include(t => t.HomeGamesNav)
+                .Include(t => t.AwayGamesNav)
+                .FirstOrDefaultAsync();
+            
+            viewModel.Last5 = _context.Game
+                .Where(g => g.Status == "Final" && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .OrderBy(g => g.DateTime)
+                .Take(5);
+
+          
+            //get roster
+
+
+            return View(viewModel);
         }
 
         // GET: Teams/Create

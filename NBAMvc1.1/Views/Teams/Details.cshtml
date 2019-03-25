@@ -1,78 +1,87 @@
-﻿@model NBAMvc1._1.Models.Team
+﻿@model NBAMvc1._1.ViewModels.TeamDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron jumbotron-fluid" style="background-color: @Model.Team.PrimaryColor">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="@Model.Team.WikipediaLogoUrl" class="teamLogo" />
+                        </div>
+                        <div class='col-md-8'>
+                            <h1>@Html.DisplayFor(model => model.Team.FullName)</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Name</th>
+                        <th>PPG</th>
+                        <th>RPG</th>
+                        <th>APG</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Team.Players)
+                    {
+                        <tr>
+                            <td>@p.Position </td>
+                            <td>@p.FirstName</td>
+                            <td>@p.LastName</td>
+                            <td>@p.StatsNav</td>
+                            <td>@p.StatsNav</td>
+                            <td>@p.StatsNav</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Home</th>
+                        <th>Away</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in Model.Last5)
+                    {
+                        <tr>
+                            <td>@g.DateTime</td>
+                            <td>@g.HomeTeamID</td>
+                            <td>@g.AwayTeamID</td>
+                            <td>@g.HomeTeamScore - @g.AwayTeamScore</td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+ </div>
+
+
+
+
 
 <div>
-    <h4>Team</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Key)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Key)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.City)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.City)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LeagueID)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LeagueID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Conference)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Conference)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Division)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Division)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PrimaryColor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PrimaryColor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SecondaryColor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SecondaryColor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TertiaryColor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TertiaryColor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.WikipediaLogoUrl)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.WikipediaLogoUrl)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.TeamID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Team.TeamID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
