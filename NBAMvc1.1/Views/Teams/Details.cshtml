@@ -12,7 +12,7 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-md-2">
-                            <img src="@Model.Team.WikipediaLogoUrl" class="teamLogo" />
+                            <img src="@Model.Team.WikipediaLogoUrl" class="teamLogoHeader" />
                         </div>
                         <div class='col-md-8'>
                             <h1>@Html.DisplayFor(model => model.Team.FullName)</h1>
@@ -28,7 +28,8 @@
                 <thead>
                     <tr>
                         <th>Pos</th>
-                        <th>Name</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
                         <th>PPG</th>
                         <th>RPG</th>
                         <th>APG</th>
@@ -41,9 +42,9 @@
                             <td>@p.Position </td>
                             <td>@p.FirstName</td>
                             <td>@p.LastName</td>
-                            <td>@p.StatsNav</td>
-                            <td>@p.StatsNav</td>
-                            <td>@p.StatsNav</td>
+                            <td>@p.StatsNav.Points</td>
+                            <td>@p.StatsNav.Rebounds</td>
+                            <td>@p.StatsNav.Assists</td>
                         </tr>
                     }
 

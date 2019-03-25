@@ -63,11 +63,10 @@ body {
     height: 60px;
 }
 
-.teamTable1{
-    float:left;
-    width: 40%;
-}
-.teamTable2 {
-    float: right;
-    width: 40%;
+.teamLogoHeader {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 150px;
+    height: 150px;
 }

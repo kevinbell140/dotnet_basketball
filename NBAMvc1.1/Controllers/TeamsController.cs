@@ -75,9 +75,7 @@ namespace NBAMvc1._1.Controllers
 
             viewModel.Team = await _context.Team
                 .Where(t => t.TeamID == id)
-                .Include(t => t.Players)
-                .Include(t => t.HomeGamesNav)
-                .Include(t => t.AwayGamesNav)
+                .Include(t => t.Players).ThenInclude(p => p.StatsNav)
                 .FirstOrDefaultAsync();
             
             viewModel.Last5 = _context.Game
@@ -85,8 +83,6 @@ namespace NBAMvc1._1.Controllers
                 .OrderBy(g => g.DateTime)
                 .Take(5);
 
-          
-            //get roster
 
 
             return View(viewModel);
