@@ -1,0 +1,89 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.Team>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Key)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LeagueID)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Conference)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Division)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PrimaryColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SecondaryColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.TertiaryColor)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.WikipediaLogoUrl)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Key)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.City)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LeagueID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Conference)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Division)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PrimaryColor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SecondaryColor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TertiaryColor)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.WikipediaLogoUrl)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.TeamID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.TeamID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
