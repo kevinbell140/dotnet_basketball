@@ -24,10 +24,18 @@ namespace NBAMvc1._1.Controllers
 
 
         // GET: Standings
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string filter = "Eastern")
         {
-            var applicationDbContext = _context.Standings.Include(s => s.TeamNav);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["filter"] = filter;
+
+            List<Standings> standings = await _context.Standings
+                .Include(s => s.TeamNav)
+                .Where(s => s.TeamNav.Conference == filter)
+                .OrderByDescending(s => s.Percentage)
+                .ToListAsync();
+
+            return View(standings);
+
         }
 
 

@@ -2,124 +2,69 @@
 
 @{
     ViewData["Title"] = "Index";
+
 }
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Wins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Losses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Percentage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ConferenceWins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ConferenceLosses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DivisionWins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DivisionLosses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HomeWins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HomeLosses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwayWins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwayLosses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastTenWins)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastTenLosses)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Streak)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GamesBack)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TeamNav)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Wins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Losses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Percentage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ConferenceWins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ConferenceLosses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DivisionWins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DivisionLosses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HomeWins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HomeLosses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AwayWins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AwayLosses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastTenWins)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastTenLosses)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Streak)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.GamesBack)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeamNav.Key)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.TeamID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.TeamID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h1>2019 NBA Standings</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            @Html.ActionLink("Eastern", "Index", new { filter = "Eastern" }, new { @class = "btn btn-primary"})
+        </div>
+        <div class="col-md-1">
+            @Html.ActionLink("Western", "Index", new { filter = "Western" }, new { @class = "btn btn-primary"})
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <h2>@ViewData["Filter"] Confernce</h2>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <td>#</td>
+                        <td>@Html.DisplayNameFor(m => m.TeamNav.FullName)</td>
+                        <td>@Html.DisplayNameFor(m => m.Wins)</td>
+                        <td>@Html.DisplayNameFor(m => m.Losses)</td>
+                        <td>@Html.DisplayNameFor(m => m.Percentage)</td>
+                        <td>@Html.DisplayNameFor(m => m.GamesBack)</td>
+                        <td>@Html.DisplayNameFor(m => m.ConferenceRecord)</td>
+                        <td>@Html.DisplayNameFor(m => m.DivisionRecord)</td>
+                        <td>@Html.DisplayNameFor(m => m.HomeRecord)</td>
+                        <td>@Html.DisplayNameFor(m => m.AwayRecord)</td>
+                        <td>@Html.DisplayNameFor(m => m.LastTen)</td>
+                        <td>@Html.DisplayNameFor(m => m.Streak)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var item in Model)
+                    {
+                    <tr>
+                        <td></td>
+                        <td><img src="@item.TeamNav.WikipediaLogoUrl" class="teamLogo" /> @Html.ActionLink(item.TeamNav.FullName, "Details", "Teams", new { id = item.TeamID } )</td>
+                        <td>@Html.DisplayFor(m => item.Wins)</td>
+                        <td>@Html.DisplayFor(m => item.Losses)</td>
+                        <td>@Html.DisplayFor(m => item.Percentage)</td>
+                        <td>@Html.DisplayFor(m => item.GamesBack)</td>
+                        <td>@Html.DisplayFor(m => item.ConferenceRecord)</td>
+                        <td>@Html.DisplayFor(m => item.DivisionRecord)</td>
+                        <td>@Html.DisplayFor(m => item.HomeRecord)</td>
+                        <td>@Html.DisplayFor(m => item.AwayRecord)</td>
+                        <td>@Html.DisplayFor(m => item.LastTen)</td>
+                        <td>@Html.DisplayFor(m => item.Streak)</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
