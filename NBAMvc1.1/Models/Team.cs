@@ -13,7 +13,6 @@ namespace NBAMvc1._1.Models
         public int TeamID { get; set; }
 
         [Required]
-        [Display(Name = "Abbreviation")]
         public string Key { get; set; }
         public string City { get; set; }
         public string Name { get; set; }
@@ -33,13 +32,15 @@ namespace NBAMvc1._1.Models
             }
         }
 
-        public virtual ICollection<Player> Players { get; set; }
+        public virtual ICollection<Player> PlayersNav { get; set; }
 
         [InverseProperty("HomeTeamNav")]
         public virtual ICollection<Game> HomeGamesNav { get; set; }
 
         [InverseProperty("AwayTeamNav")]
         public virtual ICollection<Game> AwayGamesNav { get; set; }
+
+        public virtual Standings RecordNav { get; set; }
 
     }
 }

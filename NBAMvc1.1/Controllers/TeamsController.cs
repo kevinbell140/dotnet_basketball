@@ -62,28 +62,105 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Teams/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string sortOrder)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            //get team
-            var viewModel = new TeamDetailsViewModel();
-
-
-            viewModel.Team = await _context.Team
+            //get get view model data
+            var viewModel = new TeamDetailsViewModel
+            {
+                Team = await _context.Team
                 .Where(t => t.TeamID == id)
-                .Include(t => t.Players).ThenInclude(p => p.StatsNav)
-                .FirstOrDefaultAsync();
-            
-            viewModel.Last5 = _context.Game
-                .Where(g => g.Status == "Final" && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .Include(t => t.PlayersNav).ThenInclude(p => p.StatsNav)
+                .Include(t => t.RecordNav)
+                .FirstOrDefaultAsync(),
+
+                Last5 = _context.Game
+                .Where(g => (g.Status == "Final" || g.Status == "F/OT") && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
+                .OrderByDescending(g => g.DateTime)
+                .Take(5),
+
+
+                Next3 = _context.Game
+                .Where(g => g.Status == "Scheduled" && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
                 .OrderBy(g => g.DateTime)
-                .Take(5);
+                .Take(3),
 
 
+            };
+
+            string conference = viewModel.Team.Conference;
+
+            List<Standings> conferenceStandings = _context.Standings
+                .Where(t => t.TeamNav.Conference == conference)
+                .Include(t => t.TeamNav)
+                .OrderBy(t => t.GamesBack)
+                .ToList();
+
+            viewModel.ConferenceRank = conferenceStandings.IndexOf(viewModel.Team.RecordNav)+1;
+
+            viewModel.PPGLeader = viewModel.Team.PlayersNav
+                .OrderByDescending(p => p.StatsNav.PPG)
+                .First();
+
+            viewModel.RPGLeader = viewModel.Team.PlayersNav
+                .OrderByDescending(p => p.StatsNav.RPG)
+                .First();
+
+            viewModel.APGLeader = viewModel.Team.PlayersNav
+                .OrderByDescending(p => p.StatsNav.APG)
+                .First();
+
+            
+
+
+            //sort attributes for players
+            ViewData["PosSortParam"] = String.IsNullOrEmpty(sortOrder) ? "pos_desc" : " ";
+            ViewData["PlayerSortParam"] = sortOrder == "Player" ? "player_desc" : "Player";
+            ViewData["PPGSortParam"] = sortOrder == "PPG" ? "ppg_desc" : "PPG";
+            ViewData["RPGSortParam"] = sortOrder == "RPG" ? "rpg_desc" : "RPG";
+            ViewData["APGSortParam"] = sortOrder == "APG" ? "apg_desc" : "APG";
+
+            switch (sortOrder)
+            {
+                case "pos_desc":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.Position).ToList();
+                    break;
+                case "Player":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.LastName).ToList();
+                    break;
+                case "player_desc":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.LastName).ToList();
+                    break;
+                case "PPG":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.PPG).ToList();
+                    break;
+                case "ppg_desc":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.PPG).ToList();
+                    break;
+                case "RPG":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.RPG).ToList();
+                    break;
+                case "rpg_desc":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.RPG).ToList();
+                    break;
+                case "APG":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.APG).ToList();
+                    break;
+                case "apg_desc":
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.APG).ToList();
+                    break;
+                default:
+                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.Position).ToList();
+                    break;
+            }
 
             return View(viewModel);
         }
@@ -111,7 +188,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Teams/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        private async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -131,7 +208,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
+        private async Task<IActionResult> Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
         {
             if (id != team.TeamID)
             {

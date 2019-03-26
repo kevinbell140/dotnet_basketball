@@ -8,14 +8,60 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="jumbotron jumbotron-fluid" style="background-color: @Model.Team.PrimaryColor">
+            <div class="jumbotron jumbotron-fluid" style="background-color:#@Model.Team.PrimaryColor">
                 <div class="container">
                     <div class="row">
                         <div class="col-md-2">
                             <img src="@Model.Team.WikipediaLogoUrl" class="teamLogoHeader" />
                         </div>
-                        <div class='col-md-8'>
-                            <h1>@Html.DisplayFor(model => model.Team.FullName)</h1>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1 style="color:#@Model.Team.SecondaryColor">@Html.DisplayFor(model => model.Team.FullName)</h1>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 style="color:#@Model.Team.SecondaryColor">@Model.Team.RecordNav.Wins - @Model.Team.RecordNav.Losses</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 style="color:#@Model.Team.SecondaryColor">@Model.ConferenceRank in the @Model.Team.Conference Conference</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 class="float-right">Team Leaders</h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table-dark float-right">
+                                        <thead>
+                                            <tr>
+                                                <td>PPG</td>
+                                                <td>RPG</td>
+                                                <td>APG</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td><img src="@Model.PPGLeader.PhotoUrl" class="playerHeadShot" /></td>
+                                                <td><img src="@Model.RPGLeader.PhotoUrl" class="playerHeadShot" /></td>
+                                                <td><img src="@Model.APGLeader.PhotoUrl" class="playerHeadShot" /></td>
+                                            </tr>
+                                            <tr>
+                                                <td>@Model.PPGLeader.StatsNav.PPG</td>
+                                                <td>@Model.RPGLeader.StatsNav.RPG</td>
+                                                <td>@Model.APGLeader.StatsNav.APG</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -27,24 +73,22 @@
             <table class="table table-hover">
                 <thead>
                     <tr>
-                        <th>Pos</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>PPG</th>
-                        <th>RPG</th>
-                        <th>APG</th>
+                        <th>@Html.ActionLink("Pos", "Details", new { sortOrder = ViewData["PosSortParam"] })</th>
+                        <th>@Html.ActionLink("Player", "Details", new { sortOrder = ViewData["PlayerSortParam"] })</th>
+                        <th>@Html.ActionLink("PPG", "Details", new { sortOrder = ViewData["PPGSortParam"] })</th>
+                        <th>@Html.ActionLink("RPG", "Details", new { sortOrder = ViewData["RPGSortParam"] })</th>
+                        <th>@Html.ActionLink("APG", "Details", new { sortOrder = ViewData["APGSortParam"] })</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var p in Model.Team.Players)
+                    @foreach (var p in Model.Players)
                     {
                         <tr>
                             <td>@p.Position </td>
-                            <td>@p.FirstName</td>
-                            <td>@p.LastName</td>
-                            <td>@p.StatsNav.Points</td>
-                            <td>@p.StatsNav.Rebounds</td>
-                            <td>@p.StatsNav.Assists</td>
+                            <td>@Html.ActionLink(p.FullName, "Details", "Players", new { id = p.PlayerID})</td>
+                            <td>@p.StatsNav.PPG</td>
+                            <td>@p.StatsNav.RPG</td>
+                            <td>@p.StatsNav.APG</td>
                         </tr>
                     }
 
@@ -62,12 +106,21 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach (var g in Model.Next3.Reverse())
+                    {
+                        <tr>
+                            <td>@g.DateTime</td>
+                            <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td>Upcoming</td>
+                        </tr>
+                    }
                     @foreach (var g in Model.Last5)
                     {
                         <tr>
                             <td>@g.DateTime</td>
-                            <td>@g.HomeTeamID</td>
-                            <td>@g.AwayTeamID</td>
+                            <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
                             <td>@g.HomeTeamScore - @g.AwayTeamScore</td>
                         </tr>
                     }
@@ -77,12 +130,3 @@
         </div>
     </div>
  </div>
-
-
-
-
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.Team.TeamID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>

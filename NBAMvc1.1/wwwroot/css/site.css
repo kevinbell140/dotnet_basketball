@@ -70,3 +70,11 @@ body {
     width: 150px;
     height: 150px;
 }
+
+.playerHeadShot {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 75px;
+    height: 100px;
+}

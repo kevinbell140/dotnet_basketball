@@ -30,25 +30,6 @@ namespace NBAMvc1._1.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<IActionResult> Fetch()
-        {
-            var standings = await _service.FetchStandings();
-
-            foreach(Standings s in standings)
-            {
-                var exists = await _context.Standings.AnyAsync(a => a.TeamID == s.TeamID);
-
-                if (!exists)
-                {
-                    await Create(s);
-                }
-                else
-                {
-                    await Edit(s.TeamID, s);
-                }
-            }
-            return RedirectToAction("Index");
-        }
 
         // GET: Standings/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -70,7 +51,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Standings/Create
-        public IActionResult Create()
+        private IActionResult Create()
         {
             ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key");
             return View();
@@ -94,7 +75,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Standings/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        private async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
             {
@@ -115,7 +96,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
+        private async Task<IActionResult> Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
         {
             if (id != standings.TeamID)
             {
@@ -147,7 +128,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Standings/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        private async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
             {
@@ -168,7 +149,7 @@ namespace NBAMvc1._1.Controllers
         // POST: Standings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        private async Task<IActionResult> DeleteConfirmed(int id)
         {
             var standings = await _context.Standings.FindAsync(id);
             _context.Standings.Remove(standings);
@@ -179,6 +160,26 @@ namespace NBAMvc1._1.Controllers
         private bool StandingsExists(int id)
         {
             return _context.Standings.Any(e => e.TeamID == id);
+        }
+
+        public async Task<IActionResult> Fetch()
+        {
+            var standings = await _service.FetchStandings();
+
+            foreach (Standings s in standings)
+            {
+                var exists = await _context.Standings.AnyAsync(a => a.TeamID == s.TeamID);
+
+                if (!exists)
+                {
+                    await Create(s);
+                }
+                else
+                {
+                    await Edit(s.TeamID, s);
+                }
+            }
+            return RedirectToAction("Index");
         }
     }
 }
