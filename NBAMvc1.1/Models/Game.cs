@@ -48,5 +48,7 @@ namespace NBAMvc1._1.Models
         public virtual Team HomeTeamNav { get; set; }
 
         public virtual Team AwayTeamNav { get; set; }
+
+        public virtual IEnumerable<PlayerGameStats> PlayerGameStatsNav { get; set; }
     }
 }

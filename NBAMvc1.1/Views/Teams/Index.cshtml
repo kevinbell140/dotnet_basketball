@@ -5,125 +5,122 @@
 }
 
 
-<div class="container">
+<div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <div class="row">
-                <div col-md-10>
-                    <h2>Easten Conference</h2>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                </th>
-                                <th>
-                                </th>
-                                <th>
-                                    @Html.ActionLink("City", "Index", new { sortOrder = ViewData["CitySortParam"] })
-                                </th>
-                                <th>
-                                    @Html.ActionLink("Name", "Index", new { sortOrder = ViewData["NameSortParam"] })
-                                </th>
-                                <th>
-                                    @Html.ActionLink("Division", "Index", new { sortOrder = ViewData["DivisionSortParam"] })
-                                </th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model)
-                            {
-                                @if (item.Conference == "Eastern")
-                                {
-                                    <tr>
-                                        <td>
-                                            <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Key)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.City)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Name)
-                                        </td>
-                                        <td>
-                                            @Html.DisplayFor(modelItem => item.Division)
-                                        </td>
-                                        <td>
-                                            <a asp-action="Details" asp-route-id="@item.TeamID">Details</a> |
-                                            <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
-                                        </td>
-                                    </tr>
-                                }
-
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-10">
-                    <div col-sm-6>
-                        <h2>Western Conference</h2>
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>
-                                    </th>
-                                    <th>
-                                    </th>
-                                    <th>
-                                        @Html.ActionLink("City", "Index", new { sortOrder = ViewData["CitySortParam"] })
-                                    </th>
-                                    <th>
-                                        @Html.ActionLink("Name", "Index", new { sortOrder = ViewData["NameSortParam"] })
-                                    </th>
-                                    <th>
-                                        @Html.ActionLink("Division", "Index", new { sortOrder = ViewData["DivisionSortParam"] })
-                                    </th>
-                                    <th></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var item in Model)
-                                {
-                                    @if (item.Conference == "Western")
-                                    {
-                                        <tr>
-                                            <td>
-                                                <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Key)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.City)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Name)
-                                            </td>
-                                            <td>
-                                                @Html.DisplayFor(modelItem => item.Division)
-                                            </td>
-                                            <td>
-                                                <a asp-action="Edit" asp-route-id="@item.TeamID">Edit</a> |
-                                                <a asp-action="Details" asp-route-id="@item.TeamID">Details</a> |
-                                                <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
-                                            </td>
-                                        </tr>
-                                    }
-
-                                }
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <h1>NBA Teams</h1>
         </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-6">
+            <h2>Eastern Conference</h2>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                            @Html.ActionLink("City", "Index", new { sortOrder = ViewData["CitySortParam"] })
+                        </th>
+                        <th>
+                            @Html.ActionLink("Name", "Index", new { sortOrder = ViewData["NameSortParam"] })
+                        </th>
+                        <th>
+                            @Html.ActionLink("Division", "Index", new { sortOrder = ViewData["DivisionSortParam"] })
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        @if (item.Conference == "Eastern")
+                        {
+                            <tr>
+                                <td>
+                                    <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Key)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.City)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Division)
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.TeamID">Details</a>
+                                    <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
+                                </td>
+                            </tr>
+                        }
 
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h2>Western Conference</h2>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>
+                        </th>
+                        <th>
+                        </th>
+                        <th>
+                            @Html.ActionLink("City", "Index", new { sortOrder = ViewData["CitySortParam"] })
+                        </th>
+                        <th>
+                            @Html.ActionLink("Name", "Index", new { sortOrder = ViewData["NameSortParam"] })
+                        </th>
+                        <th>
+                            @Html.ActionLink("Division", "Index", new { sortOrder = ViewData["DivisionSortParam"] })
+                        </th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        @if (item.Conference == "Western")
+                        {
+                            <tr>
+                                <td>
+                                    <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Key)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.City)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Division)
+                                </td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.TeamID">Details</a>
+                                    <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
+                                </td>
+                            </tr>
+                        }
+
+                    }
+                </tbody>
+            </table>
+        </div>
     </div> 
 </div>
+
 
 

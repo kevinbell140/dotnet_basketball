@@ -1,72 +1,80 @@
-﻿@model NBAMvc1._1.Models.Player
+﻿@model NBAMvc1._1.ViewModels.PlayerDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="jumbotron jumbotron-fluid" style="background-color:#@Model.Player.TeamNav.PrimaryColor">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <img src="@Model.Player.PhotoUrl" class="playerHeaderPhoto" style="background-color:#@Model.Player.TeamNav.TertiaryColor" />
+                        </div>
+                        <div class="col-md-4">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h1 style="color:#@Model.Player.TeamNav.SecondaryColor">#@Html.DisplayFor(m => m.Player.Jersey)  @Html.DisplayFor(m => m.Player.FullName) </h1>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h3 style="color:#@Model.Player.TeamNav.SecondaryColor"> @Html.DisplayFor(m => m.Player.TeamNav.FullName) <img src="@Model.Player.TeamNav.WikipediaLogoUrl" class="teamLogo" /></h3>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p style="color:#@Model.Player.TeamNav.SecondaryColor">
+                                        Pos: @Html.DisplayFor(m => m.Player.Position) Hgt: @Html.DisplayFor(m => m.Player.Height) Wgt: @Html.DisplayFor(m => m.Player.Weight) DOB: @Html.DisplayFor(m => m.Player.BirthDate)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h5 style="color:#@Model.Player.TeamNav.SecondaryColor">2018-2019 Stats</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <table class="table float-right" style="color:#@Model.Player.TeamNav.SecondaryColor;">
+                                        <thead>
+                                            <tr>
+                                                <td>PPG</td>
+                                                <td>3PG</td>
+                                                <td>RPG</td>
+                                                <td>APG</td>
+                                                <td>SPG</td>
+                                                <td>BPG</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>@Model.Player.StatsNav.PPG</td>
+                                                <td>@Model.Player.StatsNav.ThreesPG</td>
+                                                <td>@Model.Player.StatsNav.Rebounds</td>
+                                                <td>@Model.Player.StatsNav.Assists</td>
+                                                <td>@Model.Player.StatsNav.SPG</td>
+                                                <td>@Model.Player.StatsNav.BPG</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<div>
-    <h4>Player</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Jersey)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Jersey)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Position)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Position)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Height)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Height)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Weight)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Weight)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.BirthDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.BirthDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TeamNav)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TeamNav.Key)
-        </dd>
-    </dl>
+
+
+
+
+
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.PlayerID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+

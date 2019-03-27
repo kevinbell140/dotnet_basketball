@@ -55,3 +55,8 @@ C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\V
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Details.g.cshtml.cs
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Create.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Delete.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Details.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Edit.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Index.g.cshtml.cs

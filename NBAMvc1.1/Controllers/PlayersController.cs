@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -21,34 +22,11 @@ namespace NBAMvc1._1.Controllers
             _context = context;
             _service = service;
         }
-
-
-        public async Task<ActionResult> Fetch()
-        {
-            List<Player> players = await _service.FetchPLayers();
-
-            foreach (Player p in players)
-            {
-                var exists = await _context.Player.AnyAsync(o => o.PlayerID == p.PlayerID);
-
-                if (!exists)
-                {
-                    await Create(p);
-                }
-                else
-                {
-                    await Edit(p.PlayerID, p);
-                }
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
-
+                     
         // GET: Players
         public async Task<IActionResult> Index()
         {
+
             var applicationDbContext = _context.Player.Include(p => p.TeamNav);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -61,15 +39,19 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var player = await _context.Player
-                .Include(p => p.TeamNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id);
-            if (player == null)
+            var viewModel = new PlayerDetailsViewModel()
             {
-                return NotFound();
-            }
+                Player = await _context.Player
+                .Include(p => p.TeamNav).ThenInclude(p => p.HomeGamesNav)
+                .Include(p => p.TeamNav).ThenInclude(p => p.AwayGamesNav)
+                .Include(p => p.StatsNav)
+                .FirstOrDefaultAsync(m => m.PlayerID == id),                
+            };
 
-            return View(player);
+            viewModel.Games = viewModel.Player.TeamNav.HomeGamesNav.ToList();
+            viewModel.Games.Union(viewModel.Player.TeamNav.AwayGamesNav.ToList());
+
+            return View(viewModel);
         }
 
         // GET: Players/Create
@@ -183,5 +165,27 @@ namespace NBAMvc1._1.Controllers
         {
             return _context.Player.Any(e => e.PlayerID == id);
         }
+
+        public async Task<ActionResult> Fetch()
+        {
+            List<Player> players = await _service.FetchPLayers();
+
+            foreach (Player p in players)
+            {
+                var exists = await _context.Player.AnyAsync(o => o.PlayerID == p.PlayerID);
+
+                if (!exists)
+                {
+                    await Create(p);
+                }
+                else
+                {
+                    await Edit(p.PlayerID, p);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }

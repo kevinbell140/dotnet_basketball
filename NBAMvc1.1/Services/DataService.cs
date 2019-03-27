@@ -96,6 +96,24 @@ namespace NBAMvc1._1.Services
 
             return games;
         }
+
+        public async Task<List<PlayerGameStats>> FetchGamesStats(string date)
+        {
+            var client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "a2addb147b9e45ef90b7b0d6b5247f59");
+
+            var uri = "https://api.fantasydata.net/v3/nba/stats/json/PlayerGameStatsByDate/" + date + "?" + queryString;
+
+            var response = await client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            var stats = JsonConvert.DeserializeObject<List<PlayerGameStats>>(responseString);
+
+            return stats;
+        }
+
     }
 }
  

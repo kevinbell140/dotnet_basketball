@@ -31,7 +31,7 @@ namespace NBAMvc1._1.Controllers
             List<Standings> standings = await _context.Standings
                 .Include(s => s.TeamNav)
                 .Where(s => s.TeamNav.Conference == filter)
-                .OrderByDescending(s => s.Percentage)
+                .OrderBy(s => s.GamesBack)
                 .ToListAsync();
 
             return View(standings);

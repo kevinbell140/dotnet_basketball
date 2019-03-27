@@ -1,0 +1,167 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.PlayerGameStats>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Updated)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Minutes)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldGoalsMade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldGoalsAttempted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FieldGoalsPercentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreePointersMade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreePointersAttempted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ThreePointersPercentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FreeThrowsMade)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FreeThrowsAttempted)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FreeThrowsPercentage)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OffensiveRebounds)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.DefensiveRebounds)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Rebounds)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Assists)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Steals)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BlockedShots)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Turnovers)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PersonalFouls)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Points)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlusMinus)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlayerNav)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GameNav)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Updated)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Minutes)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FieldGoalsMade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FieldGoalsAttempted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FieldGoalsPercentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreePointersMade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreePointersAttempted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ThreePointersPercentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FreeThrowsMade)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FreeThrowsAttempted)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FreeThrowsPercentage)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OffensiveRebounds)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DefensiveRebounds)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rebounds)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Assists)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Steals)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BlockedShots)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Turnovers)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PersonalFouls)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Points)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlusMinus)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlayerNav.PlayerID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GameNav.GameID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.StatID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.StatID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.StatID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

@@ -11,7 +11,7 @@
             <div class="jumbotron jumbotron-fluid" style="background-color:#@Model.Team.PrimaryColor">
                 <div class="container">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <img src="@Model.Team.WikipediaLogoUrl" class="teamLogoHeader" />
                         </div>
                         <div class="col-md-4">
@@ -31,15 +31,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-5">
                             <div class="row">
-                                <div class="col-md-12">
-                                    <h3 class="float-right">Team Leaders</h3>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <table class="table-dark float-right">
+                                <div class="col-md-4 offset-8">
+                                    <table class="table table- float-right" style="color:#@Model.Team.SecondaryColor">
                                         <thead>
                                             <tr>
                                                 <td>PPG</td>
@@ -49,9 +44,9 @@
                                         </thead>
                                         <tbody>
                                             <tr>
-                                                <td><img src="@Model.PPGLeader.PhotoUrl" class="playerHeadShot" /></td>
-                                                <td><img src="@Model.RPGLeader.PhotoUrl" class="playerHeadShot" /></td>
-                                                <td><img src="@Model.APGLeader.PhotoUrl" class="playerHeadShot" /></td>
+                                                <td><img src="@Model.PPGLeader.PhotoUrl" class="playerHeadShot" />@Model.PPGLeader.LastName</td>
+                                                <td><img src="@Model.RPGLeader.PhotoUrl" class="playerHeadShot" />@Model.RPGLeader.LastName</td>
+                                                <td><img src="@Model.APGLeader.PhotoUrl" class="playerHeadShot" />@Model.APGLeader.LastName</td>
                                             </tr>
                                             <tr>
                                                 <td>@Model.PPGLeader.StatsNav.PPG</td>
@@ -70,6 +65,7 @@
     </div>
     <div class="row">
         <div class="col-md-6">
+            <h4>Roster</h4>
             <table class="table table-hover">
                 <thead>
                     <tr>
@@ -96,6 +92,7 @@
             </table>
         </div>
         <div class="col-md-6">
+            <h4>Recent Games</h4>
             <table class="table table-hover">
                 <thead>
                     <tr>

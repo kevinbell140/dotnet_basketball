@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Index";
-
 }
 
 <div class="container-fluid">
@@ -13,10 +12,10 @@
     </div>
     <div class="row">
         <div class="col-md-1">
-            @Html.ActionLink("Eastern", "Index", new { filter = "Eastern" }, new { @class = "btn btn-primary"})
+            @Html.ActionLink("Eastern", "Index", new { filter = "Eastern" }, new { @class = "btn btn-primary" })
         </div>
         <div class="col-md-1">
-            @Html.ActionLink("Western", "Index", new { filter = "Western" }, new { @class = "btn btn-primary"})
+            @Html.ActionLink("Western", "Index", new { filter = "Western" }, new { @class = "btn btn-primary" })
         </div>
     </div>
     <hr />
@@ -46,22 +45,25 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach(var item in Model)
-                    {
-                    <tr>
-                        <td></td>
-                        <td><img src="@item.TeamNav.WikipediaLogoUrl" class="teamLogo" /> @Html.ActionLink(item.TeamNav.FullName, "Details", "Teams", new { id = item.TeamID } )</td>
-                        <td>@Html.DisplayFor(m => item.Wins)</td>
-                        <td>@Html.DisplayFor(m => item.Losses)</td>
-                        <td>@Html.DisplayFor(m => item.Percentage)</td>
-                        <td>@Html.DisplayFor(m => item.GamesBack)</td>
-                        <td>@Html.DisplayFor(m => item.ConferenceRecord)</td>
-                        <td>@Html.DisplayFor(m => item.DivisionRecord)</td>
-                        <td>@Html.DisplayFor(m => item.HomeRecord)</td>
-                        <td>@Html.DisplayFor(m => item.AwayRecord)</td>
-                        <td>@Html.DisplayFor(m => item.LastTen)</td>
-                        <td>@Html.DisplayFor(m => item.Streak)</td>
-                    </tr>
+                    @{ 
+                        int count = 1;
+                        foreach(var item in Model)
+                        {
+                            <tr>
+                                <td>@(count++)  </td>
+                                <td><img src="@item.TeamNav.WikipediaLogoUrl" class="teamLogo" /> @Html.ActionLink(item.TeamNav.FullName, "Details", "Teams", new { id = item.TeamID })</td>
+                                <td>@Html.DisplayFor(m => item.Wins)</td>
+                                <td>@Html.DisplayFor(m => item.Losses)</td>
+                                <td>@Html.DisplayFor(m => item.Percentage)</td>
+                                <td>@Html.DisplayFor(m => item.GamesBack)</td>
+                                <td>@Html.DisplayFor(m => item.ConferenceRecord)</td>
+                                <td>@Html.DisplayFor(m => item.DivisionRecord)</td>
+                                <td>@Html.DisplayFor(m => item.HomeRecord)</td>
+                                <td>@Html.DisplayFor(m => item.AwayRecord)</td>
+                                <td>@Html.DisplayFor(m => item.LastTen)</td>
+                                <td>@Html.DisplayFor(m => item.Streak)</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
