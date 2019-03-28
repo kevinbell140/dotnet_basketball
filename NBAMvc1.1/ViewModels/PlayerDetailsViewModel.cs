@@ -12,5 +12,7 @@ namespace NBAMvc1._1.ViewModels
 
 
         public IEnumerable<Game> Games { get; set; }
+
+        public List<PlayerGameStats> GameLogs { get; set; }
     }
 }

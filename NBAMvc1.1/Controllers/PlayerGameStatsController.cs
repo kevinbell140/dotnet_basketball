@@ -172,17 +172,19 @@ namespace NBAMvc1._1.Models
             //logic to fetch all missing data
             DateTime startDate;
             DateTime endDate = DateTime.Today;
-            var exists = await _context.PlayerGameStats.AnyAsync();
-            if (!exists)
-            {
-                startDate = new DateTime(2018, 10, 16);
-            }
-            else
-            {
-                startDate = _context.PlayerGameStats.Max(s => s.Updated);
-            }
+            //var exists = await _context.PlayerGameStats.AnyAsync();
+            //if (!exists)
+            //{
+            //    startDate = new DateTime(2019, 03, 23);
+            //}
+            //else
+            //{
+            //    //startDate = _context.PlayerGameStats.Max(s => s.Updated);
+            //    startDate = new DateTime(2019, 03, 27);
+            //}
 
-            for(DateTime d = startDate; d < endDate; d.AddDays(1))
+            startDate = new DateTime(2019, 03, 27);
+            for (DateTime d = startDate; d < endDate; d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _service.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
 
@@ -197,13 +199,27 @@ namespace NBAMvc1._1.Models
                     }
                     if (!already)
                     {
-                        await Create(p);
+                        try
+                        {
+                            await Create(p);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Crashed in create");
+                        }
+
                     }
-                    else
+                   else
                     {
-                        //tracking exception 
-                        var editable = await _context.PlayerGameStats.FirstOrDefaultAsync(s => s.StatID == p.StatID);
-                        await Edit(editable.StatID, p);
+                        try
+                        {
+                            await Edit(p.StatID, p);
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine("Crahsed in edit");
+                        }
+                       
                     }
                 }
             }

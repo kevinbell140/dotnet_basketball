@@ -45,11 +45,30 @@ namespace NBAMvc1._1.Controllers
                 .Include(p => p.TeamNav).ThenInclude(p => p.HomeGamesNav)
                 .Include(p => p.TeamNav).ThenInclude(p => p.AwayGamesNav)
                 .Include(p => p.StatsNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id),                
+                .Include(p => p.GameStatsNav)
+                .FirstOrDefaultAsync(m => m.PlayerID == id),     
+                
             };
 
-            viewModel.Games = viewModel.Player.TeamNav.HomeGamesNav.ToList();
-            viewModel.Games.Union(viewModel.Player.TeamNav.AwayGamesNav.ToList());
+            viewModel.Games = _context.Game
+                .Where(g => (g.Status == "Final" || g.Status == "F/OT") && (g.HomeTeamNav.TeamID == viewModel.Player.TeamID || g.AwayTeamNav.TeamID == viewModel.Player.TeamID))
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
+                .Include(g => g.PlayerGameStatsNav)
+                .OrderByDescending(g => g.DateTime)
+                .ToList();
+
+            List<PlayerGameStats> gameLogs = new List<PlayerGameStats>();
+
+            foreach (Game g in viewModel.Games )
+            {
+                var log = _context.PlayerGameStats
+                    .Where(a => a.GameNav.GameID == g.GameID && a.PlayerNav.PlayerID == id)
+                    .FirstOrDefault();
+
+                gameLogs.Add(log);
+            }
+            viewModel.GameLogs = gameLogs;
 
             return View(viewModel);
         }
