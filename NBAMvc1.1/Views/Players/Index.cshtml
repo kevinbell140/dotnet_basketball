@@ -4,6 +4,56 @@
     ViewData["Title"] = "Index";
 }
 
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>All Players</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <tr>
+                        <td>Team</td>
+                        <td>@Html.DisplayNameFor(m => m.FullName)</td>
+                        <td>@Html.DisplayNameFor(m => m.Position)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.FieldGoalsPercentage)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.FreeThrowsPercentage)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.ThreePointersMade)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.PPG)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.APG)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.RPG)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.SPG)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.BPG)</td>
+                        <td>@Html.DisplayNameFor(m => m.StatsNav.TPG)</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model)
+                    {
+                    <tr>
+                        <td>Team</td>
+                        <td>@Html.DisplayFor(m => p.FullName)</td>
+                        <td>@Html.DisplayFor(m => p.Position)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.FieldGoalsPercentage)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.FreeThrowsPercentage)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.ThreePointersMade)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.PPG)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.APG)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.RPG)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.SPG)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.BPG)</td>
+                        <td>@Html.DisplayFor(m => p.StatsNav.TPG)</td>
+                    </tr>
+                    }
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</div>
+
+
 <h1>Index</h1>
 
 <p>

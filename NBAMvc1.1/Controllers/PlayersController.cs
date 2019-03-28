@@ -27,8 +27,11 @@ namespace NBAMvc1._1.Controllers
         public async Task<IActionResult> Index()
         {
 
-            var applicationDbContext = _context.Player.Include(p => p.TeamNav);
-            return View(await applicationDbContext.ToListAsync());
+            var players = await _context.Player
+                .Include(p => p.TeamNav)
+                .Include(p => p.StatsNav)
+                .ToListAsync();
+            return View(players);
         }
 
         // GET: Players/Details/5
@@ -58,17 +61,14 @@ namespace NBAMvc1._1.Controllers
                 .OrderByDescending(g => g.DateTime)
                 .ToList();
 
-            List<PlayerGameStats> gameLogs = new List<PlayerGameStats>();
-
+            viewModel.GameLogs = new List<PlayerGameStats>();
             foreach (Game g in viewModel.Games )
             {
                 var log = _context.PlayerGameStats
                     .Where(a => a.GameNav.GameID == g.GameID && a.PlayerNav.PlayerID == id)
                     .FirstOrDefault();
-
-                gameLogs.Add(log);
+                viewModel.GameLogs.Add(log);               
             }
-            viewModel.GameLogs = gameLogs;
 
             return View(viewModel);
         }
