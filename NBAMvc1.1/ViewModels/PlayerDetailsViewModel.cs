@@ -10,7 +10,6 @@ namespace NBAMvc1._1.ViewModels
     {
         public Player Player { get; set; }
 
-
         public IEnumerable<Game> Games { get; set; }
 
         public List<PlayerGameStats> GameLogs { get; set; }

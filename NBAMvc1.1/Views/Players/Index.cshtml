@@ -1,7 +1,7 @@
-﻿@model IEnumerable<NBAMvc1._1.Models.Player>
+﻿@model NBAMvc1._1.Utils.PaginatedList<NBAMvc1._1.Models.Player>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Players";
 }
 
 <div class="container">
@@ -11,29 +11,39 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-4">
+            @using (Html.BeginForm()){
+                <p>
+                    Search by name: @Html.TextBox("searchString", ViewData["currentFilter"] as string)
+                    <input type="submit" value="Search" />
+                </p>
+            }
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-12">
             <table class="table table-responsive table-hover">
                 <thead>
                     <tr>
                         <td>Team</td>
-                        <td>@Html.DisplayNameFor(m => m.FullName)</td>
-                        <td>@Html.DisplayNameFor(m => m.Position)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.FieldGoalsPercentage)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.FreeThrowsPercentage)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.ThreePointersMade)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.PPG)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.APG)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.RPG)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.SPG)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.BPG)</td>
-                        <td>@Html.DisplayNameFor(m => m.StatsNav.TPG)</td>
+                        <td>@Html.ActionLink("Player", "Index", new { sortParam = ViewData["playerSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>Pos</td>
+                        <td>@Html.ActionLink("FG%", "Index", new { sortParam = ViewData["fgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("FT%", "Index", new { sortParam = ViewData["ftSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("3PT", "Index", new { sortParam = ViewData["3ptSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("PPG", "Index", new { sortParam = ViewData["ppgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("APG", "Index", new { sortParam = ViewData["apgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("RPG", "Index", new { sortParam = ViewData["rpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"] }) </td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var p in Model)
                     {
                     <tr>
-                        <td>Team</td>
+                        <td><img src="@p.TeamNav.WikipediaLogoUrl" class="teamLogo"/></td>
                         <td>@Html.DisplayFor(m => p.FullName)</td>
                         <td>@Html.DisplayFor(m => p.Position)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.FieldGoalsPercentage)</td>
@@ -47,87 +57,18 @@
                         <td>@Html.DisplayFor(m => p.StatsNav.TPG)</td>
                     </tr>
                     }
-                    </tbody>
-                </table>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            @{
+                var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+            }
+            <a class="btn btn-primary btn-block @prevDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@Model.PageIndex - 1" asp-route-currentFilter="@ViewData["currentFilter"]">Previous</a>
+            <a class="btn btn-primary btn-block @nextDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@Model.PageIndex + 1" asp-route-currentFilter="@ViewData["currentFilter"]">Next</a>
         </div>
     </div>
 </div>
-
-
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Jersey)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Position)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Height)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Weight)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BirthDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TeamNav)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Jersey)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Position)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Height)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Weight)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BirthDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TeamNav.Key)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.PlayerID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.PlayerID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.PlayerID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
