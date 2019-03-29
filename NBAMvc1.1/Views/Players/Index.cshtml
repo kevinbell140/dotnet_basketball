@@ -67,8 +67,10 @@
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
                 var nextDisabled = !Model.HasNextPage ? "disabled" : "";
             }
-            <a class="btn btn-primary btn-block @prevDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@Model.PageIndex - 1" asp-route-currentFilter="@ViewData["currentFilter"]">Previous</a>
-            <a class="btn btn-primary btn-block @nextDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@Model.PageIndex + 1" asp-route-currentFilter="@ViewData["currentFilter"]">Next</a>
+            @Model.PageIndex
+            @Html.ActionLink("Previous", "Index", new { sortParam = ViewData["currentSort"], page = 3, currentFilter = ViewData["currentFilter"]})
+            <a class="btn btn-primary @prevDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@(Model.PageIndex - 1)" asp-route-currentFilter="@ViewData["currentFilter"]">Previous</a>
+            <a class="btn btn-primary @nextDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@(Model.PageIndex + 1)" asp-route-currentFilter="@ViewData["currentFilter"]">Next</a>
         </div>
     </div>
 </div>

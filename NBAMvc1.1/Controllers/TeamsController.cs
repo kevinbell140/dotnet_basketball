@@ -29,7 +29,7 @@ namespace NBAMvc1._1.Controllers
             //sort attributes
             ViewData["CitySortParam"] = String.IsNullOrEmpty(sortOrder) ? "city_desc" : " ";
             ViewData["NameSortParam"] = sortOrder == "Name" ? "name_desc" : "Name";
-            ViewData["DivisionSortParam"] = sortOrder == "Divsion" ? "division_desc" : "Division";
+            ViewData["DivisionSortParam"] = sortOrder == "Division" ? "division_desc" : "Division";
 
             //LINQ for sorting
             var teams = from t in _context.Team

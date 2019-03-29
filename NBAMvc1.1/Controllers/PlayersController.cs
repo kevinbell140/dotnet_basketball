@@ -27,6 +27,9 @@ namespace NBAMvc1._1.Controllers
         // GET: Players
         public async Task<IActionResult> Index(string sortParam, string currentFilter, string searchString, int? page)
         {
+
+            ///nothing fucking works here
+           
             //sort param
             ViewData["currentSort"] = sortParam;
 
@@ -53,10 +56,10 @@ namespace NBAMvc1._1.Controllers
             ViewData["currentFilter"] = searchString;
 
             IEnumerable<Player> players;
-            IQueryable<Player> sorted;
+            IEnumerable<Player> sorted;
 
             //for search
-            if (!String.IsNullOrEmpty(searchString))
+            if (searchString != null)
             {
                 players = await _context.Player
                     .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
@@ -77,88 +80,88 @@ namespace NBAMvc1._1.Controllers
             switch (sortParam)
             {
                 case "player_desc":
-                    sorted = players.OrderBy(p => p.LastName).AsQueryable();
+                    sorted = players.OrderBy(p => p.LastName);
                     break;
 
                 case "FG":
-                    sorted = players.OrderBy(p => p.StatsNav.FieldGoalsPercentage).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.FieldGoalsPercentage);
                     break;
 
                 case "fg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.FieldGoalsPercentage).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.FieldGoalsPercentage);
                     break;
 
                 case "FT":
-                    sorted = players.OrderBy(p => p.StatsNav.FreeThrowsPercentage).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.FreeThrowsPercentage);
                     break;
 
                 case "ft_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.FreeThrowsPercentage).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.FreeThrowsPercentage);
                     break;
 
                 case "3PT":
-                    sorted = players.OrderBy(p => p.StatsNav.ThreePointersMade).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.ThreePointersMade);
                     break;
 
                 case "3pt_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.ThreePointersMade).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.ThreePointersMade);
                     break;
 
                 case "PPG":
-                    sorted = players.OrderBy(p => p.StatsNav.PPG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.PPG);
                     break;
 
                 case "ppg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.PPG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.PPG);
                     break;
 
                 case "APG":
-                    sorted = players.OrderBy(p => p.StatsNav.APG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.APG);
                     break;
 
                 case "apg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.APG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.APG);
                     break;
 
                 case "RPG":
-                    sorted = players.OrderBy(p => p.StatsNav.RPG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.RPG);
                     break;
 
                 case "rpg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.RPG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.RPG);
                     break;
 
                 case "SPG":
-                    sorted = players.OrderBy(p => p.StatsNav.SPG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.SPG);
                     break;
 
                 case "spg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.SPG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.SPG);
                     break;
 
                 case "BPG":
-                    sorted = players.OrderBy(p => p.StatsNav.BPG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.BPG);
                     break;
 
                 case "bpg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.BPG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.BPG);
                     break;
 
                 case "TO":
-                    sorted = players.OrderBy(p => p.StatsNav.TPG).AsQueryable();
+                    sorted = players.OrderBy(p => p.StatsNav.TPG);
                     break;
 
                 case "to_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.TPG).AsQueryable();
+                    sorted = players.OrderByDescending(p => p.StatsNav.TPG);
                     break;
 
                 default:
-                    sorted = players.OrderBy(p => p.LastName).AsQueryable();
+                    sorted = players.OrderBy(p => p.LastName);
                     break;
             }
             int pageSize = 20;
 
-            return View(PaginatedList<Player>.Create(sorted, page ?? 1, pageSize));
+            return View(PaginatedList<Player>.Create(sorted.ToList(), page ?? 1, pageSize));
         }
 
         // GET: Players/Details/5
