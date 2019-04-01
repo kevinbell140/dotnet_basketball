@@ -25,11 +25,9 @@ namespace NBAMvc1._1.Controllers
         }
                      
         // GET: Players
-        public async Task<IActionResult> Index(string sortParam, string currentFilter, string searchString, int? page)
+        public async Task<IActionResult> Index(string sortParam, string currentFilter, string searchString, int? pageNumber)
         {
 
-            ///nothing fucking works here
-           
             //sort param
             ViewData["currentSort"] = sortParam;
 
@@ -45,123 +43,123 @@ namespace NBAMvc1._1.Controllers
             ViewData["toSort"] = sortParam == "TO" ? "to_desc" : "TO";
 
             //for paging 
-            if(searchString != null)
+            if (searchString != null)
             {
-                page = 1;
+                pageNumber = 1;
             }
+            else
             {
                 searchString = currentFilter;
             }
 
             ViewData["currentFilter"] = searchString;
 
-            IEnumerable<Player> players;
-            IEnumerable<Player> sorted;
+            IQueryable<Player> players;
 
             //for search
             if (searchString != null)
             {
-                players = await _context.Player
+                players = _context.Player
                     .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
                     .Include(p => p.TeamNav)
-                    .Include(p => p.StatsNav)
-                    .ToListAsync();
+                    .Include(p => p.StatsNav);
             }
             else
             {
-                players = await _context.Player
+                players = _context.Player
                     .Where(p => p.StatsNav != null)
                     .Include(p => p.TeamNav)
-                    .Include(p => p.StatsNav)
-                    .ToListAsync();
+                    .Include(p => p.StatsNav);
             }
 
             //for sort
             switch (sortParam)
             {
                 case "player_desc":
-                    sorted = players.OrderBy(p => p.LastName);
+                    players = players.OrderBy(p => p.LastName);
                     break;
 
                 case "FG":
-                    sorted = players.OrderBy(p => p.StatsNav.FieldGoalsPercentage);
+                    players = players.OrderBy(p => p.StatsNav.FieldGoalsPercentage);
                     break;
 
                 case "fg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.FieldGoalsPercentage);
+                    players = players.OrderByDescending(p => p.StatsNav.FieldGoalsPercentage);
                     break;
 
                 case "FT":
-                    sorted = players.OrderBy(p => p.StatsNav.FreeThrowsPercentage);
+                    players = players.OrderBy(p => p.StatsNav.FreeThrowsPercentage);
                     break;
 
                 case "ft_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.FreeThrowsPercentage);
+                    players = players.OrderByDescending(p => p.StatsNav.FreeThrowsPercentage);
                     break;
 
                 case "3PT":
-                    sorted = players.OrderBy(p => p.StatsNav.ThreePointersMade);
+                    players = players.OrderBy(p => p.StatsNav.ThreePointersMade);
                     break;
 
                 case "3pt_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.ThreePointersMade);
+                    players = players.OrderByDescending(p => p.StatsNav.ThreePointersMade);
                     break;
 
                 case "PPG":
-                    sorted = players.OrderBy(p => p.StatsNav.PPG);
+                    players = players.OrderBy(p => p.StatsNav.PPG);
                     break;
 
                 case "ppg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.PPG);
+                    players = players.OrderByDescending(p => p.StatsNav.PPG);
                     break;
 
                 case "APG":
-                    sorted = players.OrderBy(p => p.StatsNav.APG);
+                    players = players.OrderBy(p => p.StatsNav.APG);
                     break;
 
                 case "apg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.APG);
+                    players = players.OrderByDescending(p => p.StatsNav.APG);
                     break;
 
                 case "RPG":
-                    sorted = players.OrderBy(p => p.StatsNav.RPG);
+                    players = players.OrderBy(p => p.StatsNav.RPG);
                     break;
 
                 case "rpg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.RPG);
+                    players = players.OrderByDescending(p => p.StatsNav.RPG);
                     break;
 
                 case "SPG":
-                    sorted = players.OrderBy(p => p.StatsNav.SPG);
+                    players = players.OrderBy(p => p.StatsNav.SPG);
                     break;
 
                 case "spg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.SPG);
+                    players = players.OrderByDescending(p => p.StatsNav.SPG);
                     break;
 
                 case "BPG":
-                    sorted = players.OrderBy(p => p.StatsNav.BPG);
+                    players = players.OrderBy(p => p.StatsNav.BPG);
                     break;
 
                 case "bpg_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.BPG);
+                    players = players.OrderByDescending(p => p.StatsNav.BPG);
                     break;
 
                 case "TO":
-                    sorted = players.OrderBy(p => p.StatsNav.TPG);
+                    players = players.OrderBy(p => p.StatsNav.TPG);
                     break;
 
                 case "to_desc":
-                    sorted = players.OrderByDescending(p => p.StatsNav.TPG);
+                    players = players.OrderByDescending(p => p.StatsNav.TPG);
                     break;
 
                 default:
-                    sorted = players.OrderBy(p => p.LastName);
+                    players = players.OrderBy(p => p.LastName);
                     break;
             }
             int pageSize = 20;
 
-            return View(PaginatedList<Player>.Create(sorted.ToList(), page ?? 1, pageSize));
+
+            //return View(players);
+            return View(await PaginatedList<Player>.Create(players.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
         // GET: Players/Details/5

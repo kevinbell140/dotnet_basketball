@@ -35,10 +35,10 @@ namespace NBAMvc1._1.Utils
             }
         }
         
-        public static PaginatedList<T> Create(IEnumerable<T> source, int pageIndex, int pageSize)
+        public static async Task<PaginatedList<T>> Create(IQueryable<T> source, int pageIndex, int pageSize)
         {
-            var count = source.Count();
-            var items = source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
+            var count = await source.CountAsync();
+            var items = await source.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToListAsync();
             return new PaginatedList<T>(items, count, pageIndex, pageSize);
 
         }

@@ -1,4 +1,4 @@
-﻿@model NBAMvc1._1.Utils.PaginatedList<NBAMvc1._1.Models.Player>
+﻿@model NBAMvc1._1.Utils.PaginatedList<Player>
 
 @{
     ViewData["Title"] = "Players";
@@ -12,12 +12,15 @@
     </div>
     <div class="row">
         <div class="col-md-4">
-            @using (Html.BeginForm()){
-                <p>
-                    Search by name: @Html.TextBox("searchString", ViewData["currentFilter"] as string)
-                    <input type="submit" value="Search" />
-                </p>
-            }
+            <form asp-action="Index" method="get">
+                <div class="form-actions no-color">
+                    <p>
+                        Search: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+                        <input type="submit" value="Search" class="btn btn-primary" />
+                        <a asp-action="Index" > Back to full list</a>
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
     <div class="row">
@@ -67,10 +70,10 @@
                 var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
                 var nextDisabled = !Model.HasNextPage ? "disabled" : "";
             }
-            @Model.PageIndex
-            @Html.ActionLink("Previous", "Index", new { sortParam = ViewData["currentSort"], page = 3, currentFilter = ViewData["currentFilter"]})
-            <a class="btn btn-primary @prevDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@(Model.PageIndex - 1)" asp-route-currentFilter="@ViewData["currentFilter"]">Previous</a>
-            <a class="btn btn-primary @nextDisabled" asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-page="@(Model.PageIndex + 1)" asp-route-currentFilter="@ViewData["currentFilter"]">Next</a>
+            <a asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @prevDisabled">Previous</a>
+            <a asp-action="Index" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @nextDisabled">Next</a>
         </div>
     </div>
 </div>
