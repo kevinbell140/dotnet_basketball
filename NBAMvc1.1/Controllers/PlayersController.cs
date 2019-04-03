@@ -27,7 +27,6 @@ namespace NBAMvc1._1.Controllers
         // GET: Players
         public async Task<IActionResult> Index(string sortParam, string currentFilter, string searchString, int? pageNumber)
         {
-
             //sort param
             ViewData["currentSort"] = sortParam;
 
@@ -157,8 +156,6 @@ namespace NBAMvc1._1.Controllers
             }
             int pageSize = 20;
 
-
-            //return View(players);
             return View(await PaginatedList<Player>.Create(players.AsNoTracking(), pageNumber ?? 1, pageSize));
         }
 
