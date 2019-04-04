@@ -14,6 +14,7 @@ using NBAMvc1._1.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Areas.Identity;
 
 namespace NBAMvc1._1
 {
@@ -39,7 +40,7 @@ namespace NBAMvc1._1
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
                 .AddEntityFrameworkStores<ApplicationDbContext>();

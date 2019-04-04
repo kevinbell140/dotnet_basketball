@@ -17,7 +17,6 @@ namespace NBAMvc1._1.Data
             {
                 var adminID = await EnsureUser(serviceProvider, "Password12#", "admin@fbbm.com");
                 await EnsureRole(serviceProvider, adminID, Constants.AdministratorRole);
-                //new branch
 
             }
         }

@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Models;
 
 namespace NBAMvc1._1.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -26,6 +27,9 @@ namespace NBAMvc1._1.Data
             builder.Entity<Player>()
                 .Property(p => p.Weight)
                 .HasDefaultValue(0);
+
+            builder.Entity<PlayerMyTeam>()
+                .HasKey(p => new { p.PlayerID, p.MyTeamID });
         }
 
         public DbSet<NBAMvc1._1.Models.PlayerSeasonStats> PlayerSeasonStats { get; set; }
