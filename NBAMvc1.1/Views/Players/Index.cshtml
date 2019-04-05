@@ -1,4 +1,8 @@
 ﻿@model NBAMvc1._1.Utils.PaginatedList<Player>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+
 
 @{
     ViewData["Title"] = "Players";
@@ -11,13 +15,21 @@
         </div>
     </div>
     <div class="row">
+        <div class="col-md-12">
+            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
+            {
+                <a asp-action="Create">Create New</a>
+            }
+        </div>
+    </div>
+    <div class="row">
         <div class="col-md-4">
             <form asp-action="Index" method="get">
                 <div class="form-actions no-color">
                     <p>
                         Search: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
                         <input type="submit" value="Search" class="btn btn-primary" />
-                        <a asp-action="Index" > Back to full list</a>
+                        <a asp-action="Index"> Back to full list</a>
                     </p>
                 </div>
             </form>
@@ -40,14 +52,15 @@
                         <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"] }) </td>
                         <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
                         <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var p in Model)
                     {
                     <tr>
-                        <td><img src="@p.TeamNav.WikipediaLogoUrl" class="teamLogo"/></td>
-                        <td>@Html.DisplayFor(m => p.FullName)</td>
+                        <td><img src="@p.TeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                        <td>@Html.ActionLink(@p.FullName, "Details", new { id = p.PlayerID })</td>
                         <td>@Html.DisplayFor(m => p.Position)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.FieldGoalsPercentage)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.FreeThrowsPercentage)</td>
@@ -58,6 +71,13 @@
                         <td>@Html.DisplayFor(m => p.StatsNav.SPG)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.BPG)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.TPG)</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@p.TeamID">Details</a> |
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
+                            {
+                                <a asp-action="Delete" asp-route-id="@p.TeamID">Delete</a>
+                            }
+                        </td>
                     </tr>
                     }
                 </tbody>

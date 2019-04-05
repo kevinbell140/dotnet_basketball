@@ -15,6 +15,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using NBAMvc1._1.Services;
 using NBAMvc1._1.Areas.Identity;
+using NBAMvc1._1.Areas.Auth;
 
 namespace NBAMvc1._1
 {
@@ -52,6 +53,11 @@ namespace NBAMvc1._1
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("AdminOnly", policy => policy.RequireRole(Constants.AdministratorRole));
+            });
             services.AddScoped<DataService>();
         }
 

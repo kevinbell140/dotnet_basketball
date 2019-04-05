@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -165,8 +166,10 @@ namespace NBAMvc1._1.Controllers
             return View(viewModel);
         }
 
+
         // GET: Teams/Create
-        private IActionResult Create()
+        [Authorize(Policy = "AdminOnly")]
+        public IActionResult Create()
         {
             return View();
         }
@@ -174,9 +177,10 @@ namespace NBAMvc1._1.Controllers
         // POST: Teams/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        private async Task<IActionResult> Create([Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
+        public async Task<IActionResult> Create([Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
         {
             if (ModelState.IsValid)
             {
@@ -239,6 +243,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Teams/Delete/5
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -259,6 +264,7 @@ namespace NBAMvc1._1.Controllers
         // POST: Teams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy= "AdminOnly")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var team = await _context.Team.FindAsync(id);

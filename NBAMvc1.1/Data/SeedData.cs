@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Linq;
 using System.Threading.Tasks;
 using NBAMvc1._1.Areas.Auth;
+using NBAMvc1._1.Areas.Identity;
 
 namespace NBAMvc1._1.Data
 {
@@ -23,12 +24,12 @@ namespace NBAMvc1._1.Data
         
         private static async Task<string> EnsureUser(IServiceProvider serviceProvider, string pw, string userName)
         {
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
 
             var user = await userManager.FindByNameAsync(userName);
             if(user == null)
             {
-                user = new IdentityUser { UserName = userName };
+                user = new ApplicationUser { UserName = userName };
                 await userManager.CreateAsync(user, pw);
             }
             return user.Id;
@@ -48,7 +49,7 @@ namespace NBAMvc1._1.Data
                 IR = await roleManager.CreateAsync(new IdentityRole(role));
             }
 
-            var userManager = serviceProvider.GetService<UserManager<IdentityUser>>();
+            var userManager = serviceProvider.GetService<UserManager<ApplicationUser>>();
             var user = await userManager.FindByIdAsync(uid);
 
             IR = await userManager.AddToRoleAsync(user, role);
