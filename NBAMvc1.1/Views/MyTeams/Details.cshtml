@@ -1,0 +1,24 @@
+﻿@model NBAMvc1._1.Models.MyTeam
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>MyTeam</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.UserNav)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.UserNav.Id)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.MyTeamID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
