@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using NBAMvc1._1.Services;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Areas.Auth;
+using Microsoft.AspNetCore.Authorization;
 
 namespace NBAMvc1._1
 {
@@ -58,6 +59,9 @@ namespace NBAMvc1._1
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole(Constants.AdministratorRole));
             });
+
+            services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
+
             services.AddScoped<DataService>();
         }
 

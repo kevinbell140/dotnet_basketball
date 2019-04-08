@@ -14,7 +14,9 @@ namespace NBAMvc1._1.Models
 
         [ForeignKey("UserNav")]
         public string UserID { get; set; }
-       
+
+        public string Name { get; set; }
+
         public virtual ApplicationUser UserNav { get; set; }
 
         public virtual ICollection<PlayerMyTeam> PlayerMyTeamNav { get; set; }
