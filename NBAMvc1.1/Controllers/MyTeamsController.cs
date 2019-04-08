@@ -60,10 +60,18 @@ namespace NBAMvc1._1.Controllers
 
             viewModel.MyTeam = myTeam;
 
+            var players = await _context.PlayerMyTeam
+                .Where(p => p.MyTeamNav.MyTeamID == id)
+                .Include(p => p.PlayerNav)
+                .AsNoTracking().ToListAsync();
+
+            viewModel.Players = players;
+
             if(_userManager.GetUserId(User) != myTeam.UserID)
             {
                 return new ChallengeResult();
             }
+
 
             return View(viewModel);
         }

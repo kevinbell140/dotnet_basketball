@@ -11,15 +11,18 @@ namespace NBAMvc1._1.ViewModels
 
         public MyTeam MyTeam { get; set; }
 
+        public IEnumerable<PlayerMyTeam> Players { get; set; }
+
         public IDictionary<string, Player> Roster { get; set; }
 
+
+        //put the queries in here
         public MyTeamDetailsViewModel()
         {
             Roster = new Dictionary<string, Player>()
             {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
+                { "PG", null},
+                { "SG", null},
                 { "SG2", null},
                 { "SF1", null},
                 { "SF2", null},

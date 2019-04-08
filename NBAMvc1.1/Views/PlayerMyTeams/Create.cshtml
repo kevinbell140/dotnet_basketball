@@ -1,0 +1,102 @@
+﻿@model NBAMvc1._1.ViewModels.PlayerMyTeamCreateViewModel
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Add player to team</h3>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <form asp-action="Index" method="get">
+                <div class="form-actions no-color">
+                    <p>
+                        Search: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+                        <input type="submit" value="Search" class="btn btn-primary" />
+                    </p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-responsive table-hover">
+                <thead>
+                    <tr>
+                        <td>Team</td>
+                        <td>@Html.ActionLink("Player", "Index", new { sortParam = ViewData["playerSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>Pos</td>
+                        <td>@Html.ActionLink("FG%", "Index", new { sortParam = ViewData["fgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("FT%", "Index", new { sortParam = ViewData["ftSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("3PT", "Index", new { sortParam = ViewData["3ptSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("PPG", "Index", new { sortParam = ViewData["ppgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("APG", "Index", new { sortParam = ViewData["apgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("RPG", "Index", new { sortParam = ViewData["rpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in Model.Players)
+                    {
+                        <tr>
+                            <td><img src="@p.TeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td>@Html.ActionLink(@p.FullName, "Details", new { id = p.PlayerID })</td>
+                            <td>@Html.DisplayFor(m => p.Position)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.FieldGoalsPercentage)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.FreeThrowsPercentage)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.ThreePointersMade)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.PPG)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.APG)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.RPG)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.SPG)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.BPG)</td>
+                            <td>
+                                <form asp-action="Create">
+                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                    <div class="form-group">
+                                        <input type="hidden" asp-for="PlayerMyTeam.MyTeamID" class="form-control" value="@Model.MyTeam.MyTeamID" />
+                                        <span asp-validation-for="PlayerMyTeam.MyTeamID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="hidden" asp-for="PlayerMyTeam.PlayerID" class="form-control" value="@p.PlayerID" />
+                                        <span asp-validation-for="PlayerMyTeam.MyTeamID" class="text-danger"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="submit" value="Create" class="btn btn-primary" />
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            @{
+                var prevDisabled = !Model.Players.HasPreviousPage ? "disabled" : "";
+                var nextDisabled = !Model.Players.HasNextPage ? "disabled" : "";
+            }
+            <a asp-action="Create" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex - 1)"
+               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @prevDisabled">Previous</a>
+            <a asp-action="Create" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex + 1)"
+               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @nextDisabled">Next</a>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

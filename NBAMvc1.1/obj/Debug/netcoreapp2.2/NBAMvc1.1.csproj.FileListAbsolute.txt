@@ -65,3 +65,8 @@ C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\V
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\MyTeams\Details.g.cshtml.cs
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\MyTeams\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\MyTeams\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Create.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Delete.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Details.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Edit.g.cshtml.cs
+C:\Users\kebell\source\repos\NBAMvc1.1\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Index.g.cshtml.cs

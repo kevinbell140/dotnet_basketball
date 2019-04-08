@@ -21,12 +21,12 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (KeyValuePair<string, Player> entry in Model.Roster)
+                        @foreach (var p in Model.Players)
                         {
                             <tr>
-                                <td>@entry.Key</td>
-                                <td>@entry.Value</td>
-                                <td><a href="#">Add/Remove</a> </td>
+                                <td>@p.PlayerNav.Position</td>
+                                <td>@p.PlayerNav.FullName</td>
+                                <td><a asp-controller="PlayerMyTeams" asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID">Add/Remove</a> </td>
                             </tr>
                         }
                     </tbody>
