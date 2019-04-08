@@ -1,4 +1,4 @@
-﻿@model NBAMvc1._1.Models.MyTeam
+﻿@model NBAMvc1._1.ViewModels.MyTeamDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12">
-                <h3>@Model.Name</h3>
+                <h3>@Model.MyTeam.Name</h3>
             </div>
         </div>
         <div class="row">
@@ -21,10 +21,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Position</td>
-                            <td>Name</td>
-                        </tr>
+                        @foreach (KeyValuePair<string, Player> entry in Model.Roster)
+                        {
+                            <tr>
+                                <td>@entry.Key</td>
+                                <td>@entry.Value</td>
+                                <td><a href="#">Add/Remove</a> </td>
+                            </tr>
+                        }
                     </tbody>
                 </table>
             </div>
@@ -33,6 +37,6 @@
 
 
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.MyTeamID">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.MyTeam.MyTeamID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

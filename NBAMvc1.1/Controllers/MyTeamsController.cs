@@ -11,6 +11,7 @@ using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -41,6 +42,8 @@ namespace NBAMvc1._1.Controllers
         // GET: MyTeams/Details/5
         public async Task<IActionResult> Details(int? id)
         {
+
+            var viewModel = new MyTeamDetailsViewModel();
             if (id == null)
             {
                 return NotFound();
@@ -55,12 +58,14 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
+            viewModel.MyTeam = myTeam;
+
             if(_userManager.GetUserId(User) != myTeam.UserID)
             {
                 return new ChallengeResult();
             }
 
-            return View(myTeam);
+            return View(viewModel);
         }
 
         // GET: MyTeams/Create
