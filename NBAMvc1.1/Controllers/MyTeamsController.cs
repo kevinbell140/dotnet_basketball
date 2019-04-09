@@ -52,6 +52,7 @@ namespace NBAMvc1._1.Controllers
 
             var myTeam = await _context.MyTeam
                 .Include(m => m.PlayerMyTeamNav)
+                .Include(m => m.UserNav)
                 .FirstOrDefaultAsync(m => (m.MyTeamID == id) );
 
             if (myTeam == null)
@@ -64,7 +65,9 @@ namespace NBAMvc1._1.Controllers
             //gets player roster
             var playerMyteams = await _context.PlayerMyTeam
                 .Where(p => p.MyTeamNav.MyTeamID == id)
-                .Include(p => p.PlayerNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .OrderBy(p => p.PlayerNav.Position)
                 .AsNoTracking().ToListAsync();
 
 
@@ -82,6 +85,7 @@ namespace NBAMvc1._1.Controllers
                 }
                 else
                 {
+
                     players.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
                     posCount = (posCount == 1 ? 2 : 1);
                 }

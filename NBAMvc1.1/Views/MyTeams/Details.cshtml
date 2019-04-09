@@ -7,7 +7,8 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-md-12">
-            <h3>@Model.MyTeam.Name - Roster</h3>
+            <h3>@Model.MyTeam.Name</h3>
+            <h6>@Model.MyTeam.UserNav.Email</h6>
         </div>
     </div>
     <div class="row">
@@ -17,18 +18,38 @@
                     <tr>
                         <th>Pos</th>
                         <th>Name</th>
-                        <th></th>
+                        <th>Team</th>
+                        <td>FG%</td>
+                        <td>FT%</td>
+                        <td>3PT</td>
+                        <td>PTS</td>
+                        <td>AST</td>
+                        <td>RBD</td>
+                        <td>STL</td>
+                        <td>BLK</td>
+                        <td>TO</td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (KeyValuePair<string, Player> entry in Model.Roster)
                     {
                         <tr>
-                            <td>@entry.Key</td>
+                            <td><strong>@entry.Key</strong></td>
                             <td>@(entry.Value != null ? entry.Value.FullName : "")</td>
+                            <td><img src="@(entry.Value != null ? entry.Value.TeamNav.WikipediaLogoUrl : "#")" alt="Add a players shithead" class="teamLogoSM"/></td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.FieldGoalsPercentage : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.FreeThrowsPercentage : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.ThreePointersMade : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.PPG : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.APG : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.RPG : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.SPG : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.BPG : 0)</td>
+                            <td>@(entry.Value != null ? entry.Value.StatsNav.TPG : 0)</td>
                             @if (entry.Value == null)
                             {
-                                <td><a asp-controller="PlayerMyTeams" asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" class="btn btn-success">Add</a> </td>
+                                
+                                <td><a asp-controller="PlayerMyTeams" asp-action="Create" asp-route-posFilter="@(entry.Key.TrimEnd("12".ToCharArray()))" asp-route-teamID="@Model.MyTeam.MyTeamID" class="btn btn-success">Add</a> </td>
                             }
                             else
                             {

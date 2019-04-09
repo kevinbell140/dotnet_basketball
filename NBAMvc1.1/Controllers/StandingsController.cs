@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -170,6 +171,7 @@ namespace NBAMvc1._1.Controllers
             return _context.Standings.Any(e => e.TeamID == id);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Fetch()
         {
             var standings = await _service.FetchStandings();

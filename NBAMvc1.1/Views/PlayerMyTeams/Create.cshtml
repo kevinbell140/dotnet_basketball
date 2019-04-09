@@ -31,17 +31,17 @@
                 <thead>
                     <tr>
                         <td>Team</td>
-                        <td>@Html.ActionLink("Player", "Index", new { sortParam = ViewData["playerSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("Player", "Index", new { sortParam = ViewData["playerSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
                         <td>Pos</td>
-                        <td>@Html.ActionLink("FG%", "Index", new { sortParam = ViewData["fgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("FT%", "Index", new { sortParam = ViewData["ftSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("3PT", "Index", new { sortParam = ViewData["3ptSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("PPG", "Index", new { sortParam = ViewData["ppgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("APG", "Index", new { sortParam = ViewData["apgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("RPG", "Index", new { sortParam = ViewData["rpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"] }) </td>
-                        <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"] }) </td>
+                        <td>@Html.ActionLink("FG%", "Index", new { sortParam = ViewData["fgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"]}) </td>
+                        <td>@Html.ActionLink("FT%", "Index", new { sortParam = ViewData["ftSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"]}) </td>
+                        <td>@Html.ActionLink("3PT", "Index", new { sortParam = ViewData["3ptSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("PPG", "Index", new { sortParam = ViewData["ppgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("APG", "Index", new { sortParam = ViewData["apgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("RPG", "Index", new { sortParam = ViewData["rpgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
                         <td></td>
                     </tr>
                 </thead>
@@ -89,9 +89,9 @@
                 var nextDisabled = !Model.Players.HasNextPage ? "disabled" : "";
             }
             <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex - 1)"
-               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @prevDisabled">Previous</a>
+               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]" class="btn btn-primary @prevDisabled">Previous</a>
             <a asp-action="Create"  asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex + 1)"
-               asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @nextDisabled">Next</a>
+               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]" class="btn btn-primary @nextDisabled">Next</a>
         </div>
     </div>
 </div>

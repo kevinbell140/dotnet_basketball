@@ -71,6 +71,15 @@ body {
     height: 200px;
 }
 
+.teamLogoSM {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 55px;
+    height: 35px;
+}
+
+
 .playerHeadShot {
     border: 1px solid black;
     border-radius: 4px;

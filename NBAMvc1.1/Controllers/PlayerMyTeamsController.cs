@@ -58,7 +58,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: PlayerMyTeams/Create
-        public async Task<IActionResult> Create(int? teamID, string sortParam, string currentFilter, string searchString, int? pageNumber)
+        public async Task<IActionResult> Create(int? teamID, string sortParam, string currentFilter, string searchString, int? pageNumber, string posFilter)
         {
             var viewModel = new PlayerMyTeamCreateViewModel();
             if (teamID == null)
@@ -97,6 +97,7 @@ namespace NBAMvc1._1.Controllers
             }
 
             ViewData["currentFilter"] = searchString;
+            ViewData["posFilter"] = posFilter;
 
             IQueryable<Player> players;
 
@@ -105,6 +106,14 @@ namespace NBAMvc1._1.Controllers
             {
                 players = _context.Player
                     .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
+                    .Include(p => p.TeamNav)
+                    .Include(p => p.StatsNav);
+
+            }
+            else if(posFilter != null)
+            {
+                players = _context.Player
+                    .Where(p => p.StatsNav != null && p.Position == posFilter)
                     .Include(p => p.TeamNav)
                     .Include(p => p.StatsNav);
             }

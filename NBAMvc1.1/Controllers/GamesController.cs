@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -27,28 +28,6 @@ namespace NBAMvc1._1.Controllers
         {
             var applicationDbContext = _context.Game.Include(g => g.AwayTeamNav).Include(g => g.HomeTeamNav);
             return View(await applicationDbContext.ToListAsync());
-        }
-
-        public async Task<IActionResult> Fetch()
-        {
-            
-            var games = await _service.FetchGames();
-
-            foreach(Game g in games)
-            {
-                var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
-
-                if (!exists)
-                {
-                    await Create(g);
-                }
-                else
-                {
-                    await Edit(g.GameID, g);
-                }
-            }
-
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Games/Details/5
@@ -186,6 +165,29 @@ namespace NBAMvc1._1.Controllers
         private bool GameExists(int id)
         {
             return _context.Game.Any(e => e.GameID == id);
+        }
+
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> Fetch()
+        {
+
+            var games = await _service.FetchGames();
+
+            foreach (Game g in games)
+            {
+                var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
+
+                if (!exists)
+                {
+                    await Create(g);
+                }
+                else
+                {
+                    await Edit(g.GameID, g);
+                }
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
 }
