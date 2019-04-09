@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
@@ -29,6 +30,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: PlayerMyTeams
+        [Authorize(Policy = "AdminOnly" )]
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.PlayerMyTeam.Include(p => p.MyTeamNav).Include(p => p.PlayerNav);
@@ -201,6 +203,13 @@ namespace NBAMvc1._1.Controllers
 
             viewModel.Players = await PaginatedList<Player>.Create(players.AsNoTracking(), pageNumber ?? 1, pageSize);
 
+            var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
+
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+
             return View(viewModel);
         }
 
@@ -229,31 +238,34 @@ namespace NBAMvc1._1.Controllers
             {
                 return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID});
             }
+
             if (ModelState.IsValid)
             {
                 _context.Add(playerMyTeam);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
             }
 
-            return View(playerMyTeam);
+            return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
         }
 
         // GET: PlayerMyTeams/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? playerID, int? myTeamID)
         {
-            if (id == null)
+            if (playerID == null || myTeamID == null)
             {
                 return NotFound();
             }
 
-            var playerMyTeam = await _context.PlayerMyTeam.FindAsync(id);
+            var playerMyTeam = await _context.PlayerMyTeam
+                .Where(c => c.MyTeamID == myTeamID && c.PlayerID == playerID)
+                .FirstOrDefaultAsync();
+
             if (playerMyTeam == null)
             {
                 return NotFound();
             }
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", playerMyTeam.MyTeamID);
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerMyTeam.PlayerID);
+
             return View(playerMyTeam);
         }
 
@@ -294,10 +306,11 @@ namespace NBAMvc1._1.Controllers
             return View(playerMyTeam);
         }
 
+
         // GET: PlayerMyTeams/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? playerID, int? myTeamID)
         {
-            if (id == null)
+            if (playerID == null || myTeamID == null)
             {
                 return NotFound();
             }
@@ -305,10 +318,18 @@ namespace NBAMvc1._1.Controllers
             var playerMyTeam = await _context.PlayerMyTeam
                 .Include(p => p.MyTeamNav)
                 .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id);
+                .FirstOrDefaultAsync(m => m.PlayerID == playerID && m.MyTeamID == myTeamID );
+
             if (playerMyTeam == null)
             {
                 return NotFound();
+            }
+
+            var isAuthorized = await _auth.AuthorizeAsync(User, playerMyTeam, Operations.Delete);
+
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
             }
 
             return View(playerMyTeam);
@@ -317,12 +338,33 @@ namespace NBAMvc1._1.Controllers
         // POST: PlayerMyTeams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int? playerID, int? myTeamID)
         {
-            var playerMyTeam = await _context.PlayerMyTeam.FindAsync(id);
+            var playerMyTeam = await _context.PlayerMyTeam
+                .Include(p => p.MyTeamNav)
+                .Include(p => p.PlayerNav)
+                .FirstOrDefaultAsync(p => p.PlayerID == playerID && p.MyTeamID == myTeamID);
+
+            var pmt = await _context.PlayerMyTeam
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.PlayerID == playerID && p.MyTeamID == myTeamID);
+
+            if(pmt == null)
+            {
+                return NotFound();
+            }
+
+            var isAuthorized = await _auth.AuthorizeAsync(User, playerMyTeam, Operations.Delete);
+
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+
             _context.PlayerMyTeam.Remove(playerMyTeam);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+
+            return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
         }
 
         private bool PlayerMyTeamExists(int id)

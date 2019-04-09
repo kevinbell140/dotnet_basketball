@@ -88,9 +88,9 @@
                 var prevDisabled = !Model.Players.HasPreviousPage ? "disabled" : "";
                 var nextDisabled = !Model.Players.HasNextPage ? "disabled" : "";
             }
-            <a asp-action="Create" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex - 1)"
+            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex - 1)"
                asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @prevDisabled">Previous</a>
-            <a asp-action="Create" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex + 1)"
+            <a asp-action="Create"  asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["currentSort"]" asp-route-pageNumber="@(Model.Players.PageIndex + 1)"
                asp-route-currentFilter="@ViewData["currentFilter"]" class="btn btn-primary @nextDisabled">Next</a>
         </div>
     </div>

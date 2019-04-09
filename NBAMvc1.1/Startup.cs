@@ -62,6 +62,8 @@ namespace NBAMvc1._1
 
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
 
+            services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
+
             services.AddScoped<DataService>();
         }
 
