@@ -11,8 +11,6 @@ namespace NBAMvc1._1.ViewModels
     {
         public MyTeam MyTeam { get; set; }
 
-        //public IQueryable<Player> Players {get; set; }
-
         public PaginatedList<Player> Players { get; set; }
 
         public PlayerMyTeam PlayerMyTeam { get; set; }

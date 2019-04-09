@@ -49,6 +49,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
+
             var myTeam = await _context.MyTeam
                 .Include(m => m.PlayerMyTeamNav)
                 .FirstOrDefaultAsync(m => (m.MyTeamID == id) );
@@ -60,12 +61,37 @@ namespace NBAMvc1._1.Controllers
 
             viewModel.MyTeam = myTeam;
 
-            var players = await _context.PlayerMyTeam
+            //gets player roster
+            var playerMyteams = await _context.PlayerMyTeam
                 .Where(p => p.MyTeamNav.MyTeamID == id)
                 .Include(p => p.PlayerNav)
                 .AsNoTracking().ToListAsync();
 
-            viewModel.Players = players;
+
+            //dictonary for roster
+            Dictionary<string, Player> players = new Dictionary<string, Player>();
+
+            int posCount = 1;
+
+            //add players to in memory dictonary
+            foreach(var p in playerMyteams)
+            {
+                if(p.PlayerNav.Position == "C")
+                {
+                    players.Add(p.PlayerNav.Position, p.PlayerNav);
+                }
+                else
+                {
+                    players.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
+                    posCount = (posCount == 1 ? 2 : 1);
+                }
+            }
+
+            //add players to viewModel dictionary
+            foreach(KeyValuePair<string, Player> entry in players)
+            {
+                viewModel.Roster[entry.Key] = entry.Value;
+            }
 
             if(_userManager.GetUserId(User) != myTeam.UserID)
             {

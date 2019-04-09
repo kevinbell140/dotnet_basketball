@@ -227,7 +227,7 @@ namespace NBAMvc1._1.Controllers
             //need to create a custom exception for this
             if(player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1)
             {
-                return RedirectToAction("Index", "MyTeams");
+                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID});
             }
             if (ModelState.IsValid)
             {
