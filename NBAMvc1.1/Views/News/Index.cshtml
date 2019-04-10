@@ -1,0 +1,42 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.News>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Recent News</h2>
+            </div>
+        </div>
+        @foreach (var n in Model)
+        {
+            <div class="row">
+                <div class="col-md-12" style="margin: 5px; border-style: solid; border-width: 5px; border-color: #@n.PlayerNav.TeamNav.PrimaryColor">
+                    <div class="row">
+                        <div class="col-md-8 offset-2">
+                            <strong>@n.Title -- @n.Updated</strong>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-2 playerNewsPhotoDiv">
+                            <img src="@n.PlayerNav.PhotoUrl" class="playerNewsPhoto" />
+                        </div>
+                        <div class="col-md-8">
+                            @n.Content
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 offset-2">
+                            <a asp-controller="Players" asp-action="Details" asp-route-id="@n.PlayerID">#@n.PlayerNav.FullName</a>
+                            <a asp-controller="Teams" asp-action="Details" asp-route-id="@n.PlayerNav.TeamID">#@n.PlayerNav.TeamNav.FullName</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+    </div>

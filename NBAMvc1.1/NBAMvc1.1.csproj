@@ -12,6 +12,8 @@
     <Compile Remove="Data\Migrations\20190322181736_PlayerStats.Designer.cs" />
     <Compile Remove="Data\Migrations\20190322182653_PlayerStats.cs" />
     <Compile Remove="Data\Migrations\20190322182653_PlayerStats.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190410183730_News.cs" />
+    <Compile Remove="Data\Migrations\20190410183730_News.Designer.cs" />
   </ItemGroup>
 
 

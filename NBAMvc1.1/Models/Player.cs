@@ -52,5 +52,7 @@ namespace NBAMvc1._1.Models
         public virtual IEnumerable<PlayerGameStats> GameStatsNav { get; set; }
 
         public virtual IEnumerable<PlayerMyTeam> PlayerMyTeamNav { get; set; }
+
+        public virtual IEnumerable<News> NewsNav { get; set; }
     }
 }

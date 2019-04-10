@@ -97,3 +97,23 @@ body {
     height: 160px;
     background-color: white;
 }
+
+.playerNewsPhoto {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100px;
+    height: 115px;
+    background-color: white;
+}
+
+
+.playerNewsPhotoDiv {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center
+}
+
+.playerNewsDiv {
+    padding: 10px;
+}
