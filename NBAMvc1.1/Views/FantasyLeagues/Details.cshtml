@@ -1,0 +1,77 @@
+﻿@model NBAMvc1._1.Models.FantasyLeague
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+    <div class="container container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>@Model.Name</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <span style="color:red">@(Model.isFull == false ? "Full" : "Open")</span>
+            </div>
+            <div class="col-md-2">
+                <span style="color:red">Commissioner: @Model.ComissionerNav.Email</span>
+            </div>
+        </div>
+        <div class="row">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Pos</th>
+                        <th>Name</th>
+                        <th>Owner</th>
+                        <th>Record</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var team in Model.TeamsNav)
+                    {
+                        //this needs to be a view model
+                        <tr>
+                            <td>#</td>
+                            <td>@team.Name</td>
+                            <td>@team.UserNav.Email</td>
+                            <td>####</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+<h1>Details</h1>
+
+<div>
+    <h4>FantasyLeague</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.CommissionerID)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.CommissionerID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.isFull)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.isFull)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.FantasyLeagueID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>

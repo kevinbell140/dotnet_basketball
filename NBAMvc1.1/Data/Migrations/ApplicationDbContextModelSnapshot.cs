@@ -184,6 +184,27 @@ namespace NBAMvc1._1.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("NBAMvc1._1.Models.FantasyLeague", b =>
+                {
+                    b.Property<int>("FantasyLeagueID")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ComissionerNavId");
+
+                    b.Property<string>("CommissionerID");
+
+                    b.Property<string>("Name");
+
+                    b.Property<bool>("isFull");
+
+                    b.HasKey("FantasyLeagueID");
+
+                    b.HasIndex("ComissionerNavId");
+
+                    b.ToTable("FantasyLeague");
+                });
+
             modelBuilder.Entity("NBAMvc1._1.Models.Game", b =>
                 {
                     b.Property<int>("GameID");
@@ -229,11 +250,15 @@ namespace NBAMvc1._1.Data.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("FantasyLeagueID");
+
                     b.Property<string>("Name");
 
                     b.Property<string>("UserID");
 
                     b.HasKey("MyTeamID");
+
+                    b.HasIndex("FantasyLeagueID");
 
                     b.HasIndex("UserID");
 
@@ -552,6 +577,13 @@ namespace NBAMvc1._1.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("NBAMvc1._1.Models.FantasyLeague", b =>
+                {
+                    b.HasOne("NBAMvc1._1.Areas.Identity.ApplicationUser", "ComissionerNav")
+                        .WithMany()
+                        .HasForeignKey("ComissionerNavId");
+                });
+
             modelBuilder.Entity("NBAMvc1._1.Models.Game", b =>
                 {
                     b.HasOne("NBAMvc1._1.Models.Team", "AwayTeamNav")
@@ -565,6 +597,11 @@ namespace NBAMvc1._1.Data.Migrations
 
             modelBuilder.Entity("NBAMvc1._1.Models.MyTeam", b =>
                 {
+                    b.HasOne("NBAMvc1._1.Models.FantasyLeague", "FantasyLeagueNav")
+                        .WithMany("Teams")
+                        .HasForeignKey("FantasyLeagueID")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("NBAMvc1._1.Areas.Identity.ApplicationUser", "UserNav")
                         .WithMany("MyTeamNav")
                         .HasForeignKey("UserID");

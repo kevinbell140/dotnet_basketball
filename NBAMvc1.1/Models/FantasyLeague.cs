@@ -12,12 +12,14 @@ namespace NBAMvc1._1.Models
         public int FantasyLeagueID { get; set; }
 
         [ForeignKey("CommisionerNav")]
-        public int CommissionerID { get; set; }
+        public string CommissionerID { get; set; }
+
+        public string Name { get; set; }
+
+        public bool isFull { get; set; }
 
 
-
-
-        public virtual IEnumerable<MyTeam> Teams { get; set; }
+        public virtual IEnumerable<MyTeam> TeamsNav { get; set; }
 
 
         public virtual ApplicationUser ComissionerNav { get; set; }

@@ -12939,11 +12939,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\kebell\\source\\repos\\NBAMvc1.1\\NBAMvc1.1\\NBAMvc1.1.csproj",
+      "projectUniqueName": "C:\\Users\\kebell\\Source\\Repos\\dotnet_basketball\\NBAMvc1.1\\NBAMvc1.1.csproj",
       "projectName": "NBAMvc1.1",
-      "projectPath": "C:\\Users\\kebell\\source\\repos\\NBAMvc1.1\\NBAMvc1.1\\NBAMvc1.1.csproj",
+      "projectPath": "C:\\Users\\kebell\\Source\\Repos\\dotnet_basketball\\NBAMvc1.1\\NBAMvc1.1.csproj",
       "packagesPath": "C:\\Users\\kebell\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kebell\\source\\repos\\NBAMvc1.1\\NBAMvc1.1\\obj\\",
+      "outputPath": "C:\\Users\\kebell\\Source\\Repos\\dotnet_basketball\\NBAMvc1.1\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
