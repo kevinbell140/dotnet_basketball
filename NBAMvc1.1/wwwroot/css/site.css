@@ -116,4 +116,13 @@ body {
 
 .playerNewsDiv {
     padding: 10px;
+    background-color: white;
+}
+
+.playerNewsHash {
+    font-weight: normal;
+}
+
+.playerNewsHash:hover {
+    font-weight: bold;
 }

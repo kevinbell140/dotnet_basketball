@@ -74,9 +74,9 @@ namespace NBAMvc1._1.Controllers
             var viewModel = new TeamDetailsViewModel
             {
                 Team = await _context.Team
-                .Where(t => t.TeamID == id)
                 .Include(t => t.PlayersNav).ThenInclude(p => p.StatsNav)
                 .Include(t => t.RecordNav)
+                .Where(t => t.TeamID == id)
                 .FirstOrDefaultAsync(),
 
                 Last5 = _context.Game
@@ -108,14 +108,17 @@ namespace NBAMvc1._1.Controllers
             viewModel.ConferenceRank = conferenceStandings.IndexOf(viewModel.Team.RecordNav)+1;
 
             viewModel.PPGLeader = viewModel.Team.PlayersNav
+                .Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.PPG)
                 .First();
 
             viewModel.RPGLeader = viewModel.Team.PlayersNav
+                .Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.RPG)
                 .First();
 
             viewModel.APGLeader = viewModel.Team.PlayersNav
+                .Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.APG)
                 .First();
 
@@ -132,34 +135,34 @@ namespace NBAMvc1._1.Controllers
             switch (sortOrder)
             {
                 case "pos_desc":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.Position).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderByDescending(p => p.Position).ToList();
                     break;
                 case "Player":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.LastName).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderBy(p => p.LastName).ToList();
                     break;
                 case "player_desc":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.LastName).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderByDescending(p => p.LastName).ToList();
                     break;
                 case "PPG":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.PPG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderBy(p => p.StatsNav.PPG).ToList();
                     break;
                 case "ppg_desc":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.PPG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderByDescending(p => p.StatsNav.PPG).ToList();
                     break;
                 case "RPG":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.RPG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderBy(p => p.StatsNav.RPG).ToList();
                     break;
                 case "rpg_desc":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.RPG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderByDescending(p => p.StatsNav.RPG).ToList();
                     break;
                 case "APG":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.StatsNav.APG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderBy(p => p.StatsNav.APG).ToList();
                     break;
                 case "apg_desc":
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderByDescending(p => p.StatsNav.APG).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderByDescending(p => p.StatsNav.APG).ToList();
                     break;
                 default:
-                    viewModel.Players = viewModel.Team.PlayersNav.OrderBy(p => p.Position).ToList();
+                    viewModel.Players = viewModel.Team.PlayersNav.Where(p => p.StatsNav != null).OrderBy(p => p.Position).ToList();
                     break;
             }
 

@@ -28,7 +28,9 @@ namespace NBAMvc1._1.Controllers
         // GET: News
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.News.Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav);
+            var applicationDbContext = _context.News
+                .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
+                .OrderByDescending(n => n.Updated);
             return View(await applicationDbContext.ToListAsync());
         }
 
