@@ -9,6 +9,7 @@
         <div class="col-md-12">
             <h3>@Model.MyTeam.Name</h3>
             <h6>@Model.MyTeam.UserNav.Email</h6>
+            <h6><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.MyTeam.FantasyLeagueID"></a>  @Model.MyTeam.FantasyLeagueNav.Name</h6>
         </div>
     </div>
     <div class="row">

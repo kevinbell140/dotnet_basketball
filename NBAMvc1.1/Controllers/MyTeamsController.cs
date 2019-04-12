@@ -53,6 +53,7 @@ namespace NBAMvc1._1.Controllers
             var myTeam = await _context.MyTeam
                 .Include(m => m.PlayerMyTeamNav)
                 .Include(m => m.UserNav)
+                .Include(m => m.FantasyLeagueNav)
                 .FirstOrDefaultAsync(m => (m.MyTeamID == id) );
 
             if (myTeam == null)

@@ -1,5 +1,6 @@
 ﻿@model NBAMvc1._1.ViewModels.FantasyLeagueDetailsViewModel;
 
+
 @{
     ViewData["Title"] = "Details";
 }
@@ -34,7 +35,14 @@
                     {
                     <tr>
                         <td>@entry.Key</td>
-                        <td>@(entry.Value == null ? "" : entry.Value.Name)</td>
+                        @if (entry.Value != null)
+                        {
+                            <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@entry.Value.MyTeamID">@entry.Value.Name</a></td>
+                        }
+                        else
+                        {
+                            <td></td>
+                        }
                         <td>@(entry.Value == null ? "" : entry.Value.UserNav.Email)</td>
                         <td>####</td>
                         @if (entry.Value == null)
@@ -43,6 +51,7 @@
                         }
                         else
                         {
+
                             <td>
                                 <form asp-controller="MyTeams" asp-action="Delete">
                                     <button asp-controller="MyTeams" asp-action="Delete" asp-route-id="@entry.Value.MyTeamID" class="btn btn-danger">Remove</button>
