@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -40,18 +41,36 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var fantasyLeague = await _context.FantasyLeague
+            var viewModel = new FantasyLeagueDetailsViewModel()
+            {
+                FantasyLeague = await _context.FantasyLeague
                 .Include(m => m.TeamsNav).ThenInclude(m => m.UserNav)
                 .Include(m => m.ComissionerNav)
-                .FirstOrDefaultAsync(m => m.FantasyLeagueID == id);
-
-
-            if (fantasyLeague == null)
+                .FirstOrDefaultAsync(m => m.FantasyLeagueID == id)
+            };
+   
+            if (viewModel.FantasyLeague == null)
             {
                 return NotFound();
             }
 
-            return View(fantasyLeague);
+            int count = 1;
+
+            var teams = viewModel.FantasyLeague.TeamsNav.ToList();
+
+            Dictionary<int, MyTeam> registered = new Dictionary<int, MyTeam>();
+
+            foreach(var t in teams)
+            {
+                registered.Add(count++, t);
+            }
+
+            foreach(KeyValuePair<int, MyTeam> entry in registered)
+            {
+                viewModel.Teams[entry.Key] = entry.Value;
+            }
+
+            return View(viewModel);
         }
 
         // GET: FantasyLeagues/Create
@@ -172,6 +191,122 @@ namespace NBAMvc1._1.Controllers
         private bool FantasyLeagueExists(int id)
         {
             return _context.FantasyLeague.Any(e => e.FantasyLeagueID == id);
+        }
+
+        public async Task<IActionResult> AddTeam(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var league = await _context.FantasyLeague
+                .Where(l => l.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
+            if (league == null)
+            {
+                return NotFound();
+            }
+
+            if (!league.isFull)
+            {
+                if (league.TeamsNav == null || league.TeamsNav.Count() < 8)
+                {
+                    return RedirectToAction("Create", "MyTeams", new { leagueID = league.FantasyLeagueID });
+                }
+            }
+            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+        }
+
+        public async Task<IActionResult> AddTeamConfirm(int? id) 
+        {
+            if(id == null)
+            {
+                return NotFound();
+            }
+
+            var league = await _context.FantasyLeague
+                .Include(l => l.TeamsNav)
+                .Where(l => l.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
+
+            if (league == null)
+            {
+                return NotFound();
+            }
+
+            if (league.TeamsNav.Count() < 8 )
+            {
+                league.isFull = false;
+            }
+            else
+            {
+                league.isFull = true;
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(league);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FantasyLeagueExists(league.FantasyLeagueID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+            }
+            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+        }
+
+
+        public async Task<IActionResult> RemoveTeam(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var league = await _context.FantasyLeague
+                .Where(l => l.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
+
+            if (league == null)
+            {
+                return NotFound();
+            }
+
+            league.isFull = false;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(league);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FantasyLeagueExists(league.FantasyLeagueID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+            }
+            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
         }
     }
 }

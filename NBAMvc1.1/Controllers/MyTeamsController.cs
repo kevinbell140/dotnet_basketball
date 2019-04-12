@@ -107,8 +107,10 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: MyTeams/Create
-        public IActionResult Create()
-        { 
+        public IActionResult Create(int leagueID)
+        {
+            ViewData["LeagueID"] = leagueID;
+
             return View();
         }
 
@@ -117,7 +119,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] MyTeam myTeam)
+        public async Task<IActionResult> Create([Bind("Name, FantasyLeagueID")] MyTeam myTeam)
         {
             if (ModelState.IsValid)
             {
@@ -132,7 +134,7 @@ namespace NBAMvc1._1.Controllers
 
                 _context.Add(myTeam);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("AddTeamConfirm", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
             }
 
             return View(myTeam);
@@ -237,6 +239,7 @@ namespace NBAMvc1._1.Controllers
         {
             var myTeam = await _context.MyTeam.FindAsync(id);
 
+
             var team = await _context.MyTeam.AsNoTracking().FirstOrDefaultAsync(m => m.MyTeamID == id);
 
             if(team == null)
@@ -254,7 +257,7 @@ namespace NBAMvc1._1.Controllers
             _context.MyTeam.Remove(myTeam);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("RemoveTeam", "FantasyLeagues", new { id = team.FantasyLeagueID } );
         }
 
         private bool MyTeamExists(int id)

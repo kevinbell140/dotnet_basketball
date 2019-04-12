@@ -14,8 +14,6 @@ namespace NBAMvc1._1.ViewModels
         public IDictionary<string, Player> Roster { get; set; }
 
 
-
-        //put the queries in here
         public MyTeamDetailsViewModel()
         {
             Roster = new Dictionary<string, Player>()
