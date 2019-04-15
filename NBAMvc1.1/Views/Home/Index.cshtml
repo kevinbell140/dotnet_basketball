@@ -1,6 +1,93 @@
-﻿@{
+﻿@model NBAMvc1._1.ViewModels.HomeIndexViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
+
+<div class="container container-fluid">
+    <div class="row">
+        <div class="col-md-3">
+            <h4>Recent Results</h4>
+            @foreach (var g in Model.Last4)
+            {
+                <div class="row">
+                    <div class="card">
+                        <div class="card-header">
+                            <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
+                            <h6>Spread: @g.PointSpread</h6>
+                        </div>
+                        <div class="card-body">
+                            <table class="table table-hover">
+                                <tr>
+                                    <td>
+                                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.AwayTeamID">
+                                            <img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                                        </a>
+                                    </td>
+                                    <td>@g.AwayTeamScore</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.HomeTeamID">
+                                            <img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                                        </a>
+                                    </td>
+                                    <td>@g.HomeTeamScore</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Box Score</a>
+                        </div>
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="col-md-4">
+            <h4>Upcoming Games</h4>
+            @foreach (var g in Model.Next4)
+            {
+            <div class="card">
+                <div class="card-header">
+                    <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
+                    <h6>Spread: @g.PointSpread</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <td></td>
+                                <td>Spread</td>
+                                <td>Line</td>
+                                <td>O/U</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                                <td>@(g.PointSpread > 0 ? g.PointSpread.ToString() : "")</td>
+                                <td>@g.AwayTeamMoneyLine</td>
+                                <td>@g.OverUnder</td>
+                            </tr>
+                            <tr>
+                                <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                                <td>@(g.PointSpread < 0 ? g.PointSpread.ToString() : "")</td>
+                                <td>@g.HomeTeamMoneyLine</td>
+                                <td>@g.OverUnder</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Preview</a>
+                </div>
+            </div>
+            }
+
+        </div>
+    </div>
+</div>
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>

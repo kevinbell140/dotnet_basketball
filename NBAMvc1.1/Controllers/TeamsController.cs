@@ -94,7 +94,6 @@ namespace NBAMvc1._1.Controllers
                 .OrderBy(g => g.DateTime)
                 .Take(3),
 
-
             };
 
             string conference = viewModel.Team.Conference;

@@ -126,3 +126,18 @@ body {
 .playerNewsHash:hover {
     font-weight: bold;
 }
+
+.nav-header-brand {
+    background-image: url('../lib/img/basket-ball-header.jpg');
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-color: black;
+}
+
+.brand-logo {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50px;
+    height: 50px;
+}
