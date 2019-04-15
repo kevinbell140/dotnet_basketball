@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NBAMvc1._1.Data;
 
 namespace NBAMvc1._1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190415152930_games_season_type")]
+    partial class games_season_type
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -378,8 +380,6 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<decimal>("Rebounds")
                         .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int?>("Started");
 
                     b.Property<decimal>("Steals")
                         .HasColumnType("decimal(18, 2)");

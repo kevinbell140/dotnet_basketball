@@ -157,3 +157,5 @@ C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagues\Details.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagues\Edit.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagues\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\_DetailsBefore.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\_DetailsAfter.g.cshtml.cs

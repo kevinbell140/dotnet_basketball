@@ -20,7 +20,9 @@ namespace NBAMvc1._1.Models
         public int GameID { get; set; }
 
         public DateTime Updated { get; set; }
-        
+
+        public int? Started { get; set; }
+
         [Display(Name = "Min")]
         public int Minutes { get; set; }
 

@@ -63,7 +63,7 @@ namespace NBAMvc1._1.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus")] PlayerGameStats playerGameStats)
+        public async Task<IActionResult> Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
         {
             if (ModelState.IsValid)
             {
@@ -99,7 +99,7 @@ namespace NBAMvc1._1.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus")] PlayerGameStats playerGameStats)
+        public async Task<IActionResult> Edit(int id, [Bind("Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
         {
             if (id != playerGameStats.StatID)
             {
@@ -172,34 +172,22 @@ namespace NBAMvc1._1.Models
         public async Task<IActionResult> Fetch()
         {
             //logic to fetch all missing data
-            DateTime startDate;
+            DateTime startDate = new DateTime(2019, 04, 15);
             DateTime endDate = DateTime.Today;
-            //var exists = await _context.PlayerGameStats.AnyAsync();
-            //if (!exists)
-            //{
-            //    startDate = new DateTime(2019, 03, 23);
-            //}
-            //else
-            //{
-            //    //startDate = _context.PlayerGameStats.Max(s => s.Updated);
-            //    startDate = new DateTime(2019, 03, 27);
-            //}
 
-            startDate = new DateTime(2019, 03, 27);
             for (DateTime d = startDate; d < endDate; d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _service.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
 
                 foreach(PlayerGameStats p in stats)
                 {
-                    var already = await _context.PlayerGameStats.AnyAsync(s => s.StatID == p.StatID);
-                    var playerExists = await _context.Player.AnyAsync(s => s.PlayerID == p.PlayerID);
+                    //var playerExists = await _context.Player.AsNoTracking().AnyAsync(s => s.PlayerID == p.PlayerID);
 
-                    if(!playerExists)
-                    {
-                        continue;
-                    }
-                    if (!already)
+                    //if(!playerExists)
+                    //{
+                    //    continue;
+                    //}
+                    if (!await _context.PlayerGameStats.AsNoTracking().AnyAsync(s => s.StatID == p.StatID))
                     {
                         try
                         {
@@ -207,11 +195,11 @@ namespace NBAMvc1._1.Models
                         }
                         catch (Exception)
                         {
-                            Console.WriteLine("Crashed in create");
+                            continue;
                         }
 
                     }
-                   else
+                    else
                     {
                         try
                         {
@@ -221,7 +209,7 @@ namespace NBAMvc1._1.Models
                         {
                             Console.WriteLine("Crahsed in edit");
                         }
-                       
+
                     }
                 }
             }

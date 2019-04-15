@@ -106,7 +106,7 @@
                     @foreach (var g in Model.Next3.Reverse())
                     {
                         <tr>
-                            <td>@g.DateTime</td>
+                            <td><a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a></td>
                             <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
                             <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
                             <td>Upcoming</td>
@@ -115,7 +115,7 @@
                     @foreach (var g in Model.Last5)
                     {
                         <tr>
-                            <td>@g.DateTime</td>
+                            <td><a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a></td>
                             <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
                             <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
                             <td>@g.HomeTeamScore - @g.AwayTeamScore</td>

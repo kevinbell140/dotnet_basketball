@@ -15,6 +15,8 @@ namespace NBAMvc1._1.Models
 
         public int Season { get; set; }
 
+        public int? SeasonType { get; set; }
+
         public string Status { get; set; }
 
         public DateTime DateTime { get; set; }

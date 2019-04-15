@@ -1,0 +1,41 @@
+﻿@model NBAMvc1._1.Models.Game
+
+    <div class="container container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <dl class="row">
+                    <dt class="col-sm-2">@Html.DisplayNameFor(model => model.DateTime)</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.DateTime)</dd>
+
+                    <dt class="col-sm-2">@Html.DisplayNameFor(model => model.Status)</dt>
+                    <dd class="col-sm-10">@Html.DisplayFor(model => model.Status)</dd>
+                </dl>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <td></td>
+                            <td>Spread</td>
+                            <td>Line</td>
+                            <td>O/U</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                            <td>@(Model.PointSpread > 0 ? Model.PointSpread.ToString() : "")</td>
+                            <td>@Model.AwayTeamMoneyLine</td>
+                            <td>@Model.OverUnder</td>
+                        </tr>
+                        <tr>
+                            <td><img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                            <td>@(Model.PointSpread < 0 ? Model.PointSpread.ToString() : "")</td>
+                            <td>@Model.HomeTeamMoneyLine</td>
+                            <td>@Model.OverUnder</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
