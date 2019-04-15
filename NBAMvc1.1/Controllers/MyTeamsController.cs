@@ -34,6 +34,7 @@ namespace NBAMvc1._1.Controllers
         {
             var teams = _context.MyTeam
                 .Include(c => c.PlayerMyTeamNav)
+                .Include(c => c.FantasyLeagueNav)
                 .Where(c => c.UserID == _userManager.GetUserId(User));
 
             return View(await teams.ToListAsync());

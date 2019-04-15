@@ -76,15 +76,15 @@ namespace NBAMvc1._1.Controllers
             ViewData["currentSort"] = sortParam;
 
             ViewData["playerSort"] = String.IsNullOrEmpty(sortParam) ? "player_desc" : " ";
-            ViewData["fgSort"] = sortParam == "FG" ? "fg_desc" : "FG";
-            ViewData["ftSort"] = sortParam == "FT" ? "ft_desc" : "FT";
-            ViewData["3ptSort"] = sortParam == "3PT" ? "3pt_desc" : "3PT";
-            ViewData["ppgSort"] = sortParam == "PPG" ? "ppg_desc" : "PPG";
-            ViewData["apgSort"] = sortParam == "APG" ? "apg_desc" : "APG";
-            ViewData["rpgSort"] = sortParam == "RPG" ? "rpg_desc" : "RPG";
-            ViewData["spgSort"] = sortParam == "SPG" ? "spg_desc" : "SPG";
-            ViewData["bpgSort"] = sortParam == "BPG" ? "bpg_desc" : "BPG";
-            ViewData["toSort"] = sortParam == "TO" ? "to_desc" : "TO";
+            ViewData["fgSort"] = sortParam == "fg_desc" ? "FG" : "fg_desc";
+            ViewData["ftSort"] = sortParam == "ft_desc" ? "FT" : "ft_desc";
+            ViewData["3ptSort"] = sortParam == "3pt_desc" ? "3PT" : "3pt_desc";
+            ViewData["ppgSort"] = sortParam == "ppg_desc" ? "PPG" : "ppg_desc";
+            ViewData["apgSort"] = sortParam == "apg_desc" ? "APG" : "apg_desc";
+            ViewData["rpgSort"] = sortParam == "rpg_desc" ? "RPG" : "rpg_desc";
+            ViewData["spgSort"] = sortParam == "spg_desc" ? "SPG" : "spg_desc";
+            ViewData["bpgSort"] = sortParam == "bpg_desc" ? "BPG" : "bpg_desc";
+            ViewData["toSort"] = sortParam == "to_desc" ? "TO" : "to_desc";
 
             //for paging 
             if (searchString != null)
@@ -243,10 +243,11 @@ namespace NBAMvc1._1.Controllers
             int spots = roster.Where(p => p.PlayerNav.Position == player.Position).Count();
             
             //need to create a custom exception for this
-            if(player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1)
+            if(player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1 || await roster.AnyAsync(p => p.PlayerID == player.PlayerID))
             {
                 return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID});
             }
+
 
             if (ModelState.IsValid)
             {

@@ -31,17 +31,47 @@
                 <thead>
                     <tr>
                         <td>Team</td>
-                        <td>@Html.ActionLink("Player", "Index", new { sortParam = ViewData["playerSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["playerSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">Player%</a>
+                        </td>
                         <td>Pos</td>
-                        <td>@Html.ActionLink("FG%", "Index", new { sortParam = ViewData["fgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"]}) </td>
-                        <td>@Html.ActionLink("FT%", "Index", new { sortParam = ViewData["ftSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"]}) </td>
-                        <td>@Html.ActionLink("3PT", "Index", new { sortParam = ViewData["3ptSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("PPG", "Index", new { sortParam = ViewData["ppgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("APG", "Index", new { sortParam = ViewData["apgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("RPG", "Index", new { sortParam = ViewData["rpgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("SPG", "Index", new { sortParam = ViewData["spgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("BPG", "Index", new { sortParam = ViewData["bpgSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
-                        <td>@Html.ActionLink("TO", "Index", new { sortParam = ViewData["toSort"], currentFilter = ViewData["currentFilter"], posFilter = ViewData["posFilter"] }) </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["fgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">FG%</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["ftSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">FT%</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["3ptSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">3PT</a>
+                        </td> 
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["ppgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">PPG</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["apgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">APG</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["rpgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">RPG</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["spgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">SPG</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["bpgSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">BPG</a>
+                        </td>
+                        <td>
+                            <a asp-action="Create" asp-route-teamID="@Model.MyTeam.MyTeamID" asp-route-sortParam="@ViewData["toSort"]" asp-route-pageNumber="@(Model.Players.PageIndex)"
+                               asp-route-currentFilter="@ViewData["currentFilter"]" asp-route-posFilter="@ViewData["posFilter"]">TO</a>
+                        </td>
                         <td></td>
                     </tr>
                 </thead>
@@ -60,6 +90,7 @@
                             <td>@Html.DisplayFor(m => p.StatsNav.RPG)</td>
                             <td>@Html.DisplayFor(m => p.StatsNav.SPG)</td>
                             <td>@Html.DisplayFor(m => p.StatsNav.BPG)</td>
+                            <td>@Html.DisplayFor(m => p.StatsNav.TPG)</td>
                             <td>
                                 <form asp-action="Create">
                                     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
