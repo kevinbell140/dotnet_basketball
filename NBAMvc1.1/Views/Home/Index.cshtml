@@ -2,21 +2,23 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    int count = 0;
 }
 
 <div class="container container-fluid">
     <div class="row">
-        <div class="col-md-3">
-            <h4>Recent Results</h4>
+        <div class="col-md-2 border-dark">
+            <h4 class="text-center">Results</h4>
             @foreach (var g in Model.Last4)
             {
-                <div class="row">
-                    <div class="card">
-                        <div class="card-header">
-                            <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
-                            <h6>Spread: @g.PointSpread</h6>
-                        </div>
-                        <div class="card-body">
+            <div class="row">
+                <div class="card w-100">
+                    <div class="card-header text-center">
+                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime.ToShortDateString()</a>
+                        <h6>Spread: @g.PointSpread</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
                             <table class="table table-hover">
                                 <tr>
                                     <td>
@@ -36,20 +38,70 @@
                                 </tr>
                             </table>
                         </div>
-                        <div class="card-footer">
-                            <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Box Score</a>
-                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        @if (@Model.Leaders[count] != null)
+                        {
+                            <div class="row">
+                                <div class="results-card-leaders text-center">@Model.Leaders[count].PlayerNav.LastName: @Model.Leaders[count].Points p, @Model.Leaders[count].Assists a, @Model.Leaders[count++].Rebounds r </div>
+                            </div>
+                        }
+                        @if (Model.Leaders[count] != null)
+                        {
+                            <div class="row">
+                                <div class="results-card-leaders text-center">@Model.Leaders[count].PlayerNav.LastName: @Model.Leaders[count].Points p, @Model.Leaders[count].Assists a, @Model.Leaders[count++].Rebounds r  </div>
+                            </div>
+                        }
+                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID" class="btn btn-block">Box Score</a>
                     </div>
                 </div>
+            </div>
             }
-
         </div>
+        <div class="col-md-5 splash-main">
+            <h4>League News</h4>
+            <div class="row">
+                @foreach (var n in Model.News)
+                {
+                    <ul>
+                        <li class="splash-main-headline">
+                            <a asp-controller="News" asp-action="Details" asp-route-id="@n.NewsID">@n.Title</a>
+                        </li>
+                    </ul>
+
+                }
+            </div>
+            <h4>My Teams</h4>
+            <div class="row">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>League Name</th>
+                            <th>Rank</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.MyTeams)
+                        {
+                            <tr>
+                                <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@t.MyTeamID">@t.Name</a></td>
+                                <td><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@t.FantasyLeagueID">@t.FantasyLeagueNav.Name</a></td>
+                                <td>#</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <a asp-controller="FantasyLeagues" asp-action="Index">Join another league!</a>
+            </div>
+        </div>
+
         <div class="col-md-4">
-            <h4>Upcoming Games</h4>
+            <h4 class="text-center">Upcoming Games</h4>
             @foreach (var g in Model.Next4)
             {
             <div class="card">
-                <div class="card-header">
+                <div class="card-header text-center">
                     <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
                     <h6>Spread: @g.PointSpread</h6>
                 </div>
@@ -79,7 +131,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="card-footer">
+                <div class="card-footer text-center">
                     <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Preview</a>
                 </div>
             </div>
@@ -87,9 +139,4 @@
 
         </div>
     </div>
-</div>
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>

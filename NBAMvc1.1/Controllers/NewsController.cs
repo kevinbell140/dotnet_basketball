@@ -43,7 +43,7 @@ namespace NBAMvc1._1.Controllers
             }
 
             var news = await _context.News
-                .Include(n => n.PlayerNav)
+                .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
                 .FirstOrDefaultAsync(m => m.NewsID == id);
             if (news == null)
             {

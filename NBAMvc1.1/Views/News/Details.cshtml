@@ -4,57 +4,28 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>News</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Source)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Source)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Updated)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Updated)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Url)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Url)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Author)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Author)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PlayerNav)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PlayerNav.PlayerID)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.NewsID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12" style="margin: 5px; background-color: #@Model.PlayerNav.TeamNav.PrimaryColor">
+                <div class="row">
+                    <div class="col-md-8 offset-2">
+                        <strong style="color: #ffffff">@Model.Title -- @Model.Updated</strong>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2 playerNewsPhotoDiv">
+                        <img src="@Model.PlayerNav.PhotoUrl" class="playerNewsPhoto" />
+                    </div>
+                    <div class="col-md-8" style="background-color: #@Model.PlayerNav.TeamNav.PrimaryColor">
+                        <div style="color: #ffffff">@Model.Content</div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12 offset-2">
+                        <a class="playerNewsHash" style="color: #@Model.PlayerNav.TeamNav.SecondaryColor" asp-controller="Players" asp-action="Details" asp-route-id="@Model.PlayerID">#@Model.PlayerNav.FullName</a>
+                        <a class="playerNewsHash" style="color: #@Model.PlayerNav.TeamNav.SecondaryColor" asp-controller="Teams" asp-action="Details" asp-route-id="@Model.PlayerNav.TeamID">#@Model.PlayerNav.TeamNav.FullName</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>

@@ -63,17 +63,14 @@ namespace NBAMvc1._1.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
-        {
+        public PlayerGameStats Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
+        {      
             if (ModelState.IsValid)
             {
-                _context.Add(playerGameStats);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return playerGameStats;
             }
-            ViewData["GameID"] = new SelectList(_context.Game, "GameID", "GameID", playerGameStats.GameID);
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerGameStats.PlayerID);
-            return View(playerGameStats);
+            return null;
+
         }
 
         // GET: PlayerGameStats/Edit/5
@@ -99,36 +96,19 @@ namespace NBAMvc1._1.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
+        public PlayerGameStats Edit(int id, [Bind("StatID,PlayerID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
         {
             if (id != playerGameStats.StatID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(playerGameStats);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlayerGameStatsExists(playerGameStats.StatID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return playerGameStats;
             }
-            ViewData["GameID"] = new SelectList(_context.Game, "GameID", "GameID", playerGameStats.GameID);
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerGameStats.PlayerID);
-            return View(playerGameStats);
+
+            return null;
         }
 
         // GET: PlayerGameStats/Delete/5
@@ -175,42 +155,42 @@ namespace NBAMvc1._1.Models
             DateTime startDate = new DateTime(2019, 04, 15);
             DateTime endDate = DateTime.Today;
 
+            List<PlayerGameStats> created = new List<PlayerGameStats>();
+            List<PlayerGameStats> updated = new List<PlayerGameStats>();
+
             for (DateTime d = startDate; d < endDate; d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _service.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
 
-                foreach(PlayerGameStats p in stats)
-                {
-                    //var playerExists = await _context.Player.AsNoTracking().AnyAsync(s => s.PlayerID == p.PlayerID);
 
-                    //if(!playerExists)
-                    //{
-                    //    continue;
-                    //}
+                foreach (PlayerGameStats p in stats)
+                {
+
                     if (!await _context.PlayerGameStats.AsNoTracking().AnyAsync(s => s.StatID == p.StatID))
                     {
-                        try
-                        {
-                            await Create(p);
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-
+                        created.Add(Create(p));
                     }
                     else
                     {
-                        try
-                        {
-                            await Edit(p.StatID, p);
-                        }
-                        catch (Exception)
-                        {
-                            Console.WriteLine("Crahsed in edit");
-                        }
+                        updated.Add(Edit(p.StatID, p));
 
                     }
+                }
+
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        await _context.AddRangeAsync(created);
+                        _context.UpdateRange(updated);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        throw;
+                    }
+
+                    return RedirectToAction(nameof(Index));
                 }
             }
             return RedirectToAction(nameof(Index));
