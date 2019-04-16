@@ -35,7 +35,7 @@
                         @foreach (var t in Model)
                         {
                             <tr>
-                                <td>@t.Name</td>
+                                <td><a asp-action="Details" asp-route-id="@t.FantasyLeagueID">@t.Name</a></td>
                                 <td>@(t.isFull ? "Closed" : "Open")</td>
                                 <td>
                                     @if (!t.isFull)

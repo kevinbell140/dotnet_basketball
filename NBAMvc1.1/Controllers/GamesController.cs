@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -24,21 +25,28 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Games
-        public async Task<IActionResult> Index(DateTime? today)
+        public async Task<IActionResult> Index(DateTime? dayOf)
         {
+            var viewModel = new GameIndexViewModel();
 
-            if(today == null)
+            if (dayOf != null)
             {
-                today = DateTime.Today;
+                viewModel.dayOf = dayOf;
+            }
+            else
+            {
+                viewModel.dayOf = DateTime.Today.Date;
             }
 
-            var applicationDbContext = _context.Game
+            viewModel.Games = await _context.Game
                 .Include(g => g.AwayTeamNav)
                 .Include(g => g.HomeTeamNav)
                 .Include(g => g.PlayerGameStatsNav)
-                .Where(g => g.DateTime == today);
+                .Where(g => g.DateTime.Date == viewModel.dayOf)
+                .OrderBy(g => g.DateTime)
+                .ToListAsync();
 
-            return View(await applicationDbContext.ToListAsync());
+            return View(viewModel);
         }
 
         // GET: Games/Details/5

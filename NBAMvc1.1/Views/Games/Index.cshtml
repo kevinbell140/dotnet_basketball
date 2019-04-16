@@ -1,102 +1,59 @@
-﻿@model IEnumerable<NBAMvc1._1.Models.Game>
+﻿@model NBAMvc1._1.ViewModels.GameIndexViewModel
 
 @{
     ViewData["Title"] = "Index";
+
 }
 
-<h1>Index</h1>
+<div class="container container-fluid">
+    <div class="row">
+        <div class="col-md-8 offset-1">
+            <h4 class="text-center">Schedule</h4>
+            <div class="text-center game-index-dates">
+                <a class="btn btn-primary" asp-action="Index" asp-route-dayOf="@Model.dayOf.Value.AddDays(-1)">@Model.dayOf.Value.AddDays(-1).ToShortDateString()</a>
+                <span style="margin: 0px 5px 5px 5px;">@Model.dayOf.Value.ToShortDateString()</span>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Season)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Status)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DateTime)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HomeTeamScore)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwayTeamScore)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Updated)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PointSpread)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OverUnder)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwayTeamMoneyLine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HomeTeamMoneyLine)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HomeTeamNav)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AwayTeamNav)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>@item.SeasonType</td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Season)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DateTime)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HomeTeamScore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AwayTeamScore)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Updated)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PointSpread)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OverUnder)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AwayTeamMoneyLine)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HomeTeamMoneyLine)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HomeTeamNav.Key)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AwayTeamNav.Key)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.GameID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.GameID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.GameID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+                <a class="btn btn-primary" asp-action="Index" asp-route-dayOf="@Model.dayOf.Value.AddDays(1)">@Model.dayOf.Value.AddDays(1).ToShortDateString()</a>
+            </div>
+
+            @foreach (var g in Model.Games)
+            {
+                <div class="card">
+                    <div class="card-header text-center">
+                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
+                        <h6>Spread: @g.PointSpread</h6>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <td></td>
+                                    <td>Spread</td>
+                                    <td>Line</td>
+                                    <td>O/U</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                                    <td>@(g.PointSpread > 0 ? g.PointSpread.ToString() : "")</td>
+                                    <td>@g.AwayTeamMoneyLine</td>
+                                    <td>@g.OverUnder</td>
+                                </tr>
+                                <tr>
+                                    <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                                    <td>@(g.PointSpread < 0 ? g.PointSpread.ToString() : "")</td>
+                                    <td>@g.HomeTeamMoneyLine</td>
+                                    <td>@g.OverUnder</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Preview</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
