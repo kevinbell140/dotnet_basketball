@@ -24,9 +24,20 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Games
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime? today)
         {
-            var applicationDbContext = _context.Game.Include(g => g.AwayTeamNav).Include(g => g.HomeTeamNav);
+
+            if(today == null)
+            {
+                today = DateTime.Today;
+            }
+
+            var applicationDbContext = _context.Game
+                .Include(g => g.AwayTeamNav)
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.PlayerGameStatsNav)
+                .Where(g => g.DateTime == today);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
