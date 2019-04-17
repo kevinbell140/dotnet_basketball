@@ -72,10 +72,10 @@
                         <td>@Html.DisplayFor(m => p.StatsNav.BPG)</td>
                         <td>@Html.DisplayFor(m => p.StatsNav.TPG)</td>
                         <td>
-                            <a asp-action="Details" asp-route-id="@p.TeamID">Details</a> |
+                            <a asp-action="Details" asp-route-id="@p.PlayerID">Details</a> |
                             @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
                             {
-                                <a asp-action="Delete" asp-route-id="@p.TeamID">Delete</a>
+                                <a asp-action="Delete" asp-route-id="@p.PlayerID">Delete</a>
                             }
                         </td>
                     </tr>

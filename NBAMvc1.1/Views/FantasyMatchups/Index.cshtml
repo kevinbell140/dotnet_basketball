@@ -1,0 +1,71 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.FantasyMatchup>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Week)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeTeamScore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AwayTeamScore)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HomeTeamNav)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AwayTeamNav)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FantasyLeagueNav)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HomeTeamScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AwayTeamScore)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.HomeTeamNav.MyTeamID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AwayTeamNav.MyTeamID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FantasyLeagueNav.FantasyLeagueID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FantasyMatchupID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FantasyMatchupID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FantasyMatchupID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
