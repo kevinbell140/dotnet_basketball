@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
@@ -48,11 +49,21 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: FantasyMatchups/Create
-        public IActionResult Create()
+        public IActionResult Create(int leagueID)
         {
-            ViewData["AwayTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID");
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID");
-            ViewData["HomeTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID");
+            //I DONT THINK YOU CAN DO THIS
+        //    var viewModel = new FantasyMatchupsCreateViewModel();
+
+        //    viewModel.FantasyLeague = await _context.FantasyLeague
+        //        .Where(l => l.FantasyLeagueID == leagueID)
+        //        .FirstOrDefaultAsync();
+
+        //    viewModel.HomeTeams = await _context.MyTeam
+        //        .Where(t => t.FantasyLeagueID == leagueID)
+        //        .ToListAsync();
+
+        //    viewModel.AwayTeams = viewModel.HomeTeams;
+
             return View();
         }
 
