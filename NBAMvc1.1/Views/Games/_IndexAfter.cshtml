@@ -1,0 +1,39 @@
+﻿@model NBAMvc1._1.Models.Game
+@{ 
+    var p1 = ViewData["a"] as PlayerGameStats;
+    var p2 = ViewData["b"] as PlayerGameStats;
+}
+
+    <div class="card w-100">
+        <div class="card-header text-center">
+            <a asp-controller="Games" asp-action="Details" asp-route-id="@Model.GameID">@Model.DateTime.ToShortDateString()</a>
+            <h6>Spread: @Model.PointSpread</h6>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <table class="table table-hover text-cente">
+                    <tr>
+                        <td>
+                            <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID">
+                                <img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                            </a>
+                        </td>
+                        <td>@Model.AwayTeamScore</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID">
+                                <img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                            </a>
+                        </td>
+                        <td>@Model.HomeTeamScore</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer text-center">
+            <div class="text-center">@(p1.PlayerNav.LastName) : @p1.Points p, @p1.Assists a, @p1.Rebounds r </div>
+            <div class="text-center">@p2.PlayerNav.LastName: @p2.Points p, @p2.Assists a, @p2.Rebounds r  </div>
+            <a asp-controller="Games" asp-action="Details" asp-route-id="@Model.GameID" class="btn btn-block">Box Score</a>
+        </div>
+    </div>

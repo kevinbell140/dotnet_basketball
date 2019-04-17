@@ -46,6 +46,26 @@ namespace NBAMvc1._1.Controllers
                 .OrderBy(g => g.DateTime)
                 .ToListAsync();
 
+            int count = 0;
+
+
+            foreach (var g in viewModel.Games)
+            {
+                List<PlayerGameStats> leaders = await _context.PlayerGameStats
+               .Include(p => p.GameNav)
+               .Include(p => p.PlayerNav)
+               .Where(p => p.GameID == g.GameID)
+               .OrderByDescending(p => p.Points)
+               .Take(2).ToListAsync();
+
+                if (leaders.Count() == 2)
+                {
+                    viewModel.Leaders[count++] = leaders[0];
+                    viewModel.Leaders[count++] = leaders[1];
+                }
+
+            }
+
             return View(viewModel);
         }
 

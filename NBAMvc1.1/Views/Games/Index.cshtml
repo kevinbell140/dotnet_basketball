@@ -2,7 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
-
+    int count = 0;
 }
 
 <div class="container container-fluid">
@@ -18,41 +18,14 @@
 
             @foreach (var g in Model.Games)
             {
-                <div class="card">
-                    <div class="card-header text-center">
-                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a>
-                        <h6>Spread: @g.PointSpread</h6>
-                    </div>
-                    <div class="card-body">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <td></td>
-                                    <td>Spread</td>
-                                    <td>Line</td>
-                                    <td>O/U</td>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
-                                    <td>@(g.PointSpread > 0 ? g.PointSpread.ToString() : "")</td>
-                                    <td>@g.AwayTeamMoneyLine</td>
-                                    <td>@g.OverUnder</td>
-                                </tr>
-                                <tr>
-                                    <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
-                                    <td>@(g.PointSpread < 0 ? g.PointSpread.ToString() : "")</td>
-                                    <td>@g.HomeTeamMoneyLine</td>
-                                    <td>@g.OverUnder</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="card-footer text-center">
-                        <a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">Preview</a>
-                    </div>
-                </div>
+                @if (Model.dayOf.Value < DateTime.Today)
+                {
+                    @await Html.PartialAsync("_IndexAfter", g, new ViewDataDictionary(ViewData) { { "a", Model.Leaders[count++] }, {"b", Model.Leaders[count++]} } )
+                }
+                else
+                {
+                    @await Html.PartialAsync("_IndexBefore", g)
+                }
             }
         </div>
     </div>
