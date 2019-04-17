@@ -107,8 +107,16 @@
                     {
                         <tr>
                             <td><a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a></td>
-                            <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
-                            <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td>
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.HomeTeamID">
+                                    <img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.AwayTeamID">
+                                    <img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                </a>
+                            </td>
                             <td>Upcoming</td>
                         </tr>
                     }
@@ -116,8 +124,16 @@
                     {
                         <tr>
                             <td><a asp-controller="Games" asp-action="Details" asp-route-id="@g.GameID">@g.DateTime</a></td>
-                            <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
-                            <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></td>
+                            <td>
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.HomeTeamID">
+                                    <img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                </a>
+                            </td>
+                            <td>
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.AwayTeamID">
+                                    <img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                </a>
+                            </td>
                             <td>@g.HomeTeamScore - @g.AwayTeamScore</td>
                         </tr>
                     }

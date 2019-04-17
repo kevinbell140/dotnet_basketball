@@ -117,14 +117,22 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
-                                <td>@(g.PointSpread > 0 ? g.PointSpread.ToString() : "")</td>
+                                <td>
+                                    <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.AwayTeamID">
+                                        <img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                                    </a>
+                                </td>
+                                <td></td>
                                 <td>@g.AwayTeamMoneyLine</td>
                                 <td>@g.OverUnder</td>
                             </tr>
                             <tr>
-                                <td><img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
-                                <td>@(g.PointSpread < 0 ? g.PointSpread.ToString() : "")</td>
+                                <td>
+                                    <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.HomeTeamID">
+                                        <img src="@g.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                                    </a>
+                                </td>
+                                <td>@(g.PointSpread > 0 ? "+" + g.PointSpread.ToString() : g.PointSpread.ToString())</td>
                                 <td>@g.HomeTeamMoneyLine</td>
                                 <td>@g.OverUnder</td>
                             </tr>

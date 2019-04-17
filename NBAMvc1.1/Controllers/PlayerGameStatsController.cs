@@ -152,7 +152,7 @@ namespace NBAMvc1._1.Models
         public async Task<IActionResult> Fetch()
         {
             //logic to fetch all missing data
-            DateTime startDate = new DateTime(2019, 04, 15);
+            DateTime startDate = new DateTime(2019, 04, 16);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
