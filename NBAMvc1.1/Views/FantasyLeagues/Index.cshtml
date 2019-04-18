@@ -36,9 +36,9 @@
                         {
                             <tr>
                                 <td><a asp-action="Details" asp-route-id="@t.FantasyLeagueID">@t.Name</a></td>
-                                <td>@(t.isFull ? "Closed" : "Open")</td>
+                                <td>@(t.IsFull ? "Closed" : "Open")</td>
                                 <td>
-                                    @if (!t.isFull)
+                                    @if (!t.IsFull)
                                     {
                                         <a asp-controller="MyTeams" asp-action="Create" asp-route-leagueID="@t.FantasyLeagueID" class="btn btn-primary">Join</a>
                                     }

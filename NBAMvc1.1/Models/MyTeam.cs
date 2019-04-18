@@ -25,6 +25,12 @@ namespace NBAMvc1._1.Models
         public virtual ICollection<PlayerMyTeam> PlayerMyTeamNav { get; set; }
 
         public virtual FantasyLeague FantasyLeagueNav { get; set; }
-      
+
+
+        [InverseProperty("HomeTeamNav")]
+        public virtual ICollection<FantasyMatchup> HomeMatchupNav { get; set; }
+
+        [InverseProperty("AwayTeamNav")]
+        public virtual ICollection<FantasyMatchup> AwayMatchupNav { get; set; }
     }
 }

@@ -208,7 +208,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            if (!league.isFull)
+            if (!league.IsFull)
             {
                 if (league.TeamsNav == null || league.TeamsNav.Count() < 8)
                 {
@@ -237,11 +237,11 @@ namespace NBAMvc1._1.Controllers
 
             if (league.TeamsNav.Count() < 8 )
             {
-                league.isFull = false;
+                league.IsFull = false;
             }
             else
             {
-                league.isFull = true;
+                league.IsFull = true;
             }
 
             if (ModelState.IsValid)
@@ -284,7 +284,42 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            league.isFull = false;
+            league.IsFull = false;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(league);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FantasyLeagueExists(league.FantasyLeagueID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+            }
+            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+        }
+        public async Task<IActionResult> IsSetConfrim(int id)
+        {
+            var league = await _context.FantasyLeague
+                .Where(l => l.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
+
+            if(league == null)
+            {
+                return NotFound();
+            }
+
+            league.IsSet = true;
 
             if (ModelState.IsValid)
             {

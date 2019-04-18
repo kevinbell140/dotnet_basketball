@@ -16,8 +16,9 @@ namespace NBAMvc1._1.Models
 
         public string Name { get; set; }
 
-        public bool isFull { get; set; }
+        public bool IsFull { get; set; }
 
+        public bool IsSet { get; set; }
 
         public virtual List<MyTeam> TeamsNav { get; set; }
 

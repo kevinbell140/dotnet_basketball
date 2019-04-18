@@ -1,39 +1,47 @@
 ﻿@model NBAMvc1._1.ViewModels.FantasyLeagueDetailsViewModel;
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 
 
 @{
     ViewData["Title"] = "Details";
 }
 
-    <div class="container container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <h3>@Model.FantasyLeague.Name</h3>
+<div class="container container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <h3>@Model.FantasyLeague.Name</h3>
+            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
+            {
                 <a asp-controller="FantasyMatchups" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn">Create schedule</a>
-            </div>
+            }
         </div>
-        <div class="row">
-            <div class="col-md-2">
-                <span style="color:red">@(Model.FantasyLeague.isFull == false ? "Open" : "Full")</span>
-            </div>
-            <div class="col-md-4">
-                <span style="color:red">Commissioner: @Model.FantasyLeague.ComissionerNav.UserName</span>
-            </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2">
+            <span style="color:red">@(Model.FantasyLeague.IsFull == false ? "Open" : "Full")</span>
         </div>
-        <div class="row">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Record</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach(KeyValuePair<int, MyTeam> entry in Model.Teams)
-                    {
+        <div class="col-md-2">
+            <span style="color:red">@(Model.FantasyLeague.IsSet == false ? "Not set" : "Set")</span>
+        </div>
+        <div class="col-md-4">
+            <span style="color:red">Commissioner: @Model.FantasyLeague.ComissionerNav.UserName</span>
+        </div>
+    </div>
+    <div class="row">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Pos</th>
+                    <th>Name</th>
+                    <th>Owner</th>
+                    <th>Record</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (KeyValuePair<int, MyTeam> entry in Model.Teams)
+                {
                     <tr>
                         <td>@entry.Key</td>
                         @if (entry.Value != null)
@@ -60,11 +68,11 @@
                             </td>
                         }
                     </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
+</div>
 
 <div>
     <a asp-action="Edit" asp-route-id="@Model.FantasyLeague.FantasyLeagueID">Edit</a> |
