@@ -37,18 +37,71 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var fantasyMatchup = await _context.FantasyMatchup
-                .Include(f => f.AwayTeamNav)
-                .Include(f => f.FantasyLeagueNav)
-                .Include(f => f.HomeTeamNav)
-                .FirstOrDefaultAsync(m => m.FantasyMatchupID == id);
-
-            if (fantasyMatchup == null)
+            var viewModel = new FantasyMatchupDetailsViewModel
             {
-                return NotFound();
+                FantasyMatchup = await _context.FantasyMatchup
+                .Include(f => f.AwayTeamNav).ThenInclude(f => f.UserNav)
+                .Include(f => f.FantasyLeagueNav)
+                .Include(f => f.HomeTeamNav).ThenInclude(f => f.UserNav)
+                .FirstOrDefaultAsync(m => m.FantasyMatchupID == id)
+            };
+
+           var home = await _context.PlayerMyTeam
+                .Where(p => p.MyTeamNav.MyTeamID == viewModel.FantasyMatchup.HomeTeamID)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .OrderBy(p => p.PlayerNav.Position)
+                .AsNoTracking().ToListAsync();
+
+            var away = await _context.PlayerMyTeam
+                .Where(p => p.MyTeamNav.MyTeamID == viewModel.FantasyMatchup.AwayTeamID)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .OrderBy(p => p.PlayerNav.Position)
+                .AsNoTracking().ToListAsync();
+
+            Dictionary<string, Player> homePlayers = new Dictionary<string, Player>();
+            Dictionary<string, Player> awayPlayers = new Dictionary<string, Player>();
+
+            int posCount = 1;
+
+            foreach (var p in home)
+            {
+                if (p.PlayerNav.Position == "C")
+                {
+                    homePlayers.Add(p.PlayerNav.Position, p.PlayerNav);
+                }
+                else
+                {
+                    homePlayers.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
+                    posCount = (posCount == 1 ? 2 : 1);
+                }                    
             }
 
-            return View(fantasyMatchup);
+            foreach (var p in away)
+            {
+                if (p.PlayerNav.Position == "C")
+                {
+                    awayPlayers.Add(p.PlayerNav.Position, p.PlayerNav);
+                }
+                else
+                {
+                    awayPlayers.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
+                    posCount = (posCount == 1 ? 2 : 1);
+                }
+            }
+
+            foreach (KeyValuePair<string, Player> entry in homePlayers)
+            {
+                viewModel.HomeRoster[entry.Key] = entry.Value;
+            }
+            foreach (KeyValuePair<string, Player> entry in awayPlayers)
+            {
+                viewModel.AwayRoster[entry.Key] = entry.Value;
+            }
+
+
+            return View(viewModel);
         }
 
         [HttpGet]

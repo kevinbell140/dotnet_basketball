@@ -1,60 +1,92 @@
-﻿@model NBAMvc1._1.Models.FantasyMatchup
+﻿@model NBAMvc1._1.ViewModels.FantasyMatchupDetailsViewModel
 
 @{
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
 
-<div>
-    <h4>FantasyMatchup</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Week)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Week)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HomeTeamScore)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HomeTeamScore)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AwayTeamScore)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AwayTeamScore)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.HomeTeamNav)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.HomeTeamNav.MyTeamID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AwayTeamNav)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AwayTeamNav.MyTeamID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FantasyLeagueNav)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FantasyLeagueNav.FantasyLeagueID)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.FantasyMatchupID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div class="container container-fluid">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
+                <h6>Week @Model.FantasyMatchup.Week</h6>
+                <hr />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card w-100">
+                    <div class="card-header">
+                        <div class="text-center"><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@Model.FantasyMatchup.AwayTeamID">@Model.FantasyMatchup.AwayTeamNav.Name</a></div>
+                        <div class="text-center">@Model.FantasyMatchup.AwayTeamNav.UserNav.UserName</div>
+                    </div>
+                    <div class="card-body text-center">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Player</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (KeyValuePair<string, Player> entry in Model.AwayRoster)
+                                {
+                                    <tr>
+                                        <td>@entry.Key</td>
+                                        @if(entry.Value != null)
+                                        {
+                                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer text-center">
+                        <div class="text-center">Score: @Model.FantasyMatchup.AwayTeamScore</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card w-100">
+                    <div class="card-header">
+                        <div class="text-center"><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@Model.FantasyMatchup.HomeTeamID">@Model.FantasyMatchup.HomeTeamNav.Name</a></div>
+                        <div class="text-center">@Model.FantasyMatchup.HomeTeamNav.UserNav.UserName</div>
+                    </div>
+                    <div class="card-body text-center">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Player</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (KeyValuePair<string, Player> entry in Model.HomeRoster)
+                                {
+                                    <tr>
+                                        <td>@entry.Key</td>
+                                        @if (entry.Value != null)
+                                        {
+                                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer text-center">
+                        <div class="text-center">Score: @Model.FantasyMatchup.AwayTeamScore</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
