@@ -70,6 +70,13 @@ namespace NBAMvc1._1.Controllers
                 viewModel.Teams[entry.Key] = entry.Value;
             }
 
+            if (viewModel.FantasyLeague.IsSet)
+            {
+                viewModel.Matchups = await _context.FantasyMatchup
+                    .Where(m => m.FantasyLeagueID == id)
+                    .ToListAsync();
+            }
+
             return View(viewModel);
         }
 
@@ -95,6 +102,7 @@ namespace NBAMvc1._1.Controllers
             }
 
             fantasyLeague.CommissionerID = _userManager.GetUserId(User);
+            fantasyLeague.CurrentWeek = 1;
 
             if (ModelState.IsValid)
             {

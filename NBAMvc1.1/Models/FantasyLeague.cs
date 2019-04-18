@@ -20,6 +20,8 @@ namespace NBAMvc1._1.Models
 
         public bool IsSet { get; set; }
 
+        public int CurrentWeek { get; set; }
+
         public virtual List<MyTeam> TeamsNav { get; set; }
 
 
