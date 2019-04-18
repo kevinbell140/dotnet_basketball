@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
+    [Authorize(Policy = "AdminOnly")]
     public class FantasyMatchupsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -48,43 +50,82 @@ namespace NBAMvc1._1.Controllers
             return View(fantasyMatchup);
         }
 
-        // GET: FantasyMatchups/Create
-        public IActionResult Create(int leagueID)
+
+        public async Task<IActionResult> Create(int leagueID)
         {
-            //I DONT THINK YOU CAN DO THIS
-        //    var viewModel = new FantasyMatchupsCreateViewModel();
+            var fantasyLeague = await _context.FantasyLeague
+                .Where(l => l.FantasyLeagueID == leagueID)
+                .FirstOrDefaultAsync();
 
-        //    viewModel.FantasyLeague = await _context.FantasyLeague
-        //        .Where(l => l.FantasyLeagueID == leagueID)
-        //        .FirstOrDefaultAsync();
+            if(fantasyLeague == null)
+            {
+                return NotFound();
+            }
 
-        //    viewModel.HomeTeams = await _context.MyTeam
-        //        .Where(t => t.FantasyLeagueID == leagueID)
-        //        .ToListAsync();
+            List<MyTeam> teams = await _context.MyTeam
+                .Where(t => t.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
+                .ToListAsync(); 
 
-        //    viewModel.AwayTeams = viewModel.HomeTeams;
+            if(teams == null)
+            {
+                return NotFound();
+            }
 
-            return View();
-        }
 
-        // POST: FantasyMatchups/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FantasyMatchupID,FantasyLeagueID,Week,Status,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore")] FantasyMatchup fantasyMatchup)
-        {
+            int numWeeks = (teams.Count() - 1) * 2;
+            int halfSize = teams.Count() / 2;
+
+            List<MyTeam> listTeams = new List<MyTeam>();
+
+            listTeams.AddRange(teams);
+            listTeams.RemoveAt(0);
+
+            int teamSize = listTeams.Count();
+
+            List<FantasyMatchup> matchups = new List<FantasyMatchup>();
+
+            for(int week = 0; week < numWeeks; week++)
+            {
+                var matchup = new FantasyMatchup();
+                matchup.Week = week + 1;
+                matchup.FantasyLeagueID = leagueID;
+                matchup.Status = "Scheduled";
+
+                int teamIdx = week % teamSize;
+
+                matchup.AwayTeamNav = listTeams[teamIdx];
+                matchup.HomeTeamNav = teams[0];
+                matchup.HomeTeamScore = 0;
+                matchup.AwayTeamScore = 0;
+
+                matchups.Add(matchup);
+
+                for(int i = 1; i < halfSize; i++)
+                {
+                    var nextMatchup = new FantasyMatchup();
+                    matchup.Week = week + 1;
+                    matchup.FantasyLeagueID = leagueID;
+                    matchup.Status = "Scheduled";
+
+                    matchup.AwayTeamID = (week + i) % teamSize;
+                    matchup.HomeTeamID = (week + teamSize - i) % teamSize;
+                    matchup.AwayTeamScore = 0;
+                    matchup.HomeTeamScore = 0;
+
+                    matchups.Add(matchup);
+                }
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(fantasyMatchup);
+                _context.FantasyMatchup.AddRange(matchups);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AwayTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyMatchup.AwayTeamID);
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID", fantasyMatchup.FantasyLeagueID);
-            ViewData["HomeTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyMatchup.HomeTeamID);
-            return View(fantasyMatchup);
+
+            return RedirectToAction(nameof(Index));
         }
+
 
         // GET: FantasyMatchups/Edit/5
         public async Task<IActionResult> Edit(int? id)
