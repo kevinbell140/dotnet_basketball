@@ -136,6 +136,7 @@ namespace NBAMvc1._1.Controllers
             {
                 int numWeeks = (teams.Count() - 1) * 2;
                 int halfSize = teams.Count() / 2;
+                int teamCounter = 0; //for removing teams from the list
 
                 List<MyTeam> listTeams = new List<MyTeam>();
 
@@ -165,16 +166,16 @@ namespace NBAMvc1._1.Controllers
                     for (int i = 1; i < halfSize; i++)
                     {
                         var nextMatchup = new FantasyMatchup();
-                        matchup.Week = week + 1;
-                        matchup.FantasyLeagueID = leagueID;
-                        matchup.Status = "Scheduled";
+                        nextMatchup.Week = week+1;
+                        nextMatchup.FantasyLeagueID = leagueID;
+                        nextMatchup.Status = "Scheduled";
 
-                        matchup.AwayTeamID = (week + i) % teamSize;
-                        matchup.HomeTeamID = (week + teamSize - i) % teamSize;
-                        matchup.AwayTeamScore = 0;
-                        matchup.HomeTeamScore = 0;
+                        nextMatchup.AwayTeamNav = listTeams[(week + i) % teamSize];
+                        nextMatchup.HomeTeamNav = listTeams[(week + teamSize - i) % teamSize];
+                        nextMatchup.AwayTeamScore = 0;
+                        nextMatchup.HomeTeamScore = 0;
 
-                        matchups.Add(matchup);
+                        matchups.Add(nextMatchup);
                     }
                 }
 

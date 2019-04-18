@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Utils;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -34,7 +35,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: FantasyLeagues/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? currentWeek)
         {
             if (id == null)
             {
@@ -49,9 +50,17 @@ namespace NBAMvc1._1.Controllers
                 .FirstOrDefaultAsync(m => m.FantasyLeagueID == id)
             };
    
-            if (viewModel.FantasyLeague == null)
+            if(currentWeek == null)
             {
-                return NotFound();
+                viewModel.CurrentWeek = 1;
+            }
+            else if(currentWeek > 8)
+            {
+                viewModel.CurrentWeek = 8;
+            }
+            else
+            {
+                viewModel.CurrentWeek = currentWeek.Value;
             }
 
             int count = 1;
@@ -73,7 +82,7 @@ namespace NBAMvc1._1.Controllers
             if (viewModel.FantasyLeague.IsSet)
             {
                 viewModel.Matchups = await _context.FantasyMatchup
-                    .Where(m => m.FantasyLeagueID == id)
+                    .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.CurrentWeek)
                     .ToListAsync();
             }
 

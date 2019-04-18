@@ -1,4 +1,5 @@
 ﻿using NBAMvc1._1.Models;
+using NBAMvc1._1.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace NBAMvc1._1.ViewModels
         public IDictionary<int, MyTeam> Teams { get; set; }
 
         public IEnumerable<FantasyMatchup> Matchups { get; set; }
+
+        public int CurrentWeek { get; set; }
 
         public FantasyLeagueDetailsViewModel()
         {
