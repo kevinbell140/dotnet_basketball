@@ -1,0 +1,83 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.FantasyMatchupWeeks>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Week1)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week2)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week3)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week4)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week5)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week6)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week7)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Week8)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FantasyLeagueNav)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week1)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week2)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week3)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week4)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week5)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week6)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week7)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Week8)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FantasyLeagueNav.FantasyLeagueID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FantasyMatchupWeeksID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FantasyMatchupWeeksID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FantasyMatchupWeeksID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

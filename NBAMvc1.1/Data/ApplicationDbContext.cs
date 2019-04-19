@@ -50,5 +50,7 @@ namespace NBAMvc1._1.Data
 
         public DbSet<NBAMvc1._1.Models.FantasyMatchup> FantasyMatchup { get; set; }
 
+        public DbSet<NBAMvc1._1.Models.FantasyMatchupWeeks> FantasyMatchupWeeks { get; set; }
+
     }
 }

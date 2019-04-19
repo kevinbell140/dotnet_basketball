@@ -13,7 +13,7 @@
             <h3>@Model.FantasyLeague.Name</h3>
             @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
             {
-                <a asp-controller="FantasyMatchups" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn">Create schedule</a>
+                <a asp-controller="FantasyMatchupWeeks" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn">Create schedule</a>
             }
         </div>
     </div>

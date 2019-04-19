@@ -22,6 +22,9 @@ namespace NBAMvc1._1.Models
 
         public int CurrentWeek { get; set; }
 
+
+        public virtual FantasyMatchupWeeks FantasyMatchupWeeksNav { get; set; }
+
         public virtual List<MyTeam> TeamsNav { get; set; }
 
 

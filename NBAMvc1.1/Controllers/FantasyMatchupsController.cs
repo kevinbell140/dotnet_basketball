@@ -108,6 +108,7 @@ namespace NBAMvc1._1.Controllers
         public async Task<IActionResult> Create(int leagueID)
         {
             var fantasyLeague = await _context.FantasyLeague
+                .Include(l => l.FantasyMatchupWeeksNav)
                 .Where(l => l.FantasyLeagueID == leagueID)
                 .FirstOrDefaultAsync();
 
@@ -119,6 +120,11 @@ namespace NBAMvc1._1.Controllers
             if (!fantasyLeague.IsFull)
             {
                 return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
+            }
+
+            if(fantasyLeague.FantasyMatchupWeeksNav == null)
+            {
+                return RedirectToAction("Create", "FantasyMatchupWeeks", new { id = leagueID });
             }
 
             List<MyTeam> teams = await _context.MyTeam
@@ -173,7 +179,6 @@ namespace NBAMvc1._1.Controllers
                         nextMatchup.HomeTeamNav = listTeams[(week + teamSize - i) % teamSize];
                         nextMatchup.AwayTeamScore = 0;
                         nextMatchup.HomeTeamScore = 0;
-
                         matchups.Add(nextMatchup);
                     }
                 }

@@ -165,3 +165,8 @@ C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Details.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Create.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Delete.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Details.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Edit.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Index.g.cshtml.cs

@@ -34,5 +34,6 @@ namespace NBAMvc1._1.Models
         public virtual MyTeam AwayTeamNav { get; set; }
 
         public virtual FantasyLeague FantasyLeagueNav { get; set; }
+
     }
 }
