@@ -226,6 +226,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Players/Edit/5
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -247,6 +248,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Edit(int id, [Bind("PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
         {
             if (id != player.PlayerID)
@@ -315,6 +317,7 @@ namespace NBAMvc1._1.Controllers
             return _context.Player.Any(e => e.PlayerID == id);
         }
 
+        [Authorize(Policy = "AdminOnly")]
         public async Task<ActionResult> Fetch()
         {
             List<Player> players = await _service.FetchPLayers();

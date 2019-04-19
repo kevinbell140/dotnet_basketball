@@ -170,3 +170,19 @@ body {
     justify-content: center;
     margin-bottom: 10px;
 }
+
+.layout-background{
+    background-color: lightgray;
+}
+
+.results-card{
+    margin: 5px 5px 5px 5px;
+}
+
+.matchups-div{
+    margin-left: 70px;
+}
+
+.matchups-card {
+    margin: 5px 5px 5px 0px;
+}

@@ -5,7 +5,7 @@
 }
 
 
-<div class="container-fluid">
+<div class="container-fluid bg-white">
     <div class="row">
         <div class="col-md-12">
             <div class="jumbotron jumbotron-fluid" style="background-color:#@Model.Team.PrimaryColor">
@@ -133,7 +133,7 @@
                                 <a asp-controller="Teams" asp-action="Details" asp-route-id="@g.AwayTeamID">
                                     <img src="@g.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" />
                                 </a>
-                            </td>gi
+                            </td>
                             <td>@g.HomeTeamScore - @g.AwayTeamScore</td>
                         </tr>
                     }

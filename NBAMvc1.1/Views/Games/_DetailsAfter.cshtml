@@ -9,13 +9,14 @@
         </div>
         <div class="row">
             <div class="col-md-12">
-                <h6>@Model.AwayTeamNav.FullName</h6>
+                <h5 class="text-center"><a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID">@Model.AwayTeamNav.FullName</a></h5>
                 <table class="table table-responsive table-hover">
                     <thead>
                         <tr>
                             <td>Pos</td>
                             <td>Player</td>
                             <td>Min</td>
+                            <td>PTS</td>
                             <td>FG</td>
                             <td>FGA</td>
                             <td>FG%</td>
@@ -33,7 +34,6 @@
                             <td>BLK</td>
                             <td>TO</td>
                             <td>PF</td>
-                            <td>PTS</td>
                             <td>+/-</td>
                         </tr>
                     </thead>
@@ -42,30 +42,30 @@
                         {
                             if (g != null)
                             {
-                                <tr>
-                                    <td>@Html.DisplayFor(m => g.PlayerNav.Position)</td>
-                                    <td><a asp-controller="Players" asp-action="Details" asp-route-id="@g.PlayerID">@g.PlayerNav.FullName</a></td>
-                                    <td>@Html.DisplayFor(m => g.Minutes)</td>
-                                    <td>@Html.DisplayFor(m => g.FieldGoalsMade)</td>
-                                    <td>@Html.DisplayFor(m => g.FieldGoalsAttempted)</td>
-                                    <td>@Html.DisplayFor(m => g.FieldGoalsPercentage)</td>
-                                    <td>@Html.DisplayFor(m => g.ThreePointersMade)</td>
-                                    <td>@Html.DisplayFor(m => g.ThreePointersAttempted)</td>
-                                    <td>@Html.DisplayFor(m => g.ThreePointersPercentage)</td>
-                                    <td>@Html.DisplayFor(m => g.FreeThrowsMade)</td>
-                                    <td>@Html.DisplayFor(m => g.FreeThrowsAttempted)</td>
-                                    <td>@Html.DisplayFor(m => g.FreeThrowsPercentage)</td>
-                                    <td>@Html.DisplayFor(m => g.OffensiveRebounds)</td>
-                                    <td>@Html.DisplayFor(m => g.DefensiveRebounds)</td>
-                                    <td>@Html.DisplayFor(m => g.Rebounds)</td>
-                                    <td>@Html.DisplayFor(m => g.Assists)</td>
-                                    <td>@Html.DisplayFor(m => g.Steals)</td>
-                                    <td>@Html.DisplayFor(m => g.BlockedShots)</td>
-                                    <td>@Html.DisplayFor(m => g.Turnovers)</td>
-                                    <td>@Html.DisplayFor(m => g.PersonalFouls)</td>
-                                    <td>@Html.DisplayFor(m => g.Points)</td>
-                                    <td>@Html.DisplayFor(m => g.PlusMinus)</td>
-                                </tr>
+                        <tr>
+                            <td>@Html.DisplayFor(m => g.PlayerNav.Position)</td>
+                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@g.PlayerID">@g.PlayerNav.FullName</a></td>
+                            <td>@Html.DisplayFor(m => g.Minutes)</td>
+                            <td>@Html.DisplayFor(m => g.Points)</td>
+                            <td>@Html.DisplayFor(m => g.FieldGoalsMade)</td>
+                            <td>@Html.DisplayFor(m => g.FieldGoalsAttempted)</td>
+                            <td>@Html.DisplayFor(m => g.FieldGoalsPercentage)</td>
+                            <td>@Html.DisplayFor(m => g.ThreePointersMade)</td>
+                            <td>@Html.DisplayFor(m => g.ThreePointersAttempted)</td>
+                            <td>@Html.DisplayFor(m => g.ThreePointersPercentage)</td>
+                            <td>@Html.DisplayFor(m => g.FreeThrowsMade)</td>
+                            <td>@Html.DisplayFor(m => g.FreeThrowsAttempted)</td>
+                            <td>@Html.DisplayFor(m => g.FreeThrowsPercentage)</td>
+                            <td>@Html.DisplayFor(m => g.OffensiveRebounds)</td>
+                            <td>@Html.DisplayFor(m => g.DefensiveRebounds)</td>
+                            <td>@Html.DisplayFor(m => g.Rebounds)</td>
+                            <td>@Html.DisplayFor(m => g.Assists)</td>
+                            <td>@Html.DisplayFor(m => g.Steals)</td>
+                            <td>@Html.DisplayFor(m => g.BlockedShots)</td>
+                            <td>@Html.DisplayFor(m => g.Turnovers)</td>
+                            <td>@Html.DisplayFor(m => g.PersonalFouls)</td>
+                            <td>@Html.DisplayFor(m => g.PlusMinus)</td>
+                        </tr>
                             }
                         }
                         @foreach (var g in Model.PlayerGameStatsNav.Where(a => a.PlayerNav.TeamID == Model.AwayTeamID && a.Started != 1).OrderByDescending(a => a.Minutes))
@@ -102,9 +102,10 @@
                 </table>
             </div>
         </div>
+        <br />
         <div class="row">
             <div class="col-md-12">
-                <h6>@Model.HomeTeamNav.FullName</h6>
+                <h5 class="text-center"><a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID">@Model.HomeTeamNav.FullName</a></h5>
                 <table class="table table-responsive table-hover">
                     <thead>
                         <tr>

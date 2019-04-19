@@ -4,32 +4,30 @@
     var p2 = ViewData["b"] as PlayerGameStats;
 }
 
-    <div class="card w-100">
+    <div class="card w-100 text-center">
         <div class="card-header text-center">
             <a asp-controller="Games" asp-action="Details" asp-route-id="@Model.GameID">@Model.DateTime.ToShortDateString()</a>
             <h6>Spread: @Model.PointSpread</h6>
         </div>
         <div class="card-body">
-            <div class="row">
-                <table class="table table-hover text-cente">
-                    <tr>
-                        <td>
-                            <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID">
-                                <img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
-                            </a>
-                        </td>
-                        <td>@Model.AwayTeamScore</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID">
-                                <img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
-                            </a>
-                        </td>
-                        <td>@Model.HomeTeamScore</td>
-                    </tr>
-                </table>
-            </div>
+            <table class="table table-hover text-center">
+                <tr>
+                    <td>
+                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID">
+                            <img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                        </a>
+                    </td>
+                    <td>@Model.AwayTeamScore</td>
+                </tr>
+                <tr>
+                    <td>
+                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID">
+                            <img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" />
+                        </a>
+                    </td>
+                    <td>@Model.HomeTeamScore</td>
+                </tr>
+            </table>
         </div>
         <div class="card-footer text-center">
             <div class="text-center">@(p1.PlayerNav.LastName) : @p1.Points p, @p1.Assists a, @p1.Rebounds r </div>

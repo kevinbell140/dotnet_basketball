@@ -59,7 +59,10 @@ namespace NBAMvc1._1.Controllers
             return View(standings);
         }
 
+
+
         // GET: Standings/Create
+        [Authorize(Policy = "AdminOnly")]
         private IActionResult Create()
         {
             ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key");
@@ -71,6 +74,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         public async Task<IActionResult> Create([Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
         {
             if (ModelState.IsValid)
@@ -84,6 +88,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Standings/Edit/5
+        [Authorize(Policy = "AdminOnly")]
         private async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -105,6 +110,7 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         private async Task<IActionResult> Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
         {
             if (id != standings.TeamID)
@@ -137,6 +143,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Standings/Delete/5
+        [Authorize(Policy = "AdminOnly")]
         private async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -158,6 +165,7 @@ namespace NBAMvc1._1.Controllers
         // POST: Standings/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "AdminOnly")]
         private async Task<IActionResult> DeleteConfirmed(int id)
         {
             var standings = await _context.Standings.FindAsync(id);
