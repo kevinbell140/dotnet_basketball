@@ -152,13 +152,13 @@ namespace NBAMvc1._1.Models
         public async Task<IActionResult> Fetch()
         {
             //logic to fetch all missing data
-            DateTime startDate = new DateTime(2019, 04, 17);
+            DateTime startDate = new DateTime(2019, 04, 18);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
             List<PlayerGameStats> updated = new List<PlayerGameStats>();
 
-            for (DateTime d = startDate; d < endDate; d.AddDays(1))
+            for (DateTime d = startDate; d <= endDate; d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _service.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
 

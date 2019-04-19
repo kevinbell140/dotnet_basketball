@@ -35,7 +35,7 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: FantasyLeagues/Details/5
-        public async Task<IActionResult> Details(int? id, int? currentWeek)
+        public async Task<IActionResult> Details(int? id, int? selectedWeek)
         {
             if (id == null)
             {
@@ -50,17 +50,20 @@ namespace NBAMvc1._1.Controllers
                 .FirstOrDefaultAsync(m => m.FantasyLeagueID == id)
             };
    
-            if(currentWeek == null)
+            if(selectedWeek == null)
             {
-                viewModel.CurrentWeek = 1;
+                viewModel.SelectedWeek = viewModel.FantasyLeague.CurrentWeek;
             }
-            else if(currentWeek > 8)
+            else if(selectedWeek > 8)
             {
-                viewModel.CurrentWeek = 8;
+                viewModel.SelectedWeek = 8;
+            }else if(selectedWeek < 1)
+            {
+                viewModel.SelectedWeek = 1;
             }
             else
             {
-                viewModel.CurrentWeek = currentWeek.Value;
+                viewModel.SelectedWeek = selectedWeek.Value;
             }
 
             int count = 1;
@@ -82,7 +85,7 @@ namespace NBAMvc1._1.Controllers
             if (viewModel.FantasyLeague.IsSet)
             {
                 viewModel.Matchups = await _context.FantasyMatchup
-                    .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.CurrentWeek)
+                    .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.SelectedWeek)
                     .ToListAsync();
             }
 

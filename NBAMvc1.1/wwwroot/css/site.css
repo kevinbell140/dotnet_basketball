@@ -164,3 +164,9 @@ body {
 .game-index-dates{
     margin-bottom: 20px;
 }
+
+.current-week-flex{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}

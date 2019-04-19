@@ -15,7 +15,7 @@ namespace NBAMvc1._1.ViewModels
 
         public IEnumerable<FantasyMatchup> Matchups { get; set; }
 
-        public int CurrentWeek { get; set; }
+        public int SelectedWeek { get; set; }
 
         public FantasyLeagueDetailsViewModel()
         {

@@ -136,7 +136,6 @@ namespace NBAMvc1._1.Controllers
             {
                 int numWeeks = (teams.Count() - 1) * 2;
                 int halfSize = teams.Count() / 2;
-                int teamCounter = 0; //for removing teams from the list
 
                 List<MyTeam> listTeams = new List<MyTeam>();
 
