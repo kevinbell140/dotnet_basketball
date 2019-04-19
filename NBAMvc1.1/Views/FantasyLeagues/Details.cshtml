@@ -84,29 +84,31 @@
                 <div class="btn btn-primary">Week @Model.SelectedWeek</div>
                 <a class="btn" asp-action="Details" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-selectedWeek="@(Model.SelectedWeek + 1)">>></a>
             </div>
-            @foreach (var m in Model.Matchups)
+            @if (Model.Matchups != null)
             {
-                <div class="card matchups-card">
-                    <div class="card-body text-center">
-                        <table class="table table-hover">
-                            <tbody>
-                                <tr>
-                                    <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.AwayTeamID">@m.AwayTeamNav.Name</a></td>
-                                    <td>@m.AwayTeamScore</td>
-                                </tr>
-                                <tr>
-                                    <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.HomeTeamID">@m.HomeTeamNav.Name</a></td>
-                                    <td>@m.HomeTeamScore</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                @foreach (var m in Model.Matchups)
+                {
+                    <div class="card matchups-card">
+                        <div class="card-body text-center">
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.AwayTeamID">@m.AwayTeamNav.Name</a></td>
+                                        <td>@m.AwayTeamScore</td>
+                                    </tr>
+                                    <tr>
+                                        <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.HomeTeamID">@m.HomeTeamNav.Name</a></td>
+                                        <td>@m.HomeTeamScore</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer text-center">
+                            <a asp-controller="FantasyMatchups" asp-action="Details" asp-route-id="@m.FantasyMatchupID">See Matchup</a>
+                        </div>
                     </div>
-                    <div class="card-footer text-center">
-                        <a asp-controller="FantasyMatchups" asp-action="Details" asp-route-id="@m.FantasyMatchupID">See Matchup</a>
-                    </div>
-                </div>
+                }
             }
-
         </div>
     </div>
 </div>

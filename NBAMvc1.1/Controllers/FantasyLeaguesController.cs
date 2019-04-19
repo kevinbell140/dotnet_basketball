@@ -54,9 +54,9 @@ namespace NBAMvc1._1.Controllers
             {
                 viewModel.SelectedWeek = viewModel.FantasyLeague.CurrentWeek;
             }
-            else if(selectedWeek > 8)
+            else if(selectedWeek > 14)
             {
-                viewModel.SelectedWeek = 8;
+                viewModel.SelectedWeek = 14;
             }else if(selectedWeek < 1)
             {
                 viewModel.SelectedWeek = 1;

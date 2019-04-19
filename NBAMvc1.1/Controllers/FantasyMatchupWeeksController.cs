@@ -51,6 +51,7 @@ namespace NBAMvc1._1.Controllers
 
             var league = await _context.FantasyLeague
                 .Include(l => l.FantasyMatchupWeeksNav)
+                .Include(l => l.TeamsNav)
                 .Where(l => l.FantasyLeagueID == leagueID)
                 .FirstOrDefaultAsync();
             if(league == null)
@@ -58,33 +59,38 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            if(league.FantasyMatchupWeeksNav == null)
-            {
-                DateTime today = DateTime.Today;
+            var any = await _context.FantasyMatchupWeeks
+                .Where(l => l.FantasyLeagueID == leagueID)
+                .AnyAsync();
 
-                FantasyMatchupWeeks weeks = new FantasyMatchupWeeks
+            if(!any)
+            {
+                DateTime startDate = DateTime.Today.AddDays(-1);
+                int numWeeks = (league.TeamsNav.Count() - 1) * 2;
+                List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
+
+                for(int i = 0; i < numWeeks; i++)
                 {
-                    FantasyLeagueNav = league,
-                    Week1 = today,
-                    Week2 = today.AddDays(1),
-                    Week3 = today.AddDays(2),
-                    Week4 = today.AddDays(3),
-                    Week5 = today.AddDays(4),
-                    Week6 = today.AddDays(5),
-                    Week7 = today.AddDays(6),
-                    Week8 = today.AddDays(7),
-                };
+                    FantasyMatchupWeeks week = new FantasyMatchupWeeks
+                    {
+                        FantasyLeagueNav = league,
+                        WeekNum = i,
+                        Date = startDate.AddDays(i),
+                    };
+
+                    list.Add(week);
+                }
 
                 if (ModelState.IsValid)
                 {
-                    await _context.FantasyMatchupWeeks.AddAsync(weeks);
+                    await _context.FantasyMatchupWeeks.AddRangeAsync(list);
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Create", "FantasyMatchups", new { leagueID = leagueID });
 
                 }
             }
 
-            return RedirectToAction("Create", "FantasyMatchups", new { leagueID = leagueID });
+            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
         }
 
         // GET: FantasyMatchupWeeks/Edit/5

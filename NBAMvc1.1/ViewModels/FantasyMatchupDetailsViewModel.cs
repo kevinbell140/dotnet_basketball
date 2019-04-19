@@ -18,6 +18,8 @@ namespace NBAMvc1._1.ViewModels
 
         public Dictionary<string, Player> AwayRoster { get; set; }
 
+        public DateTime Date { get; set; }
+
         public FantasyMatchupDetailsViewModel()
         {
             HomeRoster = new Dictionary<string, Player>

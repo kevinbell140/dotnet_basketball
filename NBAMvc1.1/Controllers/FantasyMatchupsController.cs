@@ -41,7 +41,7 @@ namespace NBAMvc1._1.Controllers
             {
                 FantasyMatchup = await _context.FantasyMatchup
                 .Include(f => f.AwayTeamNav).ThenInclude(f => f.UserNav)
-                .Include(f => f.FantasyLeagueNav)
+                .Include(f => f.FantasyLeagueNav).ThenInclude(f => f.FantasyMatchupWeeksNav)
                 .Include(f => f.HomeTeamNav).ThenInclude(f => f.UserNav)
                 .FirstOrDefaultAsync(m => m.FantasyMatchupID == id)
             };
@@ -100,6 +100,20 @@ namespace NBAMvc1._1.Controllers
                 viewModel.AwayRoster[entry.Key] = entry.Value;
             }
 
+            var week = await _context.FantasyMatchupWeeks
+                .Where(w => w.WeekNum == viewModel.FantasyMatchup.Week)
+                .Where(w => w.FantasyLeagueID == viewModel.FantasyMatchup.FantasyLeagueID)
+                .FirstOrDefaultAsync();
+            
+            if(week == null)
+            {
+                viewModel.Date = DateTime.Today;
+            }
+            else
+            {
+                viewModel.Date = week.Date;
+            }
+            
 
             return View(viewModel);
         }
