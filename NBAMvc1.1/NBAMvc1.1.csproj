@@ -16,6 +16,8 @@
     <Compile Remove="Data\Migrations\20190410183730_News.Designer.cs" />
     <Compile Remove="Data\Migrations\20190419171817_FantasyMatchupWeeks.cs" />
     <Compile Remove="Data\Migrations\20190419171817_FantasyMatchupWeeks.Designer.cs" />
+    <Compile Remove="Data\Migrations\20190422154655_LeagueIsActive.cs" />
+    <Compile Remove="Data\Migrations\20190422154655_LeagueIsActive.Designer.cs" />
   </ItemGroup>
 
 

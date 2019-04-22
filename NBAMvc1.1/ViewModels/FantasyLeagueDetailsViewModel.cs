@@ -17,6 +17,8 @@ namespace NBAMvc1._1.ViewModels
 
         public int SelectedWeek { get; set; }
 
+        public int CurrentWeek { get; set; }
+
         public FantasyLeagueDetailsViewModel()
         {
             Teams = new Dictionary<int, MyTeam>()

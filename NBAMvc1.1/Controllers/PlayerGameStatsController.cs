@@ -158,7 +158,7 @@ namespace NBAMvc1._1.Models
             List<PlayerGameStats> created = new List<PlayerGameStats>();
             List<PlayerGameStats> updated = new List<PlayerGameStats>();
 
-            for (DateTime d = startDate; d <= endDate; d.AddDays(1))
+            for (DateTime d = startDate; d <= endDate; d = d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _service.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
 
@@ -176,23 +176,24 @@ namespace NBAMvc1._1.Models
 
                     }
                 }
-
-                if (ModelState.IsValid)
-                {
-                    try
-                    {
-                        await _context.AddRangeAsync(created);
-                        _context.UpdateRange(updated);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        throw;
-                    }
-
-                    return RedirectToAction(nameof(Index));
-                }
             }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            
             return RedirectToAction(nameof(Index));
         }
     }

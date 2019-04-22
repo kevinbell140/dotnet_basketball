@@ -49,10 +49,37 @@ namespace NBAMvc1._1.Controllers
                 .Include(m => m.ComissionerNav)
                 .FirstOrDefaultAsync(m => m.FantasyLeagueID == id)
             };
-   
+
+            int currentWeek = 0;
+
+            //gets the current week league
+            if (viewModel.FantasyLeague.IsActive)
+            {
+                var weeks = _context.FantasyMatchupWeeks
+                    .Where(f => f.FantasyLeagueID == id)
+                    .AsNoTracking();
+
+                var thisWeek = weeks
+                    .Where(w => w.Date == DateTime.Today)
+                    .FirstOrDefault();
+
+                if (thisWeek == null)
+                {
+                    await IsActiveFalseAsync(id);
+                    currentWeek = 14;
+                }
+                else
+                {
+                    currentWeek = thisWeek.WeekNum;
+                }
+            }
+
+            viewModel.CurrentWeek = currentWeek;
+
+
             if(selectedWeek == null)
             {
-                viewModel.SelectedWeek = viewModel.FantasyLeague.CurrentWeek;
+                viewModel.SelectedWeek = currentWeek;
             }
             else if(selectedWeek > 14)
             {
@@ -114,7 +141,7 @@ namespace NBAMvc1._1.Controllers
             }
 
             fantasyLeague.CommissionerID = _userManager.GetUserId(User);
-            fantasyLeague.CurrentWeek = 1;
+            fantasyLeague.IsActive = false;
 
             if (ModelState.IsValid)
             {
@@ -340,6 +367,43 @@ namespace NBAMvc1._1.Controllers
             }
 
             league.IsSet = true;
+            league.IsActive = true;
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(league);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!FantasyLeagueExists(league.FantasyLeagueID))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+            }
+            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
+        }
+
+        public async Task<IActionResult> IsActiveFalseAsync(int? id)
+        {
+            var league = await _context.FantasyLeague
+                .Where(l => l.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
+
+            if (league == null)
+            {
+                return NotFound();
+            }
+            
+            league.IsActive = false;
 
             if (ModelState.IsValid)
             {
