@@ -27,22 +27,29 @@
                                 <tr>
                                     <th>Pos</th>
                                     <th>Player</th>
+                                    <th>Opp</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (KeyValuePair<string, Player> entry in Model.AwayRoster)
                                 {
-                                    <tr>
-                                        <td>@entry.Key</td>
-                                        @if(entry.Value != null)
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    @if (entry.Value != null)
+                                    {
+                                        <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>
+                                        @if (Model.AwayOpp[entry.Key] != null)
                                         {
-                                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                            <img src="@Model.AwayOpp[entry.Key]" class="teamLogoSM" />
                                         }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
-                                    </tr>
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                         </table>
@@ -64,22 +71,29 @@
                                 <tr>
                                     <th>Pos</th>
                                     <th>Player</th>
+                                    <th>Opp</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (KeyValuePair<string, Player> entry in Model.HomeRoster)
                                 {
-                                    <tr>
-                                        <td>@entry.Key</td>
-                                        @if (entry.Value != null)
+                                <tr>
+                                    <td>@entry.Key</td>
+                                    @if (entry.Value != null)
+                                    {
+                                        <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                    }
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                    <td>
+                                        @if (Model.HomeOpp[entry.Key] != null)
                                         {
-                                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
+                                        <img src="@Model.HomeOpp[entry.Key]" class="teamLogoSM" />
                                         }
-                                        else
-                                        {
-                                            <td></td>
-                                        }
-                                    </tr>
+                                    </td>
+                                </tr>
                                 }
                             </tbody>
                         </table>
