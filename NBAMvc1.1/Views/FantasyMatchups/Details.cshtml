@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Details";
+    string winner = (Model.HomeScore > Model.AwayScore ? "home" : "away");
     
 }
 
@@ -11,7 +12,15 @@
             <div class="col-md-12 text-center">
                 <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
                 <h6>Week (@Model.FantasyMatchup.Week) -- @Model.Date.ToShortDateString()</h6>
-                <h6>@Model.FantasyMatchup.AwayTeamScore : @Model.FantasyMatchup.AwayTeamNav.Name <span style="color:red">VS</span> @Model.FantasyMatchup.HomeTeamNav.Name : @Model.FantasyMatchup.HomeTeamScore</h6>
+                <h6>
+                    <span class="@(Model.HomeScore < Model.AwayScore ? "matchup-header-winner" : " ")">
+                        @Model.AwayScore : @Model.FantasyMatchup.AwayTeamNav.Name
+                    </span>
+                    <span style="color:red">VS</span>
+                    <span class="@(Model.HomeScore > Model.AwayScore ? "matchup-header-winner" : " ")">
+                        @Model.FantasyMatchup.HomeTeamNav.Name : @Model.HomeScore
+                    </span>
+                </h6>
                 <hr />
             </div>
         </div>
@@ -29,6 +38,7 @@
                                     <th>Pos</th>
                                     <th>Player</th>
                                     <th>Opp</th>
+                                    <th>FPS</th>
                                     <th>Pts</th>
                                     <th>Ast</th>
                                     <th>Rbd</th>
@@ -57,6 +67,9 @@
                                         }
                                     </td>
                                     <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].FantasyPoints : 0)
+                                    </td>
+                                    <td>
                                         @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Points : 0)
                                     </td>
                                     <td>
@@ -80,7 +93,7 @@
                         </table>
                     </div>
                     <div class="card-footer text-center">
-                        <div class="text-center">Score: @Model.FantasyMatchup.AwayTeamScore</div>
+                        <div class="text-center">Score: @Model.AwayScore</div>
                     </div>
                 </div>
             </div>
@@ -99,6 +112,7 @@
                                     <th>Pos</th>
                                     <th>Player</th>
                                     <th>Opp</th>
+                                    <th>FPS</th>
                                     <th>Pts</th>
                                     <th>Ast</th>
                                     <th>Rbd</th>
@@ -127,6 +141,9 @@
                                             }
                                         </td>
                                         <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].FantasyPoints : 0)
+                                        </td>
+                                        <td>
                                             @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Points : 0)
                                         </td>
                                         <td>
@@ -150,7 +167,7 @@
                         </table>
                     </div>
                     <div class="card-footer text-center">
-                        <div class="text-center">Score: @Model.FantasyMatchup.HomeTeamScore</div>
+                        <div class="text-center">Score: @Model.HomeScore</div>
                     </div>
                 </div>
             </div>

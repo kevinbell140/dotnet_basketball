@@ -26,6 +26,31 @@ namespace NBAMvc1._1.ViewModels
 
         public Dictionary<string, PlayerGameStats> AwayStats { get; set; }
 
+        public decimal HomeScore
+        {
+            get
+            {
+                decimal count = 0;
+                foreach(var s in HomeStats)
+                {
+                    count += (s.Value != null ? s.Value.FantasyPoints : 0);
+                }
+                return count;
+            }
+        }
+
+        public decimal AwayScore
+        {
+            get
+            {
+                decimal count = 0;
+                foreach (var s in AwayStats)
+                {
+                    count += (s.Value != null ? s.Value.FantasyPoints : 0);
+                }
+                return count;
+            }
+        }
 
         public DateTime Date { get; set; }
 

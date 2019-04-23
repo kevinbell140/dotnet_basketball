@@ -46,11 +46,6 @@ namespace NBAMvc1._1.Controllers
                 .FirstOrDefaultAsync(m => m.FantasyMatchupID == id)
             };
 
-            var matchupWeek = await _context.FantasyMatchupWeeks
-                .Where(x => x.FantasyLeagueID == viewModel.FantasyMatchup.FantasyLeagueID)
-                .Where(x => x.WeekNum ==  viewModel.FantasyMatchup.Week)
-                .FirstOrDefaultAsync();
-
            var home = await _context.PlayerMyTeam
                 .Where(p => p.MyTeamNav.MyTeamID == viewModel.FantasyMatchup.HomeTeamID)
                 .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
@@ -73,6 +68,11 @@ namespace NBAMvc1._1.Controllers
 
             Dictionary<string, PlayerGameStats> homeStats = new Dictionary<string, PlayerGameStats>();
             Dictionary<string, PlayerGameStats> awayStats = new Dictionary<string, PlayerGameStats>();
+
+            var matchupWeek = await _context.FantasyMatchupWeeks
+                .Where(x => x.FantasyLeagueID == viewModel.FantasyMatchup.FantasyLeagueID)
+                .Where(x => x.WeekNum == viewModel.FantasyMatchup.Week)
+                .FirstOrDefaultAsync();
 
             int posCount = 1;
 
@@ -190,6 +190,7 @@ namespace NBAMvc1._1.Controllers
             foreach (KeyValuePair<string, PlayerGameStats> entry in homeStats)
             {
                 viewModel.HomeStats[entry.Key] = entry.Value;
+
             }
             foreach (KeyValuePair<string, PlayerGameStats> entry in awayStats)
             {

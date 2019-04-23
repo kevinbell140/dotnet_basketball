@@ -108,6 +108,17 @@ namespace NBAMvc1._1.Models
         [Display(Name = "+/-")]
         public decimal PlusMinus { get; set; }
 
+
+        [Column(TypeName = "decimal(18, 2)")]
+        [Display(Name = "FPS")]
+        public decimal FantasyPoints
+        {
+            get
+            {
+                return (Points + (Assists * 3) + (Rebounds * (decimal)1.2) + (Steals * 2) + (BlockedShots * 2) - Turnovers);
+            }
+        }
+
         public virtual Player PlayerNav { get; set; }
 
         public virtual Game GameNav { get; set; }
