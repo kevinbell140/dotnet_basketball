@@ -11,12 +11,13 @@
             <div class="col-md-12 text-center">
                 <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
                 <h6>Week (@Model.FantasyMatchup.Week) -- @Model.Date.ToShortDateString()</h6>
+                <h6>@Model.FantasyMatchup.AwayTeamScore : @Model.FantasyMatchup.AwayTeamNav.Name <span style="color:red">VS</span> @Model.FantasyMatchup.HomeTeamNav.Name : @Model.FantasyMatchup.HomeTeamScore</h6>
                 <hr />
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <div class="card w-100">
+            <div class="col-md-12">
+                <div class="card w-100 matchups-card">
                     <div class="card-header">
                         <div class="text-center"><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@Model.FantasyMatchup.AwayTeamID">@Model.FantasyMatchup.AwayTeamNav.Name</a></div>
                         <div class="text-center">@Model.FantasyMatchup.AwayTeamNav.UserNav.UserName</div>
@@ -28,6 +29,12 @@
                                     <th>Pos</th>
                                     <th>Player</th>
                                     <th>Opp</th>
+                                    <th>Pts</th>
+                                    <th>Ast</th>
+                                    <th>Rbd</th>
+                                    <th>Stl</th>
+                                    <th>Blk</th>
+                                    <th>TO</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -49,6 +56,24 @@
                                             <img src="@Model.AwayOpp[entry.Key]" class="teamLogoSM" />
                                         }
                                     </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Points : 0)
+                                    </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Assists : 0)
+                                    </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Rebounds : 0)
+                                    </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Steals : 0)
+                                    </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].BlockedShots : 0)
+                                    </td>
+                                    <td>
+                                        @(Model.AwayStats[entry.Key] != null ? Model.AwayStats[entry.Key].Turnovers : 0)
+                                    </td>
                                 </tr>
                                 }
                             </tbody>
@@ -59,8 +84,10 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="card w-100">
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card w-100 matchups-card">
                     <div class="card-header">
                         <div class="text-center"><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@Model.FantasyMatchup.HomeTeamID">@Model.FantasyMatchup.HomeTeamNav.Name</a></div>
                         <div class="text-center">@Model.FantasyMatchup.HomeTeamNav.UserNav.UserName</div>
@@ -72,34 +99,58 @@
                                     <th>Pos</th>
                                     <th>Player</th>
                                     <th>Opp</th>
+                                    <th>Pts</th>
+                                    <th>Ast</th>
+                                    <th>Rbd</th>
+                                    <th>Stl</th>
+                                    <th>Blk</th>
+                                    <th>TO</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (KeyValuePair<string, Player> entry in Model.HomeRoster)
                                 {
-                                <tr>
-                                    <td>@entry.Key</td>
-                                    @if (entry.Value != null)
-                                    {
-                                        <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
-                                    }
-                                    else
-                                    {
-                                        <td></td>
-                                    }
-                                    <td>
-                                        @if (Model.HomeOpp[entry.Key] != null)
+                                    <tr>
+                                        <td>@entry.Key</td>
+                                        @if (entry.Value != null)
                                         {
-                                        <img src="@Model.HomeOpp[entry.Key]" class="teamLogoSM" />
+                                            <td><a asp-controller="Players" asp-action="Details" asp-route-id="@entry.Value.PlayerID">@entry.Value.FullName</a></td>
                                         }
-                                    </td>
-                                </tr>
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>
+                                            @if (Model.HomeOpp[entry.Key] != null)
+                                            {
+                                                <img src="@Model.HomeOpp[entry.Key]" class="teamLogoSM" />
+                                            }
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Points : 0)
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Assists : 0)
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Rebounds : 0)
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Steals : 0)
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].BlockedShots : 0)
+                                        </td>
+                                        <td>
+                                            @(Model.HomeStats[entry.Key] != null ? Model.HomeStats[entry.Key].Turnovers : 0)
+                                        </td>
+                                    </tr>
                                 }
                             </tbody>
                         </table>
                     </div>
                     <div class="card-footer text-center">
-                        <div class="text-center">Score: @Model.FantasyMatchup.AwayTeamScore</div>
+                        <div class="text-center">Score: @Model.FantasyMatchup.HomeTeamScore</div>
                     </div>
                 </div>
             </div>

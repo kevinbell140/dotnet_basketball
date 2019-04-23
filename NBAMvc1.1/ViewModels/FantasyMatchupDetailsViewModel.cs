@@ -22,6 +22,9 @@ namespace NBAMvc1._1.ViewModels
 
         public Dictionary<string, string> AwayOpp { get; set; }
 
+        public Dictionary<string, PlayerGameStats> HomeStats { get; set; }
+
+        public Dictionary<string, PlayerGameStats> AwayStats { get; set; }
 
 
         public DateTime Date { get; set; }
@@ -68,6 +71,32 @@ namespace NBAMvc1._1.ViewModels
             };
 
             AwayOpp = new Dictionary<string, string>
+            {
+                { "PG1", null},
+                { "PG2", null},
+                { "SG1", null},
+                { "SG2", null},
+                { "SF1", null},
+                { "SF2", null},
+                { "PF1", null},
+                { "PF2", null},
+                { "C", null},
+            };
+
+            HomeStats = new Dictionary<string, PlayerGameStats>
+            {
+                { "PG1", null},
+                { "PG2", null},
+                { "SG1", null},
+                { "SG2", null},
+                { "SF1", null},
+                { "SF2", null},
+                { "PF1", null},
+                { "PF2", null},
+                { "C", null},
+            };
+
+            AwayStats = new Dictionary<string, PlayerGameStats>
             {
                 { "PG1", null},
                 { "PG2", null},
