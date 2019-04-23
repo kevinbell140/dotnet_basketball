@@ -50,13 +50,6 @@ namespace NBAMvc1._1.Models
             return View(playerGameStats);
         }
 
-        // GET: PlayerGameStats/Create
-        public IActionResult Create()
-        {
-            ViewData["GameID"] = new SelectList(_context.Game, "GameID", "GameID");
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID");
-            return View();
-        }
 
         // POST: PlayerGameStats/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -71,24 +64,6 @@ namespace NBAMvc1._1.Models
             }
             return null;
 
-        }
-
-        // GET: PlayerGameStats/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerGameStats = await _context.PlayerGameStats.FindAsync(id);
-            if (playerGameStats == null)
-            {
-                return NotFound();
-            }
-            ViewData["GameID"] = new SelectList(_context.Game, "GameID", "GameID", playerGameStats.GameID);
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerGameStats.PlayerID);
-            return View(playerGameStats);
         }
 
         // POST: PlayerGameStats/Edit/5
@@ -177,7 +152,6 @@ namespace NBAMvc1._1.Models
                     }
                 }
             }
-
             if (ModelState.IsValid)
             {
                 try

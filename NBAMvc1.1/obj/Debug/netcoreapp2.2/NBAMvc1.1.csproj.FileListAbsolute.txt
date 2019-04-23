@@ -92,10 +92,8 @@ C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.TagHelpers.output.cache
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.RazorCoreGenerate.cache
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\_ViewStart.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Create.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Delete.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Details.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Edit.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Home\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Home\Privacy.g.cshtml.cs
@@ -109,10 +107,8 @@ C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\News\Details.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\News\Edit.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\News\Index.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Create.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Delete.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Details.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Edit.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Create.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Delete.g.cshtml.cs

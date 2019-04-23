@@ -103,17 +103,18 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
+        public Game Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
         {
+            if(game.Status == "Canceled" || game.DateTime.Year != 2019)
+            {
+                return null;
+            }
+
             if (ModelState.IsValid)
             {
-                _context.Add(game);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return game;
             }
-            ViewData["AwayTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.AwayTeamID);
-            ViewData["HomeTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.HomeTeamID);
-            return View(game);
+            return null;
         }
 
         // GET: Games/Edit/5
@@ -139,36 +140,18 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
+        public Game Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
         {
             if (id != game.GameID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(game);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!GameExists(game.GameID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return game;
             }
-            ViewData["AwayTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.AwayTeamID);
-            ViewData["HomeTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.HomeTeamID);
-            return View(game);
+            return null;
         }
 
         // GET: Games/Delete/5
@@ -213,20 +196,40 @@ namespace NBAMvc1._1.Controllers
 
             var games = await _service.FetchGames();
 
+            List<Game> gamesList = new List<Game>();
+            List<Game> editedList = new List<Game>();
+
             foreach (Game g in games)
             {
                 var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
 
                 if (!exists)
                 {
-                    await Create(g);
+                    Game created = Create(g);
+                    if (created != null)
+                        gamesList.Add(created);
                 }
                 else
                 {
-                    await Edit(g.GameID, g);
+                    Game edited = Edit(g.GameID, g);
+                    if (edited != null)
+                        editedList.Add(edited);           
                 }
             }
-
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(gamesList);
+                    _context.UpdateRange(editedList);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
             return RedirectToAction(nameof(Index));
         }
     }

@@ -92,7 +92,14 @@ namespace NBAMvc1._1.Services
 
             var responseString = await response.Content.ReadAsStringAsync();
 
-            var games = JsonConvert.DeserializeObject<List<Game>>(responseString);
+            //there were null date time values in response string today, the settings ignored the exception
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var games = JsonConvert.DeserializeObject<List<Game>>(responseString, settings);
 
             return games;
         }

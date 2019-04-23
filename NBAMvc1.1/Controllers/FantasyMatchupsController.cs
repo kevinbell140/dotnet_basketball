@@ -79,7 +79,7 @@ namespace NBAMvc1._1.Controllers
                     .Include(g => g.PlayerGameStatsNav)
                     .Include(g => g.HomeTeamNav)
                     .Include(g => g.AwayTeamNav)
-                    .Where(g => g.DateTime.Date == DateTime.Today.Date)
+                    .Where(g => g.DateTime == DateTime.Today.Date)
                     .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
                     .FirstOrDefaultAsync();
 
