@@ -30,40 +30,23 @@ namespace NBAMvc1._1.Models
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: PlayerGameStats/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerGameStats = await _context.PlayerGameStats
-                .Include(p => p.GameNav)
-                .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(m => m.StatID == id);
-            if (playerGameStats == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerGameStats);
-        }
-
-
         // POST: PlayerGameStats/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PlayerGameStats Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
+        private PlayerGameStats Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
         {      
             if (ModelState.IsValid)
             {
-                return playerGameStats;
+                Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerGameStats.PlayerID);
+
+                if (playerExists)
+                {
+                    return playerGameStats;
+                }
             }
             return null;
-
         }
 
         // POST: PlayerGameStats/Edit/5
@@ -71,7 +54,7 @@ namespace NBAMvc1._1.Models
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public PlayerGameStats Edit(int id, [Bind("StatID,PlayerID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
+        private PlayerGameStats Edit(int id, [Bind("StatID,PlayerID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
         {
             if (id != playerGameStats.StatID)
             {
@@ -80,48 +63,19 @@ namespace NBAMvc1._1.Models
 
             if (ModelState.IsValid)
             {
-                return playerGameStats;
+                Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerGameStats.PlayerID);
+                if (playerExists)
+                {
+                    return playerGameStats;
+                }  
             }
-
             return null;
-        }
-
-        // GET: PlayerGameStats/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerGameStats = await _context.PlayerGameStats
-                .Include(p => p.GameNav)
-                .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(m => m.StatID == id);
-            if (playerGameStats == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerGameStats);
-        }
-
-        // POST: PlayerGameStats/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var playerGameStats = await _context.PlayerGameStats.FindAsync(id);
-            _context.PlayerGameStats.Remove(playerGameStats);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
         }
 
         private bool PlayerGameStatsExists(int id)
         {
             return _context.PlayerGameStats.Any(e => e.StatID == id);
         }
-
 
         //GET : Teams/Fetch()
         public async Task<IActionResult> Fetch()
@@ -143,12 +97,19 @@ namespace NBAMvc1._1.Models
 
                     if (!await _context.PlayerGameStats.AsNoTracking().AnyAsync(s => s.StatID == p.StatID))
                     {
-                        created.Add(Create(p));
+                        var createdStat = Create(p);
+                        if(createdStat != null)
+                        {
+                            created.Add(createdStat);
+                        }
                     }
                     else
                     {
-                        updated.Add(Edit(p.StatID, p));
-
+                        var editedStat = Edit(p.StatID, p);
+                        if(editedStat != null)
+                        {
+                            updated.Add(editedStat);
+                        }
                     }
                 }
             }
@@ -166,8 +127,7 @@ namespace NBAMvc1._1.Models
                 }
 
                 return RedirectToAction(nameof(Index));
-            }
-            
+            }          
             return RedirectToAction(nameof(Index));
         }
     }

@@ -169,44 +169,19 @@ namespace NBAMvc1._1.Controllers
         }
 
 
-        // GET: Teams/Create
-        [Authorize(Policy = "AdminOnly")]
-        public IActionResult Create()
-        {
-            return View();
-        }
-
         // POST: Teams/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
+        public Team Create([Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(team);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return team;
             }
-            return View(team);
-        }
-
-        // GET: Teams/Edit/5
-        private async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var team = await _context.Team.FindAsync(id);
-            if (team == null)
-            {
-                return NotFound();
-            }
-            return View(team);
+            return null;
         }
 
         // POST: Teams/Edit/5
@@ -214,66 +189,20 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        private async Task<IActionResult> Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
+        private Team Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
         {
             if (id != team.TeamID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(team);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TeamExists(team.TeamID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return team;
             }
-            return View(team);
+            return null;
         }
 
-        // GET: Teams/Delete/5
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var team = await _context.Team
-                .FirstOrDefaultAsync(m => m.TeamID == id);
-            if (team == null)
-            {
-                return NotFound();
-            }
-
-            return View(team);
-        }
-
-        // POST: Teams/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy= "AdminOnly")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var team = await _context.Team.FindAsync(id);
-            _context.Team.Remove(team);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool TeamExists(int id)
         {
@@ -286,6 +215,8 @@ namespace NBAMvc1._1.Controllers
         {
             List<Team> teams = await _service.FetchTeams();
 
+            List<Team> created = new List<Team>();
+            List<Team> updated = new List<Team>();
             foreach (Team t in teams)
             {
 
@@ -293,15 +224,30 @@ namespace NBAMvc1._1.Controllers
 
                 if (!exists)
                 {
-                    await Create(t);
+                    created.Add(Create(t));
                 }
                 else
                 {
-                    await Edit(t.TeamID, t);
+                    updated.Add(Edit(t.TeamID, t));
                 }
             }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

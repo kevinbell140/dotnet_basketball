@@ -13,9 +13,6 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.PlayNav.LastName)
-            </th>
-            <th>
                 @Html.DisplayNameFor(model => model.Games)
             </th>
             <th>
@@ -45,15 +42,14 @@
             <th>
                 @Html.DisplayNameFor(model => model.Turnovers)
             </th>
-            <th></th>
+            <th>
+                @Html.DisplayNameFor(model => model.PlayNav)
+            </th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlayNav.LastName)
-            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Games)
             </td>
@@ -85,9 +81,7 @@
                 @Html.DisplayFor(modelItem => item.Turnovers)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.StatID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.StatID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.StatID">Delete</a>
+                @Html.DisplayFor(modelItem => item.PlayNav.PlayerID)
             </td>
         </tr>
 }

@@ -53,110 +53,34 @@ namespace NBAMvc1._1.Controllers
             return View(news);
         }
 
-        // GET: News/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
 
         // POST: News/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
+        public News Create([Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(news);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return news;
             }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", news.PlayerID);
-            return View(news);
-        }
-
-        // GET: News/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _context.News.FindAsync(id);
-            if (news == null)
-            {
-                return NotFound();
-            }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", news.PlayerID);
-            return View(news);
+            return null;
         }
 
         // POST: News/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
+        public News Edit(int id, [Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
         {
             if (id != news.NewsID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(news);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!NewsExists(news.NewsID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return news;
             }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", news.PlayerID);
-            return View(news);
-        }
-
-        // GET: News/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _context.News
-                .Include(n => n.PlayerNav)
-                .FirstOrDefaultAsync(m => m.NewsID == id);
-            if (news == null)
-            {
-                return NotFound();
-            }
-
-            return View(news);
-        }
-
-        // POST: News/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var news = await _context.News.FindAsync(id);
-            _context.News.Remove(news);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return null;
         }
 
         private bool NewsExists(int id)
@@ -164,22 +88,48 @@ namespace NBAMvc1._1.Controllers
             return _context.News.Any(e => e.NewsID == id);
         }
 
-
-
         public async Task<IActionResult> Fetch()
         {
             List<News> news = await _service.FetchNews();
+            List<News> created = new List<News>();
+            List<News> updated = new List<News>();
 
             foreach (News n in news)
             {
-
                 var exists = await _context.News.AnyAsync(a => a.NewsID == n.NewsID);
 
                 if (!exists)
                 {
-                    await Create(n);
+                    var createdNews = Create(n);
+                    if(createdNews != null)
+                    {
+                        created.Add(createdNews);
+                    }
+                }
+                else
+                {
+                    var updatedNews = Edit(n.NewsID, n);
+                    if(updatedNews != null)
+                    {
+                        updated.Add(updatedNews);
+                    }
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
                 }
 
+                return RedirectToAction(nameof(Index));
             }
             return RedirectToAction(nameof(Index));
         }

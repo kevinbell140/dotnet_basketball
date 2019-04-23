@@ -23,7 +23,6 @@ namespace NBAMvc1._1.Controllers
             _service = service;
         }
 
-
         // GET: Standings
         public async Task<IActionResult> Index(string filter = "Eastern")
         {
@@ -40,70 +39,21 @@ namespace NBAMvc1._1.Controllers
         }
 
 
-        // GET: Standings/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var standings = await _context.Standings
-                .Include(s => s.TeamNav)
-                .FirstOrDefaultAsync(m => m.TeamID == id);
-            if (standings == null)
-            {
-                return NotFound();
-            }
-
-            return View(standings);
-        }
-
-
-
-        // GET: Standings/Create
-        [Authorize(Policy = "AdminOnly")]
-        private IActionResult Create()
-        {
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key");
-            return View();
-        }
-
         // POST: Standings/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Create([Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
+        private Standings Create([Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(standings);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return standings;
             }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", standings.TeamID);
-            return View(standings);
+            return null;
         }
 
-        // GET: Standings/Edit/5
-        [Authorize(Policy = "AdminOnly")]
-        private async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var standings = await _context.Standings.FindAsync(id);
-            if (standings == null)
-            {
-                return NotFound();
-            }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", standings.TeamID);
-            return View(standings);
-        }
 
         // POST: Standings/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -111,67 +61,18 @@ namespace NBAMvc1._1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
-        private async Task<IActionResult> Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
+        private Standings Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
         {
             if (id != standings.TeamID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(standings);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StandingsExists(standings.TeamID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return standings;
             }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", standings.TeamID);
-            return View(standings);
-        }
-
-        // GET: Standings/Delete/5
-        [Authorize(Policy = "AdminOnly")]
-        private async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var standings = await _context.Standings
-                .Include(s => s.TeamNav)
-                .FirstOrDefaultAsync(m => m.TeamID == id);
-            if (standings == null)
-            {
-                return NotFound();
-            }
-
-            return View(standings);
-        }
-
-        // POST: Standings/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy = "AdminOnly")]
-        private async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var standings = await _context.Standings.FindAsync(id);
-            _context.Standings.Remove(standings);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return null;
         }
 
         private bool StandingsExists(int id)
@@ -184,18 +85,36 @@ namespace NBAMvc1._1.Controllers
         {
             var standings = await _service.FetchStandings();
 
+            List<Standings> created = new List<Standings>();
+            List<Standings> updated = new List<Standings>();
+
             foreach (Standings s in standings)
             {
                 var exists = await _context.Standings.AnyAsync(a => a.TeamID == s.TeamID);
 
                 if (!exists)
                 {
-                    await Create(s);
+                    created.Add(Create(s));
                 }
                 else
                 {
-                    await Edit(s.TeamID, s);
+                    updated.Add(Edit(s.TeamID, s));
                 }
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Index));
             }
             return RedirectToAction("Index");
         }

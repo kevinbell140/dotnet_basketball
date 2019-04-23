@@ -199,13 +199,6 @@ namespace NBAMvc1._1.Controllers
             return View(viewModel);
         }
 
-        // GET: Players/Create
-        [Authorize(Policy = "AdminOnly")]
-        public IActionResult Create()
-        {
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key");
-            return View();
-        }
 
         // POST: Players/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -213,35 +206,15 @@ namespace NBAMvc1._1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Create([Bind(include: "PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
+        private Player Create([Bind(include: "PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(player);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return player;
             }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", player.TeamID);
-            return View(player);
+            return null;
         }
 
-        // GET: Players/Edit/5
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var player = await _context.Player.FindAsync(id);
-            if (player == null)
-            {
-                return NotFound();
-            }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", player.TeamID);
-            return View(player);
-        }
 
         // POST: Players/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
@@ -249,68 +222,20 @@ namespace NBAMvc1._1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Edit(int id, [Bind("PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
+        private Player Edit(int id, [Bind("PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
         {
             if (id != player.PlayerID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(player);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlayerExists(player.PlayerID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return player;
             }
-            ViewData["TeamID"] = new SelectList(_context.Team, "TeamID", "Key", player.TeamID);
-            return View(player);
+            return null;
         }
 
-        // GET: Players/Delete/5
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var player = await _context.Player
-                .Include(p => p.TeamNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id);
-            if (player == null)
-            {
-                return NotFound();
-            }
-
-            return View(player);
-        }
-
-        // POST: Players/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var player = await _context.Player.FindAsync(id);
-            _context.Player.Remove(player);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool PlayerExists(int id)
         {
@@ -321,6 +246,8 @@ namespace NBAMvc1._1.Controllers
         public async Task<ActionResult> Fetch()
         {
             List<Player> players = await _service.FetchPLayers();
+            List<Player> created = new List<Player>();
+            List<Player> updated = new List<Player>();
 
             foreach (Player p in players)
             {
@@ -328,12 +255,35 @@ namespace NBAMvc1._1.Controllers
 
                 if (!exists)
                 {
-                    await Create(p);
+                    var createdPlayer = Create(p);
+                    if(createdPlayer != null)
+                    {
+                        created.Add(createdPlayer);
+                    }
                 }
                 else
                 {
-                    await Edit(p.PlayerID, p);
+                    var editedPlayer = Edit(p.PlayerID, p);
+                    if(editedPlayer != null)
+                    {
+                        updated.Add(editedPlayer);
+                    }
                 }
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Index));
             }
 
             return RedirectToAction(nameof(Index));

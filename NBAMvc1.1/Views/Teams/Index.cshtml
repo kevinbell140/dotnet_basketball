@@ -41,7 +41,6 @@
                             <th>
                                 @Html.ActionLink("Division", "Index", new { sortOrder = ViewData["DivisionSortParam"] })
                             </th>
-                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,7 +50,7 @@
                             {
                                 <tr>
                                     <td>
-                                        <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
+                                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@item.TeamID"><img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" /></a>
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Key)
@@ -64,13 +63,6 @@
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Division)
-                                    </td>
-                                    <td>
-                                        <a asp-action="Details" asp-route-id="@item.TeamID">Details</a>
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
-                                        {
-                                            <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
-                                        }
                                     </td>
                                 </tr>
                             }
@@ -107,7 +99,7 @@
                             {
                                 <tr>
                                     <td>
-                                        <img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" />
+                                        <a asp-controller="Teams" asp-action="Details" asp-route-id="@item.TeamID"><img class="teamLogo" src="@item.WikipediaLogoUrl" alt="WikiLogo" /></a>
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Key)
@@ -120,13 +112,6 @@
                                     </td>
                                     <td>
                                         @Html.DisplayFor(modelItem => item.Division)
-                                    </td>
-                                    <td>
-                                        <a asp-action="Details" asp-route-id="@item.TeamID">Details</a>
-                                        @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
-                                        {
-                                            <a asp-action="Delete" asp-route-id="@item.TeamID">Delete</a>
-                                        }
                                     </td>
                                 </tr>
                             }

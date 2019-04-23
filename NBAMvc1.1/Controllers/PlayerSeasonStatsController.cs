@@ -25,27 +25,6 @@ namespace NBAMvc1._1.Controllers
             _service = service;
         }
 
-        public async Task<ActionResult> Fetch()
-        {
-            var stats = await _service.FetchStats();
-
-            foreach(PlayerSeasonStats s in stats)
-            {
-                var exists = await _context.PlayerSeasonStats.AnyAsync(a => a.StatID == s.StatID);
-
-                if (!exists)
-                {
-                    await Create(s);
-                }
-                else
-                {
-                    await Edit(s.StatID, s);
-                }
-            }
-            return RedirectToAction("Index");
-
-        }
-
         // GET: PlayerSeasonStats
         public async Task<IActionResult> Index()
         {
@@ -54,70 +33,23 @@ namespace NBAMvc1._1.Controllers
         }
 
 
-        // GET: PlayerSeasonStats/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerSeasonStats = await _context.PlayerSeasonStats
-                .Include(p => p.PlayNav)
-                .FirstOrDefaultAsync(m => m.StatID == id);
-            if (playerSeasonStats == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerSeasonStats);
-        }
-
-        // GET: PlayerSeasonStats/Create
-        public IActionResult Create()
-        {
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID");
-            return View();
-        }
-
         // POST: PlayerSeasonStats/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("StatID,PlayerID,Games,FieldGoalsPercentage,FreeThrowsPercentage,ThreePointersMade,Points,Assists,Rebounds,Steals,BlockedShots,Turnovers")] PlayerSeasonStats playerSeasonStats)
+        public PlayerSeasonStats Create([Bind("StatID,PlayerID,Games,FieldGoalsPercentage,FreeThrowsPercentage,ThreePointersMade,Points,Assists,Rebounds,Steals,BlockedShots,Turnovers")] PlayerSeasonStats playerSeasonStats)
         {
             if (ModelState.IsValid)
             {
-                Boolean playerExists = await _context.Player.AnyAsync(a => a.PlayerID == playerSeasonStats.PlayerID);
+                Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerSeasonStats.PlayerID);
 
-                if (!playerExists)
+                if (playerExists)
                 {
-                    return RedirectToAction(nameof(Index));
+                    return playerSeasonStats;
                 }
-                _context.Add(playerSeasonStats);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerSeasonStats.PlayerID);
-            return View(playerSeasonStats);
-        }
-
-        // GET: PlayerSeasonStats/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerSeasonStats = await _context.PlayerSeasonStats.FindAsync(id);
-            if (playerSeasonStats == null)
-            {
-                return NotFound();
-            }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerSeasonStats.PlayerID);
-            return View(playerSeasonStats);
+            return null;
         }
 
         // POST: PlayerSeasonStats/Edit/5
@@ -125,70 +57,75 @@ namespace NBAMvc1._1.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StatID,PlayerID,Games,FieldGoalsPercentage,FreeThrowsPercentage,ThreePointersMade,Points,Assists,Rebounds,Steals,BlockedShots,Turnovers")] PlayerSeasonStats playerSeasonStats)
+        public PlayerSeasonStats Edit(int id, [Bind("StatID,PlayerID,Games,FieldGoalsPercentage,FreeThrowsPercentage,ThreePointersMade,Points,Assists,Rebounds,Steals,BlockedShots,Turnovers")] PlayerSeasonStats playerSeasonStats)
         {
             if (id != playerSeasonStats.StatID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
+                Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerSeasonStats.PlayerID);
+
+                if (playerExists)
                 {
-                    _context.Update(playerSeasonStats);
-                    await _context.SaveChangesAsync();
+                    return playerSeasonStats;
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlayerSeasonStatsExists(playerSeasonStats.StatID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerSeasonStats.PlayerID);
-            return View(playerSeasonStats);
-        }
-
-        // GET: PlayerSeasonStats/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerSeasonStats = await _context.PlayerSeasonStats
-                .Include(p => p.PlayNav)
-                .FirstOrDefaultAsync(m => m.StatID == id);
-            if (playerSeasonStats == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerSeasonStats);
-        }
-
-        // POST: PlayerSeasonStats/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var playerSeasonStats = await _context.PlayerSeasonStats.FindAsync(id);
-            _context.PlayerSeasonStats.Remove(playerSeasonStats);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return null;
         }
 
         private bool PlayerSeasonStatsExists(int id)
         {
             return _context.PlayerSeasonStats.Any(e => e.StatID == id);
+        }
+
+
+        public async Task<ActionResult> Fetch()
+        {
+            var stats = await _service.FetchStats();
+
+            List<PlayerSeasonStats> created = new List<PlayerSeasonStats>();
+            List<PlayerSeasonStats> updated = new List<PlayerSeasonStats>();
+
+            foreach (PlayerSeasonStats s in stats)
+            {
+                var exists = await _context.PlayerSeasonStats.AnyAsync(a => a.StatID == s.StatID);
+
+                if (!exists)
+                {
+                    var createdStat = Create(s);
+                    if(createdStat != null)
+                    {
+                        created.Add(createdStat);
+                    }
+                }
+                else
+                {
+                    var updatedStat = Edit(s.StatID, s);
+                    if(updatedStat != null)
+                    {
+                        updated.Add(updatedStat);
+                    }
+                }
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(created);
+                    _context.UpdateRange(updated);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction("Index", "Players");
         }
     }
 }
