@@ -170,8 +170,6 @@ namespace NBAMvc1._1.Controllers
 
 
         // POST: Teams/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -185,8 +183,6 @@ namespace NBAMvc1._1.Controllers
         }
 
         // POST: Teams/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         private Team Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
@@ -203,7 +199,6 @@ namespace NBAMvc1._1.Controllers
             return null;
         }
 
-
         private bool TeamExists(int id)
         {
             return _context.Team.Any(e => e.TeamID == id);
@@ -211,6 +206,7 @@ namespace NBAMvc1._1.Controllers
 
 
         //GET : Teams/Fetch()
+        [Authorize(Policy ="AdminOnly")]
         public async Task<IActionResult> Fetch()
         {
             List<Team> teams = await _service.FetchTeams();

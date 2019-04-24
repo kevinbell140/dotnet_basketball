@@ -38,8 +38,9 @@ namespace NBAMvc1._1.Models
             if (ModelState.IsValid)
             {
                 Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerGameStats.PlayerID);
+                Boolean gameExists = _context.Game.Any(a => a.GameID == playerGameStats.GameID);
 
-                if (playerExists)
+                if (playerExists && gameExists)
                 {
                     return playerGameStats;
                 }
@@ -60,7 +61,8 @@ namespace NBAMvc1._1.Models
             if (ModelState.IsValid)
             {
                 Boolean playerExists = _context.Player.Any(a => a.PlayerID == playerGameStats.PlayerID);
-                if (playerExists)
+                Boolean gameExists = _context.Game.Any(a => a.GameID == playerGameStats.GameID);
+                if (playerExists && gameExists)
                 {
                     return playerGameStats;
                 }  
@@ -77,7 +79,7 @@ namespace NBAMvc1._1.Models
         public async Task<IActionResult> Fetch()
         {
             //logic to fetch all missing data
-            DateTime startDate = new DateTime(2019, 04, 22);
+            DateTime startDate = new DateTime(2019, 03, 10);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();

@@ -16,7 +16,7 @@ namespace NBAMvc1._1.Services
 
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/scores/json/teams?" + queryString;
 
@@ -33,7 +33,7 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/scores/json/Players?" + queryString;
 
@@ -50,7 +50,7 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/stats/json/PlayerSeasonStats/2019?" + queryString;
 
@@ -67,7 +67,7 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/stats/json/Standings/2019?" + queryString;
 
@@ -84,7 +84,31 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
+
+            var uri = "https://api.fantasydata.net/v3/nba/stats/json/Games/2019?" + queryString;
+
+            var response = await client.GetAsync(uri);
+
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            //there were null date time values in response string today, the settings ignored the exception
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+
+            var games = JsonConvert.DeserializeObject<List<Game>>(responseString, settings);
+
+            return games;
+        }
+
+        public async Task<List<Game>> FetchGamesPost()
+        {
+            var client = new HttpClient();
+            var queryString = HttpUtility.ParseQueryString(string.Empty);
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/stats/json/Games/2019POST?" + queryString;
 
@@ -109,7 +133,7 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/stats/json/PlayerGameStatsByDate/" + date + "?" + queryString;
 
@@ -127,7 +151,7 @@ namespace NBAMvc1._1.Services
         {
             var client = new HttpClient();
             var queryString = HttpUtility.ParseQueryString(string.Empty);
-            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "fe634e9053b84b238854e656b43138e6");
+            client.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
 
             var uri = "https://api.fantasydata.net/v3/nba/stats/json/News" + "?" + queryString;
 

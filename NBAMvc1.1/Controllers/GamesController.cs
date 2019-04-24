@@ -172,5 +172,48 @@ namespace NBAMvc1._1.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
+
+        [Authorize(Policy = "AdminOnly")]
+        public async Task<IActionResult> FetchPost()
+        {
+
+            var games = await _service.FetchGamesPost();
+
+            List<Game> gamesList = new List<Game>();
+            List<Game> editedList = new List<Game>();
+
+            foreach (Game g in games)
+            {
+                var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
+
+                if (!exists)
+                {
+                    Game created = Create(g);
+                    if (created != null)
+                        gamesList.Add(created);
+                }
+                else
+                {
+                    Game edited = Edit(g.GameID, g);
+                    if (edited != null)
+                        editedList.Add(edited);
+                }
+            }
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    await _context.AddRangeAsync(gamesList);
+                    _context.UpdateRange(editedList);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
