@@ -20,12 +20,14 @@ namespace NBAMvc1._1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
+        private readonly FantasyMatchupsController _fantasyMatchupsController;
 
-        public FantasyLeaguesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
+        public FantasyLeaguesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, FantasyMatchupsController fantasyMatchupsController)
         {
             _context = context;
             _userManager = userManager;
             _auth = auth;
+            _fantasyMatchupsController = fantasyMatchupsController;
         }
 
         // GET: FantasyLeagues
@@ -99,14 +101,19 @@ namespace NBAMvc1._1.Controllers
             if (viewModel.FantasyLeague.IsSet)
             {
                 viewModel.Matchups = await _context.FantasyMatchup
+                    .Include(m => m.AwayTeamNav)
+                    .Include(m => m.HomeTeamNav)
                     .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.SelectedWeek)
-                    .ToListAsync();
+                    .AsNoTracking().ToListAsync();
 
-                foreach(var m in viewModel.Matchups)
+                List<FantasyMatchup> updateList = new List<FantasyMatchup>();
+
+                foreach (var m in viewModel.Matchups)
                 {
-                    if(m.Week < currentWeek)
+                    if(m.Week <= currentWeek)
                     {
                         //update matchup status
+                        updateList = await UpdateMatchupStatus(m.FantasyMatchupID, currentWeek, updateList);
                         //check for game stat records
                         //if there are records then,
                         //calculate score
@@ -114,9 +121,60 @@ namespace NBAMvc1._1.Controllers
                         //update league standings
                     }
                 }
+                if (ModelState.IsValid)
+                {
+                    try
+                    {
+                        _context.UpdateRange(updateList);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        throw;
+                    }
+                    return View(viewModel);
+                }               
+            }
+            return View(viewModel);
+        }
+
+        private async Task<List<FantasyMatchup>> UpdateMatchupScores(int id, int[] scores, List<FantasyMatchup> updateList)
+        {
+            var matchup = await _context.FantasyMatchup
+                .Where(x => x.FantasyMatchupID == id)
+                .AsNoTracking().FirstOrDefaultAsync();
+
+            matchup.HomeTeamScore = scores[0];
+            matchup.AwayTeamScore = scores[1];
+
+            FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
+            if (updatedMatch != null)
+            {
+                updateList.Add(updatedMatch);
+            }
+            return updateList;
+        }
+
+        private async Task<List<FantasyMatchup>> UpdateMatchupStatus(int id, int currentWeek, List<FantasyMatchup> updateList)
+        {
+            var matchup = await _context.FantasyMatchup
+                .Where(x => x.FantasyMatchupID == id)
+                .AsNoTracking().FirstOrDefaultAsync();
+
+            if(matchup.Week < currentWeek)
+            {
+                matchup.Status = "Final";
+            }else
+            {
+                matchup.Status = "In Progress";
             }
 
-            return View(viewModel);
+            FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
+            if(updatedMatch != null)
+            {
+                updateList.Add(updatedMatch);
+            }
+            return updateList;
         }
 
         // GET: FantasyLeagues/Create

@@ -53,7 +53,7 @@ namespace NBAMvc1._1
                 microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
             });
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().AddControllersAsServices().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthorization(options =>
             {

@@ -11,7 +11,7 @@
         <div class="row">
             <div class="col-md-12 text-center">
                 <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
-                <h6>Week (@Model.FantasyMatchup.Week) -- @Model.Date.ToShortDateString()</h6>
+                <h6>Week (@Model.FantasyMatchup.Week) -- @Model.Date.ToShortDateString() - <span class="@(Model.FantasyMatchup.Status == "In Progress" ? "in-progress": "not-in-progress")">@Model.FantasyMatchup.Status</span> </h6>
                 <h6>
                     <span class="@(Model.HomeScore < Model.AwayScore ? "matchup-header-winner" : " ")">
                         @Model.AwayScore : @Model.FantasyMatchup.AwayTeamNav.Name

@@ -115,7 +115,9 @@ namespace NBAMvc1._1.Models
         {
             get
             {
-                return (Points + (Assists * 3) + (Rebounds * (decimal)1.2) + (Steals * 2) + (BlockedShots * 2) - Turnovers);
+                decimal total = 0;
+                total += (Points + (Assists * 3) + (Rebounds * (decimal)1.2) + (Steals * 2) + (BlockedShots * 2) - Turnovers);
+                return total;
             }
         }
 
