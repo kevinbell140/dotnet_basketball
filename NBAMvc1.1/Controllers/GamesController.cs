@@ -90,20 +90,10 @@ namespace NBAMvc1._1.Controllers
             return View(game);
         }
 
-        // GET: Games/Create
-        public IActionResult Create()
-        {
-            ViewData["AwayTeamID"] = new SelectList(_context.Team, "TeamID", "Key");
-            ViewData["HomeTeamID"] = new SelectList(_context.Team, "TeamID", "Key");
-            return View();
-        }
-
         // POST: Games/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public Game Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
+        private Game Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
         {
             if(game.Status == "Canceled" || game.DateTime.Year != 2019)
             {
@@ -117,30 +107,10 @@ namespace NBAMvc1._1.Controllers
             return null;
         }
 
-        // GET: Games/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var game = await _context.Game.FindAsync(id);
-            if (game == null)
-            {
-                return NotFound();
-            }
-            ViewData["AwayTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.AwayTeamID);
-            ViewData["HomeTeamID"] = new SelectList(_context.Team, "TeamID", "Key", game.HomeTeamID);
-            return View(game);
-        }
-
         // POST: Games/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public Game Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
+        private Game Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
         {
             if (id != game.GameID)
             {
@@ -154,36 +124,6 @@ namespace NBAMvc1._1.Controllers
             return null;
         }
 
-        // GET: Games/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var game = await _context.Game
-                .Include(g => g.AwayTeamNav)
-                .Include(g => g.HomeTeamNav)
-                .FirstOrDefaultAsync(m => m.GameID == id);
-            if (game == null)
-            {
-                return NotFound();
-            }
-
-            return View(game);
-        }
-
-        // POST: Games/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var game = await _context.Game.FindAsync(id);
-            _context.Game.Remove(game);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool GameExists(int id)
         {

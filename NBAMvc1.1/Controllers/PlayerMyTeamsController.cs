@@ -37,26 +37,6 @@ namespace NBAMvc1._1.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: PlayerMyTeams/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var playerMyTeam = await _context.PlayerMyTeam
-                .Include(p => p.MyTeamNav)
-                .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id);
-            if (playerMyTeam == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerMyTeam);
-        }
-
         // GET: PlayerMyTeams/Create
         public async Task<IActionResult> Create(int? teamID, string sortParam, string currentFilter, string searchString, int? pageNumber, string posFilter)
         {
@@ -223,8 +203,6 @@ namespace NBAMvc1._1.Controllers
         }
 
         // POST: PlayerMyTeams/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PlayerID,MyTeamID")] PlayerMyTeam playerMyTeam)
@@ -257,92 +235,6 @@ namespace NBAMvc1._1.Controllers
             }
 
             return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
-        }
-
-        // GET: PlayerMyTeams/Edit/5
-        public async Task<IActionResult> Edit(int? playerID, int? myTeamID)
-        {
-            if (playerID == null || myTeamID == null)
-            {
-                return NotFound();
-            }
-
-            var playerMyTeam = await _context.PlayerMyTeam
-                .Where(c => c.MyTeamID == myTeamID && c.PlayerID == playerID)
-                .FirstOrDefaultAsync();
-
-            if (playerMyTeam == null)
-            {
-                return NotFound();
-            }
-
-            return View(playerMyTeam);
-        }
-
-        // POST: PlayerMyTeams/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PlayerID,MyTeamID")] PlayerMyTeam playerMyTeam)
-        {
-            if (id != playerMyTeam.PlayerID)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(playerMyTeam);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!PlayerMyTeamExists(playerMyTeam.PlayerID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", playerMyTeam.MyTeamID);
-            ViewData["PlayerID"] = new SelectList(_context.Player, "PlayerID", "PlayerID", playerMyTeam.PlayerID);
-            return View(playerMyTeam);
-        }
-
-
-        // GET: PlayerMyTeams/Delete/5
-        public async Task<IActionResult> Delete(int? playerID, int? myTeamID)
-        {
-            if (playerID == null || myTeamID == null)
-            {
-                return NotFound();
-            }
-
-            var playerMyTeam = await _context.PlayerMyTeam
-                .Include(p => p.MyTeamNav)
-                .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == playerID && m.MyTeamID == myTeamID );
-
-            if (playerMyTeam == null)
-            {
-                return NotFound();
-            }
-
-            var isAuthorized = await _auth.AuthorizeAsync(User, playerMyTeam, Operations.Delete);
-
-            if (!isAuthorized.Succeeded)
-            {
-                return new ChallengeResult();
-            }
-
-            return View(playerMyTeam);
         }
 
         // POST: PlayerMyTeams/Delete/5

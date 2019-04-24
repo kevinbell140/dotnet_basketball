@@ -175,8 +175,7 @@ namespace NBAMvc1._1.Controllers
                 .Include(p => p.TeamNav).ThenInclude(p => p.AwayGamesNav)
                 .Include(p => p.StatsNav)
                 .Include(p => p.GameStatsNav)
-                .FirstOrDefaultAsync(m => m.PlayerID == id),     
-                
+                .FirstOrDefaultAsync(m => m.PlayerID == id),                     
             };
 
             viewModel.Games = _context.Game
@@ -195,14 +194,10 @@ namespace NBAMvc1._1.Controllers
                     .FirstOrDefault();
                 viewModel.GameLogs.Add(log);               
             }
-
             return View(viewModel);
         }
 
-
         // POST: Players/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
@@ -215,10 +210,7 @@ namespace NBAMvc1._1.Controllers
             return null;
         }
 
-
         // POST: Players/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
@@ -228,14 +220,12 @@ namespace NBAMvc1._1.Controllers
             {
                 return null;
             }
-
             if (ModelState.IsValid)
             {
                 return player;
             }
             return null;
         }
-
 
         private bool PlayerExists(int id)
         {
@@ -282,12 +272,9 @@ namespace NBAMvc1._1.Controllers
                 {
                     throw;
                 }
-
                 return RedirectToAction(nameof(Index));
             }
-
             return RedirectToAction(nameof(Index));
         }
-
     }
 }

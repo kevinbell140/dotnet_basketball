@@ -11,12 +11,12 @@
                     <div class="container">
                         <div class="row">
                             <div class="col-md-3 offset-2">
-                                <img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID"><img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogo" /></a>
                                 @Model.AwayTeamNav.FullName
                                 <span style="font-size:large">@Model.AwayTeamScore</span>
                             </div>
                             <div class="col-md-3 offset-1">
-                                <img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" />
+                                <a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID"><img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogo" /></a>
                                 @Model.HomeTeamNav.FullName
                                 <span style="font-size:large">@Model.HomeTeamScore</span>
                             </div>

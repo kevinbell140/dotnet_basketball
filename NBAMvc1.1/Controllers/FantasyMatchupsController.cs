@@ -293,7 +293,6 @@ namespace NBAMvc1._1.Controllers
                         matchups.Add(nextMatchup);
                     }
                 }
-
                 if (ModelState.IsValid)
                 {
                     _context.FantasyMatchup.AddRange(matchups);
@@ -301,34 +300,11 @@ namespace NBAMvc1._1.Controllers
                     return RedirectToAction("IsSetConfrim", "FantasyLeagues", new { id = leagueID });
                 }
             }
-
-
             return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
         }
 
-
-        // GET: FantasyMatchups/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var fantasyMatchup = await _context.FantasyMatchup.FindAsync(id);
-            if (fantasyMatchup == null)
-            {
-                return NotFound();
-            }
-            ViewData["AwayTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyMatchup.AwayTeamID);
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID", fantasyMatchup.FantasyLeagueID);
-            ViewData["HomeTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyMatchup.HomeTeamID);
-            return View(fantasyMatchup);
-        }
-
+        //keeping this for now just in case, might delete later
         // POST: FantasyMatchups/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("FantasyMatchupID,FantasyLeagueID,Week,Status,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore")] FantasyMatchup fantasyMatchup)
@@ -363,39 +339,6 @@ namespace NBAMvc1._1.Controllers
             ViewData["HomeTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyMatchup.HomeTeamID);
             return View(fantasyMatchup);
         }
-
-        // GET: FantasyMatchups/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var fantasyMatchup = await _context.FantasyMatchup
-                .Include(f => f.AwayTeamNav)
-                .Include(f => f.FantasyLeagueNav)
-                .Include(f => f.HomeTeamNav)
-                .FirstOrDefaultAsync(m => m.FantasyMatchupID == id);
-            if (fantasyMatchup == null)
-            {
-                return NotFound();
-            }
-
-            return View(fantasyMatchup);
-        }
-
-        // POST: FantasyMatchups/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var fantasyMatchup = await _context.FantasyMatchup.FindAsync(id);
-            _context.FantasyMatchup.Remove(fantasyMatchup);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
         private bool FantasyMatchupExists(int id)
         {
             return _context.FantasyMatchup.Any(e => e.FantasyMatchupID == id);

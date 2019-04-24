@@ -23,13 +23,13 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                            <td><a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.AwayTeamID"><img src="@Model.AwayTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></a></td>
                             <td>@(Model.PointSpread > 0 ? Model.PointSpread.ToString() : "")</td>
                             <td>@Model.AwayTeamMoneyLine</td>
                             <td>@Model.OverUnder</td>
                         </tr>
                         <tr>
-                            <td><img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></td>
+                            <td><a asp-controller="Teams" asp-action="Details" asp-route-id="@Model.HomeTeamID"><img src="@Model.HomeTeamNav.WikipediaLogoUrl" class="teamLogoSM" /></a></td>
                             <td>@(Model.PointSpread < 0 ? Model.PointSpread.ToString() : "")</td>
                             <td>@Model.HomeTeamMoneyLine</td>
                             <td>@Model.OverUnder</td>

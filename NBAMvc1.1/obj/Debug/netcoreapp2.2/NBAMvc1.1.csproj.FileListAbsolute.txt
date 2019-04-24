@@ -92,7 +92,6 @@ C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.TagHelpers.output.cache
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.RazorCoreGenerate.cache
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Areas\Identity\Pages\_ViewStart.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Delete.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Details.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Home\Index.g.cshtml.cs
@@ -107,8 +106,6 @@ C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerGameStats\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Create.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Delete.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Details.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Edit.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerMyTeams\Index.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Players\Details.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Players\Index.g.cshtml.cs
@@ -137,13 +134,9 @@ C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\_DetailsAfter.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\_IndexAfter.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Games\_IndexBefore.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Delete.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Details.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Index.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Create.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Delete.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Details.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Index.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerSeasonStats\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Edit.g.cshtml.cs

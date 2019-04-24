@@ -31,8 +31,6 @@ namespace NBAMvc1._1.Models
         }
 
         // POST: PlayerGameStats/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         private PlayerGameStats Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
@@ -50,8 +48,6 @@ namespace NBAMvc1._1.Models
         }
 
         // POST: PlayerGameStats/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         private PlayerGameStats Edit(int id, [Bind("StatID,PlayerID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
@@ -81,7 +77,7 @@ namespace NBAMvc1._1.Models
         public async Task<IActionResult> Fetch()
         {
             //logic to fetch all missing data
-            DateTime startDate = new DateTime(2019, 04, 18);
+            DateTime startDate = new DateTime(2019, 04, 22);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
