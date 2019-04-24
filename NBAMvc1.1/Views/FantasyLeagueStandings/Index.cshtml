@@ -1,0 +1,77 @@
+﻿@model IEnumerable<NBAMvc1._1.Models.FantasyLeagueStandings>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Wins)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Losses)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Draws)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FantasyPoints)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FantasyPointsAgainst)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GamesBack)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MyTeamNav)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FantasyLeagueNav)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Wins)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Losses)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Draws)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FantasyPoints)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FantasyPointsAgainst)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GamesBack)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.MyTeamNav.MyTeamID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FantasyLeagueNav.FantasyLeagueID)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.FantasyLeagueStandingsID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.FantasyLeagueStandingsID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.FantasyLeagueStandingsID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

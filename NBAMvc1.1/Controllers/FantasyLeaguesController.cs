@@ -112,13 +112,7 @@ namespace NBAMvc1._1.Controllers
                 {
                     if(m.Week <= currentWeek)
                     {
-                        //update matchup status
                         updateList = await UpdateMatchupStatus(m.FantasyMatchupID, currentWeek, updateList);
-                        //check for game stat records
-                        //if there are records then,
-                        //calculate score
-                        //update score
-                        //update league standings
                     }
                 }
                 if (ModelState.IsValid)
@@ -138,23 +132,6 @@ namespace NBAMvc1._1.Controllers
             return View(viewModel);
         }
 
-        private async Task<List<FantasyMatchup>> UpdateMatchupScores(int id, int[] scores, List<FantasyMatchup> updateList)
-        {
-            var matchup = await _context.FantasyMatchup
-                .Where(x => x.FantasyMatchupID == id)
-                .AsNoTracking().FirstOrDefaultAsync();
-
-            matchup.HomeTeamScore = scores[0];
-            matchup.AwayTeamScore = scores[1];
-
-            FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
-            if (updatedMatch != null)
-            {
-                updateList.Add(updatedMatch);
-            }
-            return updateList;
-        }
-
         private async Task<List<FantasyMatchup>> UpdateMatchupStatus(int id, int currentWeek, List<FantasyMatchup> updateList)
         {
             var matchup = await _context.FantasyMatchup
@@ -168,6 +145,11 @@ namespace NBAMvc1._1.Controllers
             {
                 matchup.Status = "In Progress";
             }
+
+            var scores = await _fantasyMatchupsController.CalculateScore(matchup.FantasyMatchupID);
+
+            matchup.HomeTeamScore = scores[0];
+            matchup.AwayTeamScore = scores[1];
 
             FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
             if(updatedMatch != null)

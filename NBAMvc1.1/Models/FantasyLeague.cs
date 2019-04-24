@@ -26,7 +26,8 @@ namespace NBAMvc1._1.Models
 
         public virtual List<MyTeam> TeamsNav { get; set; }
 
-
         public virtual ApplicationUser ComissionerNav { get; set; }
+
+        public virtual IEnumerable<FantasyLeagueStandings> FantasyLeagueStandingsNav { get; set; }
     }
 }

@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NBAMvc1._1.Data;
 
 namespace NBAMvc1._1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190424194945_MatchupScoresDecimal")]
+    partial class MatchupScoresDecimal
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -205,41 +207,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.HasIndex("CommissionerID");
 
                     b.ToTable("FantasyLeague");
-                });
-
-            modelBuilder.Entity("NBAMvc1._1.Models.FantasyLeagueStandings", b =>
-                {
-                    b.Property<int>("FantasyLeagueStandingsID")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("Draws");
-
-                    b.Property<int>("FantasyLeagueID");
-
-                    b.Property<decimal>("FantasyPoints")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<decimal>("FantasyPointsAgainst")
-                        .HasColumnType("decimal(18, 2)");
-
-                    b.Property<int>("GamesBack");
-
-                    b.Property<int>("Losses");
-
-                    b.Property<int?>("MyTeamID");
-
-                    b.Property<int>("Wins");
-
-                    b.HasKey("FantasyLeagueStandingsID");
-
-                    b.HasIndex("FantasyLeagueID");
-
-                    b.HasIndex("MyTeamID")
-                        .IsUnique()
-                        .HasFilter("[MyTeamID] IS NOT NULL");
-
-                    b.ToTable("FantasyLeagueStandings");
                 });
 
             modelBuilder.Entity("NBAMvc1._1.Models.FantasyMatchup", b =>
@@ -679,18 +646,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.HasOne("NBAMvc1._1.Areas.Identity.ApplicationUser", "ComissionerNav")
                         .WithMany()
                         .HasForeignKey("CommissionerID");
-                });
-
-            modelBuilder.Entity("NBAMvc1._1.Models.FantasyLeagueStandings", b =>
-                {
-                    b.HasOne("NBAMvc1._1.Models.FantasyLeague", "FantasyLeagueNav")
-                        .WithMany("FantasyLeagueStandingsNav")
-                        .HasForeignKey("FantasyLeagueID")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("NBAMvc1._1.Models.MyTeam", "MyTeamNav")
-                        .WithOne("FantasyLeagueStandingsNav")
-                        .HasForeignKey("NBAMvc1._1.Models.FantasyLeagueStandings", "MyTeamID");
                 });
 
             modelBuilder.Entity("NBAMvc1._1.Models.FantasyMatchup", b =>

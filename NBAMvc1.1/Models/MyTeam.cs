@@ -32,5 +32,8 @@ namespace NBAMvc1._1.Models
 
         [InverseProperty("AwayTeamNav")]
         public virtual ICollection<FantasyMatchup> AwayMatchupNav { get; set; }
+
+
+        public virtual FantasyLeagueStandings FantasyLeagueStandingsNav { get; set; }
     }
 }

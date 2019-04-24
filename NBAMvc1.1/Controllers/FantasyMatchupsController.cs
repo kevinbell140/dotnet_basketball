@@ -29,88 +29,6 @@ namespace NBAMvc1._1.Controllers
             return View(await applicationDbContext.ToListAsync());
         }
 
-        public async Task<ActionResult<decimal[]>> CalculateScore(int id)
-        {
-            var matchup = await _context.FantasyMatchup
-                .Include(f => f.AwayTeamNav).ThenInclude(f => f.UserNav)
-                .Include(f => f.FantasyLeagueNav).ThenInclude(f => f.FantasyMatchupWeeksNav)
-                .Include(f => f.HomeTeamNav).ThenInclude(f => f.UserNav)
-                .FirstOrDefaultAsync(m => m.FantasyMatchupID == id);
-
-            if(matchup == null)
-            {
-                return NotFound();
-            }
-
-            var home = await _context.PlayerMyTeam
-                 .Where(p => p.MyTeamNav.MyTeamID == matchup.HomeTeamID)
-                 .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
-                 .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
-                 .OrderBy(p => p.PlayerNav.Position)
-                 .AsNoTracking().ToListAsync();
-
-            var away = await _context.PlayerMyTeam
-                .Where(p => p.MyTeamNav.MyTeamID == matchup.AwayTeamID)
-                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
-                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
-                .OrderBy(p => p.PlayerNav.Position)
-                .AsNoTracking().ToListAsync();
-
-            var matchupWeek = await _context.FantasyMatchupWeeks
-                .Where(x => x.FantasyLeagueID == matchup.FantasyLeagueID)
-                .Where(x => x.WeekNum == matchup.Week)
-                .FirstOrDefaultAsync();
-
-            List<PlayerGameStats> homeStats = new List<PlayerGameStats>();
-            List<PlayerGameStats> awayStats = new List<PlayerGameStats>();
-
-            foreach (var p in home)
-            {
-                var gameTonight = await _context.Game
-                    .Include(g => g.PlayerGameStatsNav)
-                    .Include(g => g.HomeTeamNav)
-                    .Include(g => g.AwayTeamNav)
-                    .Where(g => g.DateTime.Date == matchupWeek.Date)
-                    .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
-                    .FirstOrDefaultAsync();
-
-                if (gameTonight != null)
-                {
-                    var stats = await _context.PlayerGameStats
-                    .Where(x => x.GameID == gameTonight.GameID)
-                    .Where(x => x.PlayerID == p.PlayerID)
-                    .FirstOrDefaultAsync();
-                    if (stats != null)
-                    {
-                        homeStats.Add(stats);
-                    }
-                }
-            }
-            foreach (var p in away)
-            {
-                var gameTonight = await _context.Game
-                    .Include(g => g.PlayerGameStatsNav)
-                    .Include(g => g.HomeTeamNav)
-                    .Include(g => g.AwayTeamNav)
-                    .Where(g => g.DateTime.Date == matchupWeek.Date)
-                    .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
-                    .FirstOrDefaultAsync();
-
-                if (gameTonight != null)
-                {
-                    var stats = await _context.PlayerGameStats
-                    .Where(x => x.GameID == gameTonight.GameID)
-                    .Where(x => x.PlayerID == p.PlayerID)
-                    .FirstOrDefaultAsync();
-                    if (stats != null)
-                    {
-                        awayStats.Add(stats);
-                    }
-                }
-            }
-            return new decimal[] { homeStats.Sum(x => x.FantasyPoints), awayStats.Sum(x => x.FantasyPoints) };
-        }
-
         // GET: FantasyMatchups/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -364,6 +282,89 @@ namespace NBAMvc1._1.Controllers
         private bool FantasyMatchupExists(int id)
         {
             return _context.FantasyMatchup.Any(e => e.FantasyMatchupID == id);
+        }
+
+        public async Task<decimal[]> CalculateScore(int id)
+        {
+            var matchup = await _context.FantasyMatchup
+                .Include(f => f.AwayTeamNav).ThenInclude(f => f.UserNav)
+                .Include(f => f.FantasyLeagueNav).ThenInclude(f => f.FantasyMatchupWeeksNav)
+                .Include(f => f.HomeTeamNav).ThenInclude(f => f.UserNav)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(m => m.FantasyMatchupID == id);
+
+            if (matchup == null)
+            {
+                return null;
+            }
+
+            var home = await _context.PlayerMyTeam
+                 .Where(p => p.MyTeamNav.MyTeamID == matchup.HomeTeamID)
+                 .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
+                 .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                 .OrderBy(p => p.PlayerNav.Position)
+                 .AsNoTracking().ToListAsync();
+
+            var away = await _context.PlayerMyTeam
+                .Where(p => p.MyTeamNav.MyTeamID == matchup.AwayTeamID)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .OrderBy(p => p.PlayerNav.Position)
+                .AsNoTracking().ToListAsync();
+
+            var matchupWeek = await _context.FantasyMatchupWeeks
+                .Where(x => x.FantasyLeagueID == matchup.FantasyLeagueID)
+                .Where(x => x.WeekNum == matchup.Week)
+                .FirstOrDefaultAsync();
+
+            List<PlayerGameStats> homeStats = new List<PlayerGameStats>();
+            List<PlayerGameStats> awayStats = new List<PlayerGameStats>();
+
+            foreach (var p in home)
+            {
+                var gameTonight = await _context.Game
+                    .Include(g => g.PlayerGameStatsNav)
+                    .Include(g => g.HomeTeamNav)
+                    .Include(g => g.AwayTeamNav)
+                    .Where(g => g.DateTime.Date == matchupWeek.Date)
+                    .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
+                    .FirstOrDefaultAsync();
+
+                if (gameTonight != null)
+                {
+                    var stats = await _context.PlayerGameStats
+                    .Where(x => x.GameID == gameTonight.GameID)
+                    .Where(x => x.PlayerID == p.PlayerID)
+                    .FirstOrDefaultAsync();
+                    if (stats != null)
+                    {
+                        homeStats.Add(stats);
+                    }
+                }
+            }
+            foreach (var p in away)
+            {
+                var gameTonight = await _context.Game
+                    .Include(g => g.PlayerGameStatsNav)
+                    .Include(g => g.HomeTeamNav)
+                    .Include(g => g.AwayTeamNav)
+                    .Where(g => g.DateTime.Date == matchupWeek.Date)
+                    .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
+                    .FirstOrDefaultAsync();
+
+                if (gameTonight != null)
+                {
+                    var stats = await _context.PlayerGameStats
+                    .Where(x => x.GameID == gameTonight.GameID)
+                    .Where(x => x.PlayerID == p.PlayerID)
+                    .FirstOrDefaultAsync();
+                    if (stats != null)
+                    {
+                        awayStats.Add(stats);
+                    }
+                }
+            }
+            return new decimal[] { homeStats.Sum(x => x.FantasyPoints), awayStats.Sum(x => x.FantasyPoints) };
         }
     }
 }

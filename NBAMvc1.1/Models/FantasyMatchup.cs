@@ -23,9 +23,11 @@ namespace NBAMvc1._1.Models
         [ForeignKey("AwayTeamNav")]
         public int? AwayTeamID { get; set; }
 
-        public int? HomeTeamScore { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal? HomeTeamScore { get; set; }
 
-        public int? AwayTeamScore { get; set; }
+        [Column(TypeName = "decimal(18, 2)")]
+        public decimal? AwayTeamScore { get; set; }
 
 
         public virtual MyTeam HomeTeamNav { get; set; }
