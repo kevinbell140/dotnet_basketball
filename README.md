@@ -24,3 +24,13 @@ Instructions for manually populating a clean database.
 9)/news/fetch
 
 The database should now be ready to use. 
+
+Instructions for daily updates on an existing database
+
+1)/games/fetch (or /games/fetchpost)
+
+2)/playergamestats/fetch
+
+3)/standings/fetch
+
+4)/news/fetch
