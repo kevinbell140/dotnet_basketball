@@ -17,7 +17,6 @@ namespace NBAMvc1._1.Models
 
         public string Status { get; set; }
 
-
         [ForeignKey("HomeTeamNav")]
         public int? HomeTeamID { get; set; }
 

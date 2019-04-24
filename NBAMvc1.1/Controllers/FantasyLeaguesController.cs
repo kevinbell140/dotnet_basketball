@@ -73,10 +73,9 @@ namespace NBAMvc1._1.Controllers
                     currentWeek = thisWeek.WeekNum;
                 }
             }
-
             viewModel.CurrentWeek = currentWeek;
 
-
+            //browse between different matchup weeks
             if(selectedWeek == null)
             {
                 viewModel.SelectedWeek = currentWeek;
@@ -95,25 +94,26 @@ namespace NBAMvc1._1.Controllers
 
             int count = 1;
 
-            var teams = viewModel.FantasyLeague.TeamsNav.ToList();
-
-            Dictionary<int, MyTeam> registered = new Dictionary<int, MyTeam>();
-
-            foreach(var t in teams)
-            {
-                registered.Add(count++, t);
-            }
-
-            foreach(KeyValuePair<int, MyTeam> entry in registered)
-            {
-                viewModel.Teams[entry.Key] = entry.Value;
-            }
+            viewModel.Teams = viewModel.FantasyLeague.TeamsNav.ToDictionary(x => count++, x => x);
 
             if (viewModel.FantasyLeague.IsSet)
             {
                 viewModel.Matchups = await _context.FantasyMatchup
                     .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.SelectedWeek)
                     .ToListAsync();
+
+                foreach(var m in viewModel.Matchups)
+                {
+                    if(m.Week < currentWeek)
+                    {
+                        //update matchup status
+                        //check for game stat records
+                        //if there are records then,
+                        //calculate score
+                        //update score
+                        //update league standings
+                    }
+                }
             }
 
             return View(viewModel);
@@ -127,8 +127,6 @@ namespace NBAMvc1._1.Controllers
         }
 
         // POST: FantasyLeagues/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
@@ -170,8 +168,6 @@ namespace NBAMvc1._1.Controllers
         }
 
         // POST: FantasyLeagues/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [ValidateAntiForgeryToken]

@@ -46,6 +46,7 @@ namespace NBAMvc1._1.Controllers
                 .FirstOrDefaultAsync(m => m.FantasyMatchupID == id)
             };
 
+            //query players to list and not to dictionary b/c there may be empty space on roster
            var home = await _context.PlayerMyTeam
                 .Where(p => p.MyTeamNav.MyTeamID == viewModel.FantasyMatchup.HomeTeamID)
                 .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
@@ -59,15 +60,6 @@ namespace NBAMvc1._1.Controllers
                 .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
                 .OrderBy(p => p.PlayerNav.Position)
                 .AsNoTracking().ToListAsync();
-
-            Dictionary<string, Player> homePlayers = new Dictionary<string, Player>();
-            Dictionary<string, Player> awayPlayers = new Dictionary<string, Player>();
-
-            Dictionary<string, string> homeOpp = new Dictionary<string, string>();
-            Dictionary<string, string> awayOpp = new Dictionary<string, string>();
-
-            Dictionary<string, PlayerGameStats> homeStats = new Dictionary<string, PlayerGameStats>();
-            Dictionary<string, PlayerGameStats> awayStats = new Dictionary<string, PlayerGameStats>();
 
             var matchupWeek = await _context.FantasyMatchupWeeks
                 .Where(x => x.FantasyLeagueID == viewModel.FantasyMatchup.FantasyLeagueID)
@@ -86,40 +78,38 @@ namespace NBAMvc1._1.Controllers
                     .Where(g => g.AwayTeamID == p.PlayerNav.TeamID || g.HomeTeamID == p.PlayerNav.TeamID)
                     .FirstOrDefaultAsync();
 
-
                 if (p.PlayerNav.Position == "C")
                 {
-                    homePlayers.Add(p.PlayerNav.Position, p.PlayerNav);
+                    viewModel.HomeRoster[p.PlayerNav.Position] = p.PlayerNav;
                     if (gameTonight != null)
-                        homeOpp.Add(p.PlayerNav.Position, (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl));
-                    if(gameTonight.PlayerGameStatsNav != null)
                     {
-                        homeStats.Add(p.PlayerNav.Position, gameTonight.PlayerGameStatsNav.Where(x => x.PlayerID == p.PlayerID).FirstOrDefault());
+                        viewModel.HomeOpp[p.PlayerNav.Position] = (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl);
+
+                        var stats = await _context.PlayerGameStats
+                        .Where(x => x.GameID == gameTonight.GameID)
+                        .Where(x => x.PlayerID == p.PlayerID)
+                        .FirstOrDefaultAsync();
+                        if (stats != null)
+                        {
+                            viewModel.HomeStats[p.PlayerNav.Position + posCount] = stats;
+                        }
+                    }
+                }
+                else
+                {
+                    viewModel.HomeRoster[p.PlayerNav.Position + posCount] = p.PlayerNav;
+                    if (gameTonight != null)
+                    {
+                        viewModel.HomeOpp[p.PlayerNav.Position + posCount] = (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl);
                         var stats = await _context.PlayerGameStats
                             .Where(x => x.GameID == gameTonight.GameID)
                             .Where(x => x.PlayerID == p.PlayerID)
                             .FirstOrDefaultAsync();
                         if (stats != null)
                         {
-                            homeStats.Add(p.PlayerNav.Position + posCount, stats);
+                            viewModel.HomeStats[p.PlayerNav.Position + posCount] = stats;
                         }
                     }
-                }
-                else
-                {
-                    homePlayers.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
-                    if (gameTonight != null)
-                    {
-                        homeOpp.Add(p.PlayerNav.Position + posCount, (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl));
-                        var stats = await _context.PlayerGameStats
-                            .Where(x => x.GameID == gameTonight.GameID)
-                            .Where(x => x.PlayerID == p.PlayerID)
-                            .FirstOrDefaultAsync();
-                        if(stats != null)
-                        {
-                            homeStats.Add(p.PlayerNav.Position + posCount, stats);
-                        } 
-                    }                        
                     posCount = (posCount == 1 ? 2 : 1);
                 }
             }
@@ -136,67 +126,38 @@ namespace NBAMvc1._1.Controllers
 
                 if (p.PlayerNav.Position == "C")
                 {
-                    awayPlayers.Add(p.PlayerNav.Position, p.PlayerNav);
+                    viewModel.AwayRoster[p.PlayerNav.Position] = p.PlayerNav;
                     if (gameTonight != null)
                     {
-                        awayOpp.Add(p.PlayerNav.Position, (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl));
+                        viewModel.AwayOpp[p.PlayerNav.Position] = (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl);
                         var stats = await _context.PlayerGameStats
                             .Where(x => x.GameID == gameTonight.GameID)
                             .Where(x => x.PlayerID == p.PlayerID)
                             .FirstOrDefaultAsync();
                         if (stats != null)
                         {
-                            awayStats.Add(p.PlayerNav.Position + posCount, stats);
+                            viewModel.AwayStats[p.PlayerNav.Position + posCount] = stats;
                         }
                     }
                 }
                 else
                 {
-                    awayPlayers.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
+                    viewModel.AwayRoster[p.PlayerNav.Position + posCount] = p.PlayerNav;
                     if (gameTonight != null)
                     {
-                        awayOpp.Add(p.PlayerNav.Position + posCount, (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl));
+                        viewModel.AwayOpp[p.PlayerNav.Position + posCount] = (gameTonight.AwayTeamID == p.PlayerNav.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl);
                         var stats = await _context.PlayerGameStats
                             .Where(x => x.GameID == gameTonight.GameID)
                             .Where(x => x.PlayerID == p.PlayerID)
                             .FirstOrDefaultAsync();
                         if (stats != null)
                         {
-                            awayStats.Add(p.PlayerNav.Position + posCount, stats);
+                            viewModel.AwayStats[p.PlayerNav.Position + posCount] = stats;
                         }
-                    }                        
+                    }
                     posCount = (posCount == 1 ? 2 : 1);
                 }
             }
-
-            foreach (KeyValuePair<string, Player> entry in homePlayers)
-            {
-                viewModel.HomeRoster[entry.Key] = entry.Value;
-            }
-            foreach (KeyValuePair<string, Player> entry in awayPlayers)
-            {
-                viewModel.AwayRoster[entry.Key] = entry.Value;
-            }
-
-            foreach (KeyValuePair<string, string> entry in homeOpp)
-            {
-                viewModel.HomeOpp[entry.Key] = entry.Value;
-            }
-            foreach (KeyValuePair<string, string> entry in awayOpp)
-            {
-                viewModel.AwayOpp[entry.Key] = entry.Value;
-            }
-
-            foreach (KeyValuePair<string, PlayerGameStats> entry in homeStats)
-            {
-                viewModel.HomeStats[entry.Key] = entry.Value;
-
-            }
-            foreach (KeyValuePair<string, PlayerGameStats> entry in awayStats)
-            {
-                viewModel.AwayStats[entry.Key] = entry.Value;
-            }
-
             var week = await _context.FantasyMatchupWeeks
                 .Where(w => w.WeekNum == viewModel.FantasyMatchup.Week)
                 .Where(w => w.FantasyLeagueID == viewModel.FantasyMatchup.FantasyLeagueID)
@@ -210,8 +171,6 @@ namespace NBAMvc1._1.Controllers
             {
                 viewModel.Date = week.Date;
             }
-            
-
             return View(viewModel);
         }
 
