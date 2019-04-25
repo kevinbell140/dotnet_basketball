@@ -118,11 +118,20 @@ namespace NBAMvc1._1.Controllers
         // POST: MyTeams/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name, FantasyLeagueID")] MyTeam myTeam)
+        public async Task<IActionResult> Create([Bind("MyTeamID, Name, FantasyLeagueID")] MyTeam myTeam)
         {
             if (ModelState.IsValid)
             {
                 myTeam.UserID = _userManager.GetUserId(User);
+
+                var league = await _context.FantasyLeague
+                    .Where(x => x.FantasyLeagueID == myTeam.FantasyLeagueID)
+                    .AsNoTracking().FirstOrDefaultAsync();
+
+                if(league == null)
+                {
+                    return NotFound();
+                }
 
                 var isAuthorizied = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
 
@@ -131,12 +140,14 @@ namespace NBAMvc1._1.Controllers
                     return new ChallengeResult();
                 }
 
-                _context.Add(myTeam);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("AddTeamConfirm", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+                if (!league.IsFull)
+                {
+                    _context.Add(myTeam);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Create", "FantasyLeagueStandings", new { myTeamID = myTeam.MyTeamID });
+                }
             }
-
-            return View(myTeam);
+            return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
         }
 
         // GET: MyTeams/Edit/5

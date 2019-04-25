@@ -46,85 +46,45 @@ namespace NBAMvc1._1.Controllers
             return View(fantasyLeagueStandings);
         }
 
-        // GET: FantasyLeagueStandings/Create
-        public IActionResult Create()
-        {
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID");
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID");
-            return View();
-        }
 
-        // POST: FantasyLeagueStandings/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FantasyLeagueStandingsID,FantasyLeagueID,MyTeamID,Wins,Losses,Draws,FantasyPoints,FantasyPointsAgainst,GamesBack")] FantasyLeagueStandings fantasyLeagueStandings)
+        //redirected from MyTeam/Create
+        public async Task<IActionResult> Create(int myTeamID)
         {
-            if (ModelState.IsValid)
+            var myTeam = _context.MyTeam
+                .Include(x => x.FantasyLeagueNav)
+                .Where(x => x.MyTeamID == myTeamID)
+                .AsNoTracking().FirstOrDefault();
+
+            if(myTeam != null)
             {
-                _context.Add(fantasyLeagueStandings);
+                FantasyLeagueStandings s = new FantasyLeagueStandings();
+                s.FantasyLeagueID = myTeam.FantasyLeagueID;
+                s.MyTeamID = myTeam.MyTeamID;
+                s.Updated = DateTime.Now;
+
+                _context.Add(s);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("AddTeamConfirm", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
             }
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID", fantasyLeagueStandings.FantasyLeagueID);
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyLeagueStandings.MyTeamID);
-            return View(fantasyLeagueStandings);
+            return RedirectToAction("Index", "FantasyLeagues", new { myTeamID = myTeam.MyTeamID });
         }
 
-        // GET: FantasyLeagueStandings/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var fantasyLeagueStandings = await _context.FantasyLeagueStandings.FindAsync(id);
-            if (fantasyLeagueStandings == null)
-            {
-                return NotFound();
-            }
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID", fantasyLeagueStandings.FantasyLeagueID);
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyLeagueStandings.MyTeamID);
-            return View(fantasyLeagueStandings);
-        }
 
         // POST: FantasyLeagueStandings/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FantasyLeagueStandingsID,FantasyLeagueID,MyTeamID,Wins,Losses,Draws,FantasyPoints,FantasyPointsAgainst,GamesBack")] FantasyLeagueStandings fantasyLeagueStandings)
+        public FantasyLeagueStandings Edit(int id, [Bind("FantasyLeagueStandingsID,FantasyLeagueID,MyTeamID,Wins,Losses,Draws,FantasyPoints,FantasyPointsAgainst,GamesBack")] FantasyLeagueStandings fantasyLeagueStandings)
         {
             if (id != fantasyLeagueStandings.FantasyLeagueStandingsID)
             {
-                return NotFound();
+                return null;
             }
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(fantasyLeagueStandings);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FantasyLeagueStandingsExists(fantasyLeagueStandings.FantasyLeagueStandingsID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return fantasyLeagueStandings;
             }
-            ViewData["FantasyLeagueID"] = new SelectList(_context.FantasyLeague, "FantasyLeagueID", "FantasyLeagueID", fantasyLeagueStandings.FantasyLeagueID);
-            ViewData["MyTeamID"] = new SelectList(_context.MyTeam, "MyTeamID", "MyTeamID", fantasyLeagueStandings.MyTeamID);
-            return View(fantasyLeagueStandings);
+            return null;
         }
 
         // GET: FantasyLeagueStandings/Delete/5

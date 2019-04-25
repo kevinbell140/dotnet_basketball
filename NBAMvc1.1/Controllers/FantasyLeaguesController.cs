@@ -21,13 +21,16 @@ namespace NBAMvc1._1.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
         private readonly FantasyMatchupsController _fantasyMatchupsController;
+        private readonly FantasyLeagueStandingsController _fantasyLeagueStandingsController;
 
-        public FantasyLeaguesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, FantasyMatchupsController fantasyMatchupsController)
+        public FantasyLeaguesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, 
+            FantasyMatchupsController fantasyMatchupsController, FantasyLeagueStandingsController fantasyLeagueStandingsController)
         {
             _context = context;
             _userManager = userManager;
             _auth = auth;
             _fantasyMatchupsController = fantasyMatchupsController;
+            _fantasyLeagueStandingsController = fantasyLeagueStandingsController;
         }
 
         // GET: FantasyLeagues
@@ -100,15 +103,23 @@ namespace NBAMvc1._1.Controllers
 
             if (viewModel.FantasyLeague.IsSet)
             {
+                //the matchups to display for the chosen week
                 viewModel.Matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav)
                     .Include(m => m.HomeTeamNav)
-                    .Where(m => m.FantasyLeagueID == id && m.Week == viewModel.SelectedWeek)
+                    .Where(m => m.FantasyLeagueID == id && m.Week <= viewModel.SelectedWeek)
+                    .AsNoTracking().ToListAsync();
+
+                //all of the matchups prior to this week for updating purposes
+                var matchupUpdates = await _context.FantasyMatchup
+                    .Include(m => m.AwayTeamNav)
+                    .Include(m => m.HomeTeamNav)
+                    .Where(m => m.FantasyLeagueID == id && m.Week <= currentWeek)
                     .AsNoTracking().ToListAsync();
 
                 List<FantasyMatchup> updateList = new List<FantasyMatchup>();
 
-                foreach (var m in viewModel.Matchups)
+                foreach (var m in matchupUpdates)
                 {
                     if(m.Week <= currentWeek)
                     {
@@ -276,30 +287,6 @@ namespace NBAMvc1._1.Controllers
             return _context.FantasyLeague.Any(e => e.FantasyLeagueID == id);
         }
 
-        public async Task<IActionResult> AddTeam(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var league = await _context.FantasyLeague
-                .Where(l => l.FantasyLeagueID == id)
-                .FirstOrDefaultAsync();
-            if (league == null)
-            {
-                return NotFound();
-            }
-
-            if (!league.IsFull)
-            {
-                if (league.TeamsNav == null || league.TeamsNav.Count() < 8)
-                {
-                    return RedirectToAction("Create", "MyTeams", new { leagueID = league.FantasyLeagueID });
-                }
-            }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
-        }
 
         public async Task<IActionResult> AddTeamConfirm(int? id) 
         {

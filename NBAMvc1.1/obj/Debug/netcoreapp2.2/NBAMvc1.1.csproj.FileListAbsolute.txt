@@ -140,8 +140,5 @@ C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchupWeeks\Index.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerSeasonStats\Index.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\Edit.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Create.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Delete.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Details.g.cshtml.cs
-C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Edit.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Index.g.cshtml.cs
