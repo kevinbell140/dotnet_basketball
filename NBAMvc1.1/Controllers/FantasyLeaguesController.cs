@@ -143,6 +143,52 @@ namespace NBAMvc1._1.Controllers
             return View(viewModel);
         }
 
+        //THIS NEEDS ITS OWN METHOD IN A SERVICE CLASS
+
+        //public async Task<List<FantasyLeagueStandings>> UpdateStandings(int id)
+        //{
+        //    var league = await _context.FantasyLeague
+        //        .Where(x => x.FantasyLeagueID == id)
+        //        .AsNoTracking().FirstOrDefaultAsync();
+
+        //    if(league == null)
+        //    {
+        //        return null; 
+        //    }
+
+        //    List<FantasyLeagueStandings> standings = await _context.FantasyLeagueStandings
+        //        .Where(x => x.FantasyLeagueID == league.FantasyLeagueID)
+        //        .AsNoTracking().ToListAsync();
+
+        //    List<FantasyMatchup> matchups = await _context.FantasyMatchup
+        //        .Where(x => x.FantasyLeagueID == league.FantasyLeagueID)
+        //        .Where(x => x.Status == "Final" && !x.Recorded)
+        //        .AsNoTracking().ToListAsync();
+
+
+        //    foreach(var m in matchups)
+        //    {
+        //        var homeStandings = standings.Find(x => x.MyTeamID == m.HomeTeamID);
+        //        int homeWins = homeStandings.Wins;
+        //        int homeLosses = homeStandings.Losses;
+        //        decimal homeFPS = homeStandings.FantasyPoints;
+
+        //        var awayStandings = standings.Find(x => x.MyTeamID == m.AwayTeamID);
+        //        int awayWins = awayStandings.Wins;
+        //        int awayLosses = awayStandings.Losses;
+        //        decimal awayFPS = awayStandings.FantasyPoints;
+
+
+        //        if (m.HomeTeamScore > m.AwayTeamScore)
+        //        {
+        //            homeStandings.Wins++;
+        //            awayStandings.Losses--;
+
+        //        }
+        //    }
+
+        //}
+
         private async Task<List<FantasyMatchup>> UpdateMatchupStatus(int id, int currentWeek, List<FantasyMatchup> updateList)
         {
             var matchup = await _context.FantasyMatchup
@@ -161,6 +207,9 @@ namespace NBAMvc1._1.Controllers
 
             matchup.HomeTeamScore = scores[0];
             matchup.AwayTeamScore = scores[1];
+
+
+
 
             FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
             if(updatedMatch != null)

@@ -15,6 +15,8 @@ namespace NBAMvc1._1.Models
 
         public int Week { get; set; }
 
+        public bool Recorded { get; set; } = false;
+
         public string Status { get; set; }
 
         [ForeignKey("HomeTeamNav")]
