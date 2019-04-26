@@ -66,9 +66,7 @@ namespace NBAMvc1._1.Services
 
         public Player GetPPGLeader(List<Player> players)
         {
-            Player leader = new Player();
-
-            leader = players.Where(p => p.StatsNav != null)
+            Player leader = players.Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.PPG)
                 .FirstOrDefault();
             return leader;
@@ -76,9 +74,7 @@ namespace NBAMvc1._1.Services
 
         public Player GetRPGLeader(List<Player> players)
         {
-            Player leader = new Player();
-
-            leader = players.Where(p => p.StatsNav != null)
+            Player leader = players.Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.RPG)
                 .FirstOrDefault();
             return leader;
@@ -86,9 +82,7 @@ namespace NBAMvc1._1.Services
 
         public Player GetAPGLeader(List<Player> players)
         {
-            Player leader = new Player();
-
-            leader = players.Where(p => p.StatsNav != null)
+            Player leader = players.Where(p => p.StatsNav != null)
                 .OrderByDescending(p => p.StatsNav.APG)
                 .FirstOrDefault();
             return leader;

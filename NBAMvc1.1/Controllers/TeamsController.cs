@@ -40,27 +40,28 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Teams/Details/5
-        public async Task<IActionResult> Details(int id, string sortOrder)
+        public async Task<IActionResult> Details(int? id, string sortOrder)
         {
-            //get get view model data
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             var viewModel = new TeamDetailsViewModel
             {
-                Team = await _teamsService.GetTeam(id),
-                Last5 = _gamesService.GetLast5(id),
-                Next3 = _gamesService.GetNext3(id),
+                Team = await _teamsService.GetTeam(id.Value),
+                Last5 = _gamesService.GetLast5(id.Value),
+                Next3 = _gamesService.GetNext3(id.Value),
             };
 
             List<Standings> conferenceStandings = await _standingsService.GetStandings(viewModel.Team.Conference);
 
             viewModel.ConferenceRank = conferenceStandings.IndexOf(viewModel.Team.RecordNav)+1;
-
             viewModel.PPGLeader = _teamsService.GetPPGLeader(viewModel.Team.PlayersNav.ToList());
-
             viewModel.RPGLeader = _teamsService.GetRPGLeader(viewModel.Team.PlayersNav.ToList());
-
             viewModel.APGLeader = _teamsService.GetAPGLeader(viewModel.Team.PlayersNav.ToList());
 
-            //sort attributes for players
+            //for sorting
             ViewData["PosSortParam"] = String.IsNullOrEmpty(sortOrder) ? "pos_desc" : " ";
             ViewData["PlayerSortParam"] = sortOrder == "Player" ? "player_desc" : "Player";
             ViewData["PPGSortParam"] = sortOrder == "PPG" ? "ppg_desc" : "PPG";
