@@ -31,27 +31,50 @@ namespace NBAMvc1._1.Services
 
             return game;
         }
-
-        public async Task<IEnumerable<Game>> GetLast5(int id)
+        public async Task<IEnumerable<Game>> GetLast(int num)
         {
             var last5 = await _context.Game
                 .Include(g => g.HomeTeamNav)
                 .Include(g => g.AwayTeamNav)
-                .Where(g => (g.Status == "Final" || g.Status == "F/OT") && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .Where(g => (g.Status == "Final" || g.Status == "F/OT"))
                 .OrderByDescending(g => g.DateTime)
-                .Take(5).ToListAsync();
+                .Take(num).ToListAsync();
 
             return last5;
         }
 
-        public async Task<IEnumerable<Game>> GetNext3(int id)
+        public async Task<IEnumerable<Game>> GetNext(int num)
         {
             var next3 = await _context.Game
                 .Include(g => g.HomeTeamNav)
                 .Include(g => g.AwayTeamNav)
-                .Where(g => g.Status == "Scheduled" && (g.HomeTeamID == id || g.AwayTeamID == id))
+                .Where(g => g.Status == "Scheduled")
                 .OrderBy(g => g.DateTime)
-                .Take(3).ToListAsync();
+                .Take(num).ToListAsync();
+
+            return next3;
+        }
+
+        public async Task<IEnumerable<Game>> GetLast(int teamID, int num)
+        {
+            var last5 = await _context.Game
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
+                .Where(g => (g.Status == "Final" || g.Status == "F/OT") && (g.HomeTeamID == teamID || g.AwayTeamID == teamID))
+                .OrderByDescending(g => g.DateTime)
+                .Take(num).ToListAsync();
+
+            return last5;
+        }
+
+        public async Task<IEnumerable<Game>> GetNext(int teamID, int num)
+        {
+            var next3 = await _context.Game
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
+                .Where(g => g.Status == "Scheduled" && (g.HomeTeamID == teamID || g.AwayTeamID == teamID))
+                .OrderBy(g => g.DateTime)
+                .Take(num).ToListAsync();
 
             return next3;
         }

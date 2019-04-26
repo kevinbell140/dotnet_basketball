@@ -57,8 +57,8 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            viewModel.Last5 = await _gamesService.GetLast5(id.Value);
-            viewModel.Next3 = await _gamesService.GetNext3(id.Value);
+            viewModel.Last5 = await _gamesService.GetLast(id.Value, 5);
+            viewModel.Next3 = await _gamesService.GetNext(id.Value, 3);
 
             List<Standings> conferenceStandings = await _standingsService.GetStandings(viewModel.Team.Conference);
 

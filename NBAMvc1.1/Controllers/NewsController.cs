@@ -16,22 +16,18 @@ namespace NBAMvc1._1.Controllers
 
     public class NewsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DataService _service;
+        private readonly NewsService _newsService;
 
-        public NewsController(ApplicationDbContext context, DataService service)
+        public NewsController(ApplicationDbContext context, NewsService newsService)
         {
-            _context = context;
-            _service = service;
+            _newsService = newsService;
         }
 
         // GET: News
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.News
-                .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
-                .OrderByDescending(n => n.Updated);
-            return View(await applicationDbContext.ToListAsync());
+            var news = await _newsService.GetNews();
+            return View(news);
         }
 
         // GET: News/Details/5
@@ -42,96 +38,21 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var news = await _context.News
-                .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
-                .FirstOrDefaultAsync(m => m.NewsID == id);
+            var news = await _newsService.GetNewsByID(id.Value);
             if (news == null)
             {
                 return NotFound();
             }
-
             return View(news);
-        }
-
-
-        // POST: News/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public News Create([Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
-        {
-            if (ModelState.IsValid)
-            {
-                return news;
-            }
-            return null;
-        }
-
-        // POST: News/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public News Edit(int id, [Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
-        {
-            if (id != news.NewsID)
-            {
-                return null;
-            }
-
-            if (ModelState.IsValid)
-            {
-                return news;
-            }
-            return null;
-        }
-
-        private bool NewsExists(int id)
-        {
-            return _context.News.Any(e => e.NewsID == id);
         }
 
         public async Task<IActionResult> Fetch()
         {
-            List<News> news = await _service.FetchNews();
-            List<News> created = new List<News>();
-            List<News> updated = new List<News>();
-
-            foreach (News n in news)
+            if (await _newsService.Fetch())
             {
-                var exists = await _context.News.AnyAsync(a => a.NewsID == n.NewsID);
-
-                if (!exists)
-                {
-                    var createdNews = Create(n);
-                    if(createdNews != null)
-                    {
-                        created.Add(createdNews);
-                    }
-                }
-                else
-                {
-                    var updatedNews = Edit(n.NewsID, n);
-                    if(updatedNews != null)
-                    {
-                        updated.Add(updatedNews);
-                    }
-                }
+                return RedirectToAction("Index", "News");
             }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _context.AddRangeAsync(created);
-                    _context.UpdateRange(updated);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
-            }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
     }
 }

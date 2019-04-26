@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -19,12 +20,21 @@ namespace NBAMvc1._1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
+        private readonly NewsService _newsService;
+        private readonly GamesService _gamesService;
+        private readonly MyTeamsService _myTeamsService;
+        private readonly PlayerGameStatsService _playerGameStatsService;
 
-        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
+        public HomeController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth,
+            NewsService newsService, GamesService gamesService, MyTeamsService myTeamsService, PlayerGameStatsService playerGameStatsService)
         {
             _context = context;
             _userManager = userManager;
             _auth = auth;
+            _newsService = newsService;
+            _gamesService = gamesService;
+            _myTeamsService = myTeamsService;
+            _playerGameStatsService = playerGameStatsService;
         }
 
         public async Task<IActionResult> Index()
@@ -32,54 +42,23 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new HomeIndexViewModel()
             {
-                Last4 = _context.Game
-                .Where(g => (g.Status == "Final" || g.Status == "F/OT"))
-                .Include(g => g.HomeTeamNav)
-                .Include(g => g.AwayTeamNav)
-                .OrderByDescending(g => g.DateTime)
-                .Take(4),
-
-
-                Next4 = _context.Game
-                .Where(g => g.Status == "Scheduled")
-                .Include(g => g.HomeTeamNav)
-                .Include(g => g.AwayTeamNav)
-                .OrderBy(g => g.DateTime)
-                .Take(4),
-
-                News = _context.News
-                .Include(n => n.PlayerNav)
-                .OrderByDescending(n => n.Updated)
-                .Take(5),
-
-
-                MyTeams = await  _context.MyTeam
-                .Include(t => t.FantasyLeagueNav)
-                .Include(t => t.PlayerMyTeamNav)
-                .Where(t => t.UserID == _userManager.GetUserId(User))
-                .ToListAsync()
+                Last4 = await _gamesService.GetLast(4),
+                Next4 = await _gamesService.GetNext(4),
+                News = await _newsService.GetNews(5),
+                MyTeams = await _myTeamsService.GetMyTeamByUserID(_userManager.GetUserId(User)),
             };
 
             int count = 0;
-            
-
             foreach(var g in viewModel.Last4)
             {
-                List<PlayerGameStats> leaders = await _context.PlayerGameStats
-               .Include(p => p.GameNav)
-               .Include(p => p.PlayerNav)
-               .Where(p => p.GameID == g.GameID)
-               .OrderByDescending(p => p.Points)
-               .Take(2).ToListAsync();
+                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeaders(g.GameID);
 
                 if(leaders.Count() == 2)
                 {
                     viewModel.Leaders[count++] = leaders[0];
                     viewModel.Leaders[count++] = leaders[1];
                 }
-
             }
-
             return View(viewModel);
         }
 
