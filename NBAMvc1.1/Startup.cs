@@ -68,6 +68,7 @@ namespace NBAMvc1._1
             services.AddScoped<TeamsService>();
             services.AddScoped<GamesService>();
             services.AddScoped<StandingsService>();
+            services.AddScoped<PlayerSeasonStatsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

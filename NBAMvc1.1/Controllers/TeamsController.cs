@@ -15,17 +15,12 @@ namespace NBAMvc1._1.Controllers
 {
     public class TeamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DataService _service;
         private readonly TeamsService _teamsService;
         private readonly GamesService _gamesService;
         private readonly StandingsService _standingsService;
 
-        public TeamsController(ApplicationDbContext context, DataService service, TeamsService teamsService,
-            GamesService gamesService, StandingsService standingsService)
+        public TeamsController(TeamsService teamsService, GamesService gamesService, StandingsService standingsService)
         {
-            _context = context;
-            _service = service;
             _teamsService = teamsService;
             _gamesService = gamesService;
             _standingsService = standingsService;
@@ -86,7 +81,6 @@ namespace NBAMvc1._1.Controllers
                 return RedirectToAction("Index", "Teams");
             }
             return RedirectToAction("Index", "Home");
-
         }
     }
 }
