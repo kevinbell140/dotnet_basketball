@@ -4,8 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
@@ -15,13 +13,13 @@ namespace NBAMvc1._1.Controllers
 {
     public class GamesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly DataService _service;
+        private readonly GamesService _gamesService;
+        private readonly PlayerGameStatsService _playerGameStatsService;
 
-        public GamesController(ApplicationDbContext context, DataService service)
+        public GamesController(GamesService gamesService, PlayerGameStatsService playerGameStatsService)
         {
-            _context = context;
-            _service = service;
+            _gamesService = gamesService;
+            _playerGameStatsService = playerGameStatsService;
         }
 
         // GET: Games
@@ -38,34 +36,20 @@ namespace NBAMvc1._1.Controllers
                 viewModel.dayOf = DateTime.Today.Date;
             }
 
-            viewModel.Games = await _context.Game
-                .Include(g => g.AwayTeamNav)
-                .Include(g => g.HomeTeamNav)
-                .Include(g => g.PlayerGameStatsNav)
-                .Where(g => g.DateTime.Date == viewModel.dayOf)
-                .OrderBy(g => g.DateTime)
-                .ToListAsync();
+            viewModel.Games = await _gamesService.GetGamesByDate(viewModel.dayOf.Value);
 
             int count = 0;
 
-
             foreach (var g in viewModel.Games)
             {
-                List<PlayerGameStats> leaders = await _context.PlayerGameStats
-               .Include(p => p.GameNav)
-               .Include(p => p.PlayerNav)
-               .Where(p => p.GameID == g.GameID)
-               .OrderByDescending(p => p.Points)
-               .Take(2).ToListAsync();
+                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeaders(g.GameID);
 
                 if (leaders.Count() == 2)
                 {
                     viewModel.Leaders[count++] = leaders[0];
                     viewModel.Leaders[count++] = leaders[1];
                 }
-
             }
-
             return View(viewModel);
         }
 
@@ -77,11 +61,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Game
-                .Include(g => g.AwayTeamNav)
-                .Include(g => g.HomeTeamNav)
-                .Include(g => g.PlayerGameStatsNav).ThenInclude(g => g.PlayerNav)
-                .FirstOrDefaultAsync(m => m.GameID == id);
+            var game = await _gamesService.GetGame(id.Value);
             if (game == null)
             {
                 return NotFound();
@@ -90,130 +70,15 @@ namespace NBAMvc1._1.Controllers
             return View(game);
         }
 
-        // POST: Games/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        private Game Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
-        {
-            if(game.Status == "Canceled" || game.DateTime.Year != 2019)
-            {
-                return null;
-            }
-
-            if (ModelState.IsValid)
-            {
-                return game;
-            }
-            return null;
-        }
-
-        // POST: Games/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        private Game Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
-        {
-            if (id != game.GameID)
-            {
-                return null;
-            }
-
-            if (ModelState.IsValid)
-            {
-                return game;
-            }
-            return null;
-        }
-
-
-        private bool GameExists(int id)
-        {
-            return _context.Game.Any(e => e.GameID == id);
-        }
-
+        //custom route for this
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Fetch()
+        public async Task<IActionResult> Fetch(bool isPost)
         {
-
-            var games = await _service.FetchGames();
-
-            List<Game> gamesList = new List<Game>();
-            List<Game> editedList = new List<Game>();
-
-            foreach (Game g in games)
+            if(await _gamesService.Fetch(isPost))
             {
-                var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
-
-                if (!exists)
-                {
-                    Game created = Create(g);
-                    if (created != null)
-                        gamesList.Add(created);
-                }
-                else
-                {
-                    Game edited = Edit(g.GameID, g);
-                    if (edited != null)
-                        editedList.Add(edited);           
-                }
+                return RedirectToAction("Index", "Games");
             }
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _context.AddRangeAsync(gamesList);
-                    _context.UpdateRange(editedList);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return RedirectToAction(nameof(Index));
-        }
-
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> FetchPost()
-        {
-
-            var games = await _service.FetchGamesPost();
-
-            List<Game> gamesList = new List<Game>();
-            List<Game> editedList = new List<Game>();
-
-            foreach (Game g in games)
-            {
-                var exists = await _context.Game.AnyAsync(a => a.GameID == g.GameID);
-
-                if (!exists)
-                {
-                    Game created = Create(g);
-                    if (created != null)
-                        gamesList.Add(created);
-                }
-                else
-                {
-                    Game edited = Edit(g.GameID, g);
-                    if (edited != null)
-                        editedList.Add(edited);
-                }
-            }
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    await _context.AddRangeAsync(gamesList);
-                    _context.UpdateRange(editedList);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
     }
 }

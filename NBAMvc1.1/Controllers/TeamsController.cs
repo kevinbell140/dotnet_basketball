@@ -50,9 +50,15 @@ namespace NBAMvc1._1.Controllers
             var viewModel = new TeamDetailsViewModel
             {
                 Team = await _teamsService.GetTeam(id.Value),
-                Last5 = _gamesService.GetLast5(id.Value),
-                Next3 = _gamesService.GetNext3(id.Value),
             };
+
+            if(viewModel.Team == null)
+            {
+                return NotFound();
+            }
+
+            viewModel.Last5 = await _gamesService.GetLast5(id.Value);
+            viewModel.Next3 = await _gamesService.GetNext3(id.Value);
 
             List<Standings> conferenceStandings = await _standingsService.GetStandings(viewModel.Team.Conference);
 

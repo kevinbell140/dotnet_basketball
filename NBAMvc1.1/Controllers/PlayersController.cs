@@ -73,13 +73,18 @@ namespace NBAMvc1._1.Controllers
                 Player = await _playersService.GetPlayer(id.Value)              
             };
 
+            if(viewModel.Player == null)
+            {
+                return NotFound();
+            }
+
             viewModel.Games = await _gamesService.GetFinalGamesByTeam(viewModel.Player.TeamID);
             viewModel.GameLogs = new List<PlayerGameStats>();
 
             foreach (Game g in viewModel.Games )
             {
                 var log = _playerGameStatsService.GetPlayerGameStatsByGame(viewModel.Player.PlayerID, g.GameID);;
-                viewModel.GameLogs.Add(log);               
+                viewModel.GameLogs.Add(await log);               
             }
             return View(viewModel);
         }
