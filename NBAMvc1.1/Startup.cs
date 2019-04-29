@@ -61,19 +61,20 @@ namespace NBAMvc1._1
             });
 
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
-
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
-
             services.AddScoped<DataService>();
-            services.AddScoped<TeamsService>();
+            services.AddScoped<FantasyLeagueService>();
+            services.AddScoped<FantasyMatchupService>();
+            services.AddScoped<FantasyMatchupsWeeksService>();
             services.AddScoped<GamesService>();
-            services.AddScoped<StandingsService>();
+            services.AddScoped<MyTeamsService>();
+            services.AddScoped<NewsService>();
+            services.AddScoped<PlayerGameStatsService>();
+            services.AddScoped<PlayerMyTeamService>();
             services.AddScoped<PlayerSeasonStatsService>();
             services.AddScoped<PlayersService>();
-            services.AddScoped<PlayerGameStatsService>();
-            services.AddScoped<NewsService>();
-            services.AddScoped<MyTeamsService>();
-            services.AddScoped<FantasyLeagueService>();
+            services.AddScoped<StandingsService>();
+            services.AddScoped<TeamsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

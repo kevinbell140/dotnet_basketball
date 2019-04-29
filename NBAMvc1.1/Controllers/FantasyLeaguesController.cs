@@ -24,9 +24,12 @@ namespace NBAMvc1._1.Controllers
         private readonly FantasyMatchupsController _fantasyMatchupsController;
         private readonly FantasyLeagueStandingsController _fantasyLeagueStandingsController;
         private readonly FantasyLeagueService _fantasyLeagueService;
+        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
+        private readonly FantasyMatchupService _fantasyMatchupService;
 
         public FantasyLeaguesController(FantasyLeagueService fantasyLeagueService, ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, 
-            FantasyMatchupsController fantasyMatchupsController, FantasyLeagueStandingsController fantasyLeagueStandingsController)
+            FantasyMatchupsController fantasyMatchupsController, FantasyLeagueStandingsController fantasyLeagueStandingsController,
+            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, FantasyMatchupService fantasyMatchupService)
         {
             _context = context;
             _userManager = userManager;
@@ -34,6 +37,8 @@ namespace NBAMvc1._1.Controllers
             _fantasyMatchupsController = fantasyMatchupsController;
             _fantasyLeagueStandingsController = fantasyLeagueStandingsController;
             _fantasyLeagueService = fantasyLeagueService;
+            _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
+            _fantasyMatchupService = fantasyMatchupService;
         }
 
         // GET: FantasyLeagues
@@ -53,10 +58,7 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new FantasyLeagueDetailsViewModel()
             {
-                FantasyLeague = await _context.FantasyLeague
-                .Include(m => m.TeamsNav).ThenInclude(m => m.UserNav)
-                .Include(m => m.ComissionerNav)
-                .FirstOrDefaultAsync(m => m.FantasyLeagueID == id)
+                FantasyLeague = await _fantasyLeagueService.GetLeague(id.Value)
             };
 
             int currentWeek = 0;
@@ -64,17 +66,12 @@ namespace NBAMvc1._1.Controllers
             //gets the current week league
             if (viewModel.FantasyLeague.IsActive)
             {
-                var weeks = _context.FantasyMatchupWeeks
-                    .Where(f => f.FantasyLeagueID == id)
-                    .AsNoTracking();
-
-                var thisWeek = weeks
-                    .Where(w => w.Date == DateTime.Today)
-                    .FirstOrDefault();
+                var weeks = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeeksByLeague(viewModel.FantasyLeague.FantasyLeagueID);
+                var thisWeek = _fantasyMatchupsWeeksService.GetThisWeek(weeks);
 
                 if (thisWeek == null)
                 {
-                    await IsActiveFalseAsync(id);
+                    _fantasyLeagueService.IsActiveFalseAsync(viewModel.FantasyLeague.FantasyLeagueID);
                     currentWeek = 14;
                 }
                 else
@@ -101,26 +98,19 @@ namespace NBAMvc1._1.Controllers
                 viewModel.SelectedWeek = selectedWeek.Value;
             }
 
-            int count = 1;
-
-            viewModel.Teams = viewModel.FantasyLeague.TeamsNav.ToDictionary(x => count++, x => x);
+            viewModel.Teams = await _fantasyLeagueService.GetTeamsDictionary(viewModel.FantasyLeague.FantasyLeagueID);
 
             if (viewModel.FantasyLeague.IsSet)
             {
                 //the matchups to display for the chosen week
-                viewModel.Matchups = await _context.FantasyMatchup
-                    .Include(m => m.AwayTeamNav)
-                    .Include(m => m.HomeTeamNav)
-                    .Where(m => m.FantasyLeagueID == id && m.Week <= viewModel.SelectedWeek)
-                    .AsNoTracking().ToListAsync();
+                viewModel.Matchups = await _fantasyMatchupService.GetMatchupsByWeek(viewModel.FantasyLeague.FantasyLeagueID, viewModel.SelectedWeek);
 
                 //all of the matchups prior to this week for updating purposes
-                var matchupUpdates = await _context.FantasyMatchup
-                    .Include(m => m.AwayTeamNav)
-                    .Include(m => m.HomeTeamNav)
-                    .Where(m => m.FantasyLeagueID == id && m.Week <= currentWeek)
-                    .AsNoTracking().ToListAsync();
+                var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, currentWeek);
 
+                //Went to go work on matchups service
+
+                ////THIS NEEDS TO BE DONE STILL
                 List<FantasyMatchup> updateList = new List<FantasyMatchup>();
 
                 foreach (var m in matchupUpdates)
@@ -211,9 +201,6 @@ namespace NBAMvc1._1.Controllers
 
             matchup.HomeTeamScore = scores[0];
             matchup.AwayTeamScore = scores[1];
-
-
-
 
             FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
             if(updatedMatch != null)
@@ -426,42 +413,6 @@ namespace NBAMvc1._1.Controllers
 
             league.IsSet = true;
             league.IsActive = true;
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(league);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FantasyLeagueExists(league.FantasyLeagueID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
-            }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
-        }
-
-        public async Task<IActionResult> IsActiveFalseAsync(int? id)
-        {
-            var league = await _context.FantasyLeague
-                .Where(l => l.FantasyLeagueID == id)
-                .FirstOrDefaultAsync();
-
-            if (league == null)
-            {
-                return NotFound();
-            }
-            
-            league.IsActive = false;
 
             if (ModelState.IsValid)
             {

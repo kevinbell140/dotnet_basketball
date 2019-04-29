@@ -37,7 +37,7 @@ namespace NBAMvc1._1.Controllers
                 Last4 = await _gamesService.GetLast(4),
                 Next4 = await _gamesService.GetNext(4),
                 News = await _newsService.GetNews(5),
-                MyTeams = await _myTeamsService.GetMyTeamByUserID(_userManager.GetUserId(User)),
+                MyTeams = await _myTeamsService.GetMyTeamsByUserID(_userManager.GetUserId(User)),
             };
 
             int count = 0;

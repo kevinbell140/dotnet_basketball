@@ -11,6 +11,7 @@ using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -21,23 +22,22 @@ namespace NBAMvc1._1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
+        private readonly MyTeamsService _myTeamService;
 
-        public MyTeamsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
+        public MyTeamsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth,
+            MyTeamsService myTeamsService)
         {
             _context = context;
             _userManager = userManager;
             _auth = auth;
+            _myTeamService = myTeamsService;
         }
 
         // GET: MyTeams
         public async Task<IActionResult> Index()
         {
-            var teams = _context.MyTeam
-                .Include(c => c.PlayerMyTeamNav)
-                .Include(c => c.FantasyLeagueNav)
-                .Where(c => c.UserID == _userManager.GetUserId(User));
-
-            return View(await teams.ToListAsync());
+            var teams = await _myTeamService.GetMyTeamsByUserID(_userManager.GetUserId(User));
+            return View(teams);
         }
 
         // GET: MyTeams/Details/5
@@ -50,18 +50,11 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-
-            var myTeam = await _context.MyTeam
-                .Include(m => m.PlayerMyTeamNav)
-                .Include(m => m.UserNav)
-                .Include(m => m.FantasyLeagueNav)
-                .FirstOrDefaultAsync(m => (m.MyTeamID == id) );
-
+            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
             if (myTeam == null)
             {
                 return NotFound();
             }
-
             viewModel.MyTeam = myTeam;
 
             //gets player roster
@@ -112,61 +105,49 @@ namespace NBAMvc1._1.Controllers
         public IActionResult Create(int leagueID)
         {
             ViewData["LeagueID"] = leagueID;
+            ViewData["UserID"] = _userManager.GetUserId(User);
             return View();
         }
 
         // POST: MyTeams/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("MyTeamID, Name, FantasyLeagueID")] MyTeam myTeam)
+        public async Task<IActionResult> Create([Bind("MyTeamID,Name,FantasyLeagueID,UserID")] MyTeam myTeam)
         {
+            
+            var isAuthorizied = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
+
+            if (!isAuthorizied.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid)
             {
-                myTeam.UserID = _userManager.GetUserId(User);
-
-                var league = await _context.FantasyLeague
-                    .Where(x => x.FantasyLeagueID == myTeam.FantasyLeagueID)
-                    .AsNoTracking().FirstOrDefaultAsync();
-
-                if(league == null)
+                if (await _myTeamService.Create(myTeam))
                 {
-                    return NotFound();
-                }
-
-                var isAuthorizied = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
-
-                if (!isAuthorizied.Succeeded)
-                {
-                    return new ChallengeResult();
-                }
-
-                if (!league.IsFull)
-                {
-                    _context.Add(myTeam);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Create", "FantasyLeagueStandings", new { myTeamID = myTeam.MyTeamID });
+                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID } );
+                    //return RedirectToAction("Create", "FantasyLeagueStandings", new { myTeamID = myTeam.MyTeamID });
                 }
             }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+            return RedirectToAction("Index", "Home");
         }
 
         // GET: MyTeams/Edit/5
         public async Task<IActionResult> Edit(int? id)
-        {
-            
+        {  
             if (id == null)
             {
                 return NotFound();
             }
 
-            var myTeam = await _context.MyTeam.FindAsync(id);
+            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
             if (myTeam == null)
             {
                 return NotFound();
             }
 
             var isAuhtorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Update);
-
             if (!isAuhtorized.Succeeded)
             {
                 return new ChallengeResult();
@@ -178,39 +159,26 @@ namespace NBAMvc1._1.Controllers
         // POST: MyTeams/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Name")] MyTeam myTeam)
+        public async Task<IActionResult> Edit(int id, [Bind("Name,MyTeamID,FantasyLeagueID,UserID")] MyTeam myTeam)
         {
-
-            var oldTeam = await _context.MyTeam.AsNoTracking().FirstOrDefaultAsync(m => m.MyTeamID == id);
-
+            var oldTeam = await _myTeamService.GetMyTeamByID(id);
             if(oldTeam == null)
             {
                 return NotFound();
             }
 
+            var isAuthorized = await _auth.AuthorizeAsync(User, oldTeam, Operations.Update);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
+
             if (ModelState.IsValid)
             {
-                var isAuthorized = await _auth.AuthorizeAsync(User, oldTeam, Operations.Update);
-
-                if (!isAuthorized.Succeeded)
+                if (await _myTeamService.Edit(myTeam))
                 {
-                    return new ChallengeResult();
+                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
                 }
-
-                myTeam.UserID = oldTeam.UserID;
-                myTeam.MyTeamID = oldTeam.MyTeamID;
-
-                try
-                {
-                    _context.Attach(myTeam).State = EntityState.Modified;
-                    await _context.SaveChangesAsync();
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
-
-                return RedirectToAction(nameof(Index));
             }
             return View(myTeam);
         }
@@ -223,9 +191,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var myTeam = await _context.MyTeam
-                .Include(m => m.UserNav)
-                .FirstOrDefaultAsync(m => m.MyTeamID == id);
+            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
             if (myTeam == null)
             {
                 return NotFound();
@@ -236,7 +202,6 @@ namespace NBAMvc1._1.Controllers
             {
                 return new ChallengeResult();
             }
-
             return View(myTeam);
         }
 
@@ -245,32 +210,26 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var myTeam = await _context.MyTeam.FindAsync(id);
+            var myTeam = await _myTeamService.GetMyTeamByID(id);
+            int leagueID = myTeam.FantasyLeagueID;
 
-
-            var team = await _context.MyTeam.AsNoTracking().FirstOrDefaultAsync(m => m.MyTeamID == id);
-
-            if(team == null)
+            if(myTeam == null)
             {
                 return NotFound();
             }
 
-            var isAuthorized = await _auth.AuthorizeAsync(User, team, Operations.Delete);
-
+            var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Delete);
             if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();
             }
 
-            _context.MyTeam.Remove(myTeam);
-            await _context.SaveChangesAsync();
+            if (await _myTeamService.Delete(myTeam))
+            {
+                return RedirectToAction("RemoveTeam", "FantasyLeagues", new { id = leagueID });
+            }
+            return RedirectToAction("Index", "Home");
 
-            return RedirectToAction("RemoveTeam", "FantasyLeagues", new { id = team.FantasyLeagueID } );
-        }
-
-        private bool MyTeamExists(int id)
-        {
-            return _context.MyTeam.Any(e => e.MyTeamID == id);
         }
     }
 }
