@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 using NBAMvc1._1.Utils;
 using NBAMvc1._1.ViewModels;
 
@@ -22,8 +23,9 @@ namespace NBAMvc1._1.Controllers
         private readonly IAuthorizationService _auth;
         private readonly FantasyMatchupsController _fantasyMatchupsController;
         private readonly FantasyLeagueStandingsController _fantasyLeagueStandingsController;
+        private readonly FantasyLeagueService _fantasyLeagueService;
 
-        public FantasyLeaguesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, 
+        public FantasyLeaguesController(FantasyLeagueService fantasyLeagueService, ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth, 
             FantasyMatchupsController fantasyMatchupsController, FantasyLeagueStandingsController fantasyLeagueStandingsController)
         {
             _context = context;
@@ -31,12 +33,14 @@ namespace NBAMvc1._1.Controllers
             _auth = auth;
             _fantasyMatchupsController = fantasyMatchupsController;
             _fantasyLeagueStandingsController = fantasyLeagueStandingsController;
+            _fantasyLeagueService = fantasyLeagueService;
         }
 
         // GET: FantasyLeagues
         public async Task<IActionResult> Index()
         {
-            return View(await _context.FantasyLeague.ToListAsync());
+            var leagues = await  _fantasyLeagueService.GetLeagues();
+            return View(leagues);
         }
 
         // GET: FantasyLeagues/Details/5
@@ -230,22 +234,20 @@ namespace NBAMvc1._1.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Create([Bind("FantasyLeagueID,Name,isFull")] FantasyLeague fantasyLeague)
+        public async Task<IActionResult> Create([Bind("FantasyLeagueID,Name,IsFull,IsSet,IsActive")] FantasyLeague fantasyLeague)
         {
-
             if (!User.IsInRole("Administrator"))
             {
                 return new ChallengeResult();
             }
-
             fantasyLeague.CommissionerID = _userManager.GetUserId(User);
-            fantasyLeague.IsActive = false;
 
             if (ModelState.IsValid)
             {
-                _context.Add(fantasyLeague);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                if (await _fantasyLeagueService.Create(fantasyLeague))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(fantasyLeague);
         }
@@ -258,8 +260,7 @@ namespace NBAMvc1._1.Controllers
             {
                 return NotFound();
             }
-
-            var fantasyLeague = await _context.FantasyLeague.FindAsync(id);
+            var fantasyLeague = await _fantasyLeagueService.GetLeague(id.Value);
             if (fantasyLeague == null)
             {
                 return NotFound();
@@ -271,7 +272,7 @@ namespace NBAMvc1._1.Controllers
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("FantasyLeagueID,CommissionerID,Name,isFull")] FantasyLeague fantasyLeague)
+        public async Task<IActionResult> Edit(int id, [Bind("FantasyLeagueID,Name,IsFull,IsSet,IsActive")] FantasyLeague fantasyLeague)
         {
             if (id != fantasyLeague.FantasyLeagueID)
             {
@@ -279,25 +280,12 @@ namespace NBAMvc1._1.Controllers
             }
             fantasyLeague.CommissionerID = _userManager.GetUserId(User);
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && await _fantasyLeagueService.FantasyLeagueExists(id))
             {
-                try
+                if(await _fantasyLeagueService.Edit(fantasyLeague))
                 {
-                    _context.Update(fantasyLeague);
-                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FantasyLeagueExists(fantasyLeague.FantasyLeagueID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
             }
             return View(fantasyLeague);
         }
@@ -309,14 +297,11 @@ namespace NBAMvc1._1.Controllers
             {
                 return NotFound();
             }
-
-            var fantasyLeague = await _context.FantasyLeague
-                .FirstOrDefaultAsync(m => m.FantasyLeagueID == id);
+            var fantasyLeague = await _fantasyLeagueService.GetLeague(id.Value);
             if (fantasyLeague == null)
             {
                 return NotFound();
             }
-
             return View(fantasyLeague);
         }
 
@@ -325,10 +310,11 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var fantasyLeague = await _context.FantasyLeague.FindAsync(id);
-            _context.FantasyLeague.Remove(fantasyLeague);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            if (await _fantasyLeagueService.Delete(id))
+            {
+                return RedirectToAction("Index", "FantasyLeagues");
+            }
+            return RedirectToAction("Index", "Home");
         }
 
         private bool FantasyLeagueExists(int id)
