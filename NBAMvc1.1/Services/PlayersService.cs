@@ -41,6 +41,34 @@ namespace NBAMvc1._1.Services
             return players.AsNoTracking();
         }
 
+        public IQueryable<Player> GetPlayers(string searchString, string posFilter)
+        {
+            IQueryable<Player> players;
+            if (searchString != null)
+            {
+                players = _context.Player
+                    .Include(p => p.TeamNav)
+                    .Include(p => p.StatsNav)
+                    .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
+                    .Where(p => p.StatsNav.Games > 10);
+            }else if(posFilter != null)
+            {
+                players = _context.Player
+                    .Include(p => p.TeamNav)
+                    .Include(p => p.StatsNav)
+                    .Where(p => p.StatsNav != null && p.Position == posFilter)
+                    .Where(p => p.StatsNav.Games > 10);
+            }
+            else
+            {
+                players = _context.Player
+                    .Include(p => p.TeamNav)
+                    .Include(p => p.StatsNav)
+                    .Where(p => p.StatsNav != null && p.StatsNav.Games > 10);
+            }
+            return players.AsNoTracking();
+        }
+
         public IQueryable<Player>SortPLayers(IQueryable<Player> players, string sortParam)
         {
             switch (sortParam)
@@ -135,6 +163,7 @@ namespace NBAMvc1._1.Services
                 .Include(p => p.TeamNav).ThenInclude(p => p.AwayGamesNav)
                 .Include(p => p.StatsNav)
                 .Include(p => p.GameStatsNav)
+                .Include(p => p.PlayerMyTeamNav)
                 .FirstOrDefaultAsync(m => m.PlayerID == id);
 
             return player;

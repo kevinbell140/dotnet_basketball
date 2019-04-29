@@ -11,6 +11,7 @@ using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 using NBAMvc1._1.Utils;
 using NBAMvc1._1.ViewModels;
 
@@ -21,20 +22,26 @@ namespace NBAMvc1._1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
+        private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly MyTeamsService _myTeamsService;
+        private readonly PlayersService _playersService;
 
-        public PlayerMyTeamsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
+        public PlayerMyTeamsController(PlayersService playersService, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
         {
             _context = context;
             _userManager = userManager;
             _auth = auth;
+            _playerMyTeamService = playerMyTeamService;
+            _myTeamsService = myTeamsService;
+            _playersService = playersService;
         }
 
         // GET: PlayerMyTeams
         [Authorize(Policy = "AdminOnly" )]
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.PlayerMyTeam.Include(p => p.MyTeamNav).Include(p => p.PlayerNav);
-            return View(await applicationDbContext.ToListAsync());
+            var players = await  _playerMyTeamService.GetPlayerMyTeams();
+            return View(players);
         }
 
         // GET: PlayerMyTeams/Create
@@ -46,13 +53,15 @@ namespace NBAMvc1._1.Controllers
                 return BadRequest();
             }
 
-            var myTeam = _context.MyTeam
-                .Where(t => t.MyTeamID == teamID)
-                .Include(t => t.PlayerMyTeamNav)
-                .AsNoTracking().FirstOrDefault();
+            viewModel.MyTeam = await _myTeamsService.GetMyTeamByID(teamID.Value);
 
-            viewModel.MyTeam = myTeam;
+            var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Create);
+            if (!isAuthorized.Succeeded)
+            {
+                return new ChallengeResult();
+            }
 
+            //sort param
             ViewData["currentSort"] = sortParam;
 
             ViewData["playerSort"] = String.IsNullOrEmpty(sortParam) ? "player_desc" : " ";
@@ -79,125 +88,11 @@ namespace NBAMvc1._1.Controllers
             ViewData["currentFilter"] = searchString;
             ViewData["posFilter"] = posFilter;
 
-            IQueryable<Player> players;
-
-            //for search
-            if (searchString != null)
-            {
-                players = _context.Player
-                    .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
-                    .Include(p => p.TeamNav)
-                    .Include(p => p.StatsNav);
-
-            }
-            else if(posFilter != null)
-            {
-                players = _context.Player
-                    .Where(p => p.StatsNav != null && p.Position == posFilter)
-                    .Include(p => p.TeamNav)
-                    .Include(p => p.StatsNav);
-            }
-            else
-            {
-                players = _context.Player
-                    .Where(p => p.StatsNav != null)
-                    .Include(p => p.TeamNav)
-                    .Include(p => p.StatsNav);
-            }
-
-            //for sort
-            switch (sortParam)
-            {
-                case "player_desc":
-                    players = players.OrderBy(p => p.LastName);
-                    break;
-
-                case "FG":
-                    players = players.OrderBy(p => p.StatsNav.FieldGoalsPercentage);
-                    break;
-
-                case "fg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.FieldGoalsPercentage);
-                    break;
-
-                case "FT":
-                    players = players.OrderBy(p => p.StatsNav.FreeThrowsPercentage);
-                    break;
-
-                case "ft_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.FreeThrowsPercentage);
-                    break;
-
-                case "3PT":
-                    players = players.OrderBy(p => p.StatsNav.ThreePointersMade);
-                    break;
-
-                case "3pt_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.ThreePointersMade);
-                    break;
-
-                case "PPG":
-                    players = players.OrderBy(p => p.StatsNav.PPG);
-                    break;
-
-                case "ppg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.PPG);
-                    break;
-
-                case "APG":
-                    players = players.OrderBy(p => p.StatsNav.APG);
-                    break;
-
-                case "apg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.APG);
-                    break;
-
-                case "RPG":
-                    players = players.OrderBy(p => p.StatsNav.RPG);
-                    break;
-
-                case "rpg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.RPG);
-                    break;
-
-                case "SPG":
-                    players = players.OrderBy(p => p.StatsNav.SPG);
-                    break;
-
-                case "spg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.SPG);
-                    break;
-
-                case "BPG":
-                    players = players.OrderBy(p => p.StatsNav.BPG);
-                    break;
-
-                case "bpg_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.BPG);
-                    break;
-
-                case "TO":
-                    players = players.OrderBy(p => p.StatsNav.TPG);
-                    break;
-
-                case "to_desc":
-                    players = players.OrderByDescending(p => p.StatsNav.TPG);
-                    break;
-
-                default:
-                    players = players.OrderBy(p => p.LastName);
-                    break;
-            }
+            IQueryable<Player> players = _playersService.GetPlayers(searchString, posFilter);
+            players = _playersService.SortPLayers(players, sortParam);
             int pageSize = 20;
 
             viewModel.Players = await PaginatedList<Player>.Create(players.AsNoTracking(), pageNumber ?? 1, pageSize);
-
-            var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
-
-            if (!isAuthorized.Succeeded)
-            {
-                return new ChallengeResult();
-            }
 
             return View(viewModel);
         }
@@ -207,51 +102,31 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PlayerID,MyTeamID")] PlayerMyTeam playerMyTeam)
         {
-
-            var player = await _context.Player
-                .Where(p => p.PlayerID == playerMyTeam.PlayerID)
-                .FirstOrDefaultAsync();
-
-            var roster = _context.PlayerMyTeam
-                .Where(p => p.MyTeamID == playerMyTeam.MyTeamID)
-                .Include(p => p.MyTeamID)
-                .Include(p => p.PlayerNav)
-                .AsNoTracking();
-
-            int spots = roster.Where(p => p.PlayerNav.Position == player.Position).Count();
-            
-            //need to create a custom exception for this
-            if(player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1 || await roster.AnyAsync(p => p.PlayerID == player.PlayerID))
+            var myTeam = await _myTeamsService.GetMyTeamByID(playerMyTeam.MyTeamID);
+            var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
+            if (!isAuthorized.Succeeded)
             {
-                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID});
+                return new ChallengeResult();
             }
-
 
             if (ModelState.IsValid)
             {
-                _context.Add(playerMyTeam);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
+                if (await _playerMyTeamService.Create(playerMyTeam))
+                {
+                    return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
+                }
             }
-
             return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
         }
 
         // POST: PlayerMyTeams/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int? playerID, int? myTeamID)
+        public async Task<IActionResult> DeleteConfirmed(int playerID, int myTeamID)
         {
-            var playerMyTeam = await _context.PlayerMyTeam
-                .Include(p => p.MyTeamNav)
-                .Include(p => p.PlayerNav)
-                .FirstOrDefaultAsync(p => p.PlayerID == playerID && p.MyTeamID == myTeamID);
+            var playerMyTeam = await _playerMyTeamService.GetPlayerMyTeam(playerID, myTeamID);
 
-            var pmt = await _context.PlayerMyTeam
-                .AsNoTracking()
-                .FirstOrDefaultAsync(p => p.PlayerID == playerID && p.MyTeamID == myTeamID);
-
-            if(pmt == null)
+            if(playerMyTeam == null)
             {
                 return NotFound();
             }
@@ -263,15 +138,12 @@ namespace NBAMvc1._1.Controllers
                 return new ChallengeResult();
             }
 
-            _context.PlayerMyTeam.Remove(playerMyTeam);
-            await _context.SaveChangesAsync();
+            if (await _playerMyTeamService.Delete(playerMyTeam))
+            {
+                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
+            }
 
             return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
-        }
-
-        private bool PlayerMyTeamExists(int id)
-        {
-            return _context.PlayerMyTeam.Any(e => e.PlayerID == id);
         }
     }
 }
