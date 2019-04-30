@@ -19,12 +19,15 @@ namespace NBAMvc1._1.Controllers
         private readonly ApplicationDbContext _context;
         private readonly FantasyMatchupService _fantasyMatchupService;
         private readonly FantasyLeagueService _fantasyLeagueService;
+        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
 
-        public FantasyMatchupsController(ApplicationDbContext context, FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService)
+        public FantasyMatchupsController(ApplicationDbContext context, FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService,
+            FantasyMatchupsWeeksService fantasyMatchupsWeeksService)
         {
             _context = context;
             _fantasyMatchupService = fantasyMatchupService;
             _fantasyLeagueService = fantasyLeagueService;
+            _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
         }
 
         // GET: FantasyMatchups
@@ -194,74 +197,17 @@ namespace NBAMvc1._1.Controllers
                 return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
             }
 
-            if(fantasyLeague.FantasyMatchupWeeksNav == null)
+            if (await _fantasyMatchupsWeeksService.Create(fantasyLeague))
             {
-                return RedirectToAction("Create", "FantasyMatchupWeeks", new { id = leagueID });
-            }
-
-            List<MyTeam> teams = await _context.MyTeam
-                .Where(t => t.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
-                .Include(t => t.HomeMatchupNav)
-                .Include(t => t.AwayMatchupNav)
-                .ToListAsync(); 
-
-            if(teams == null)
-            {
-                return NotFound();
-            }
-            var any = await _context.FantasyMatchup.Where(m => m.FantasyLeagueID == leagueID).AnyAsync();
-            if(!any)
-            {
-                int numWeeks = (teams.Count() - 1) * 2;
-                int halfSize = teams.Count() / 2;
-
-                List<MyTeam> listTeams = new List<MyTeam>();
-
-                listTeams.AddRange(teams);
-                listTeams.RemoveAt(0);
-
-                int teamSize = listTeams.Count();
-
-                List<FantasyMatchup> matchups = new List<FantasyMatchup>();
-
-                for (int week = 0; week < numWeeks; week++)
+                if(await _fantasyMatchupService.Create(fantasyLeague))
                 {
-                    var matchup = new FantasyMatchup();
-                    matchup.Week = week + 1;
-                    matchup.FantasyLeagueID = leagueID;
-                    matchup.Status = "Scheduled";
-
-                    int teamIdx = week % teamSize;
-
-                    matchup.AwayTeamNav = listTeams[teamIdx];
-                    matchup.HomeTeamNav = teams[0];
-                    matchup.HomeTeamScore = 0;
-                    matchup.AwayTeamScore = 0;
-
-                    matchups.Add(matchup);
-
-                    for (int i = 1; i < halfSize; i++)
+                    if(await _fantasyLeagueService.IsSetConfirm(fantasyLeague.FantasyLeagueID))
                     {
-                        var nextMatchup = new FantasyMatchup();
-                        nextMatchup.Week = week+1;
-                        nextMatchup.FantasyLeagueID = leagueID;
-                        nextMatchup.Status = "Scheduled";
-
-                        nextMatchup.AwayTeamNav = listTeams[(week + i) % teamSize];
-                        nextMatchup.HomeTeamNav = listTeams[(week + teamSize - i) % teamSize];
-                        nextMatchup.AwayTeamScore = 0;
-                        nextMatchup.HomeTeamScore = 0;
-                        matchups.Add(nextMatchup);
+                        return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
                     }
                 }
-                if (ModelState.IsValid)
-                {
-                    _context.FantasyMatchup.AddRange(matchups);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("IsSetConfrim", "FantasyLeagues", new { id = leagueID });
-                }
             }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
+            return RedirectToAction("Index", "Home", new { id = leagueID });
         }
 
         // POST: FantasyMatchups/Edit/5
@@ -280,10 +226,6 @@ namespace NBAMvc1._1.Controllers
             }
 
             return null;
-        }
-        private bool FantasyMatchupExists(int id)
-        {
-            return _context.FantasyMatchup.Any(e => e.FantasyMatchupID == id);
         }
 
         public async Task<decimal[]> CalculateScore(int id)

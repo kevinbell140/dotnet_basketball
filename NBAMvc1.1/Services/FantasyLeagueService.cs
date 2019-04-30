@@ -14,14 +14,10 @@ namespace NBAMvc1._1.Services
     public class FantasyLeagueService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public FantasyLeagueService(ApplicationDbContext context, DataService dataService, UserManager<ApplicationUser> userManager)
+        public FantasyLeagueService(ApplicationDbContext context)
         {
             _context = context;
-            _dataService = dataService;
-            _userManager = userManager;
         }
         public async Task<IEnumerable<FantasyLeague>> GetLeagues()
         {
@@ -171,6 +167,32 @@ namespace NBAMvc1._1.Services
             }
             league.IsFull = false;
             league.IsSet = false;
+
+            try
+            {
+                _context.Update(league);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> IsSetConfirm(int id)
+        {
+            var league = await GetLeague(id);
+            if(league == null)
+            {
+                return false;
+            }
+            league.IsSet = true;
+            league.IsActive = true;
 
             try
             {

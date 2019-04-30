@@ -303,47 +303,5 @@ namespace NBAMvc1._1.Controllers
             }
             return RedirectToAction("Index", "Home");
         }
-
-        private bool FantasyLeagueExists(int id)
-        {
-            return _context.FantasyLeague.Any(e => e.FantasyLeagueID == id);
-        }
-
-        public async Task<IActionResult> IsSetConfrim(int id)
-        {
-            var league = await _context.FantasyLeague
-                .Where(l => l.FantasyLeagueID == id)
-                .FirstOrDefaultAsync();
-
-            if(league == null)
-            {
-                return NotFound();
-            }
-
-            league.IsSet = true;
-            league.IsActive = true;
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(league);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!FantasyLeagueExists(league.FantasyLeagueID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
-            }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = league.FantasyLeagueID });
-        }
     }
 }
