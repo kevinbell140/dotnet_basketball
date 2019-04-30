@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using NBAMvc1._1.Data;
-using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 
 namespace NBAMvc1._1.Controllers
 {
     public class FantasyMatchupWeeksController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly FantasyMatchupsWeeksService _fantasyMatchupWeeksService;
+        private readonly FantasyLeagueService _fantasyLeagueService;
 
-        public FantasyMatchupWeeksController(ApplicationDbContext context)
+        public FantasyMatchupWeeksController(FantasyMatchupsWeeksService fantasyMatchupWeeksService, FantasyLeagueService fantasyLeagueService)
         {
-            _context = context;
+            _fantasyMatchupWeeksService = fantasyMatchupWeeksService;
+            _fantasyLeagueService = fantasyLeagueService;
         }
 
         // GET: FantasyMatchupWeeks
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.FantasyMatchupWeeks.Include(f => f.FantasyLeagueNav);
-            return View(await applicationDbContext.ToListAsync());
+            var weeks = await _fantasyMatchupWeeksService.GetWeeks();
+            return View(weeks);
         }
 
         // GET: FantasyMatchupWeeks/Details/5
@@ -33,9 +29,8 @@ namespace NBAMvc1._1.Controllers
             {
                 return NotFound();
             }
-            var fantasyMatchupWeeks = await _context.FantasyMatchupWeeks
-                .Include(f => f.FantasyLeagueNav)
-                .FirstOrDefaultAsync(m => m.FantasyMatchupWeeksID == id);
+            var fantasyMatchupWeeks = await _fantasyMatchupWeeksService.GetFantasyMatchupWeeksByID(id.Value);
+
             if (fantasyMatchupWeeks == null)
             {
                 return NotFound();
@@ -46,49 +41,22 @@ namespace NBAMvc1._1.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int? leagueID)
         {
-            var league = await _context.FantasyLeague
-                .Include(l => l.FantasyMatchupWeeksNav)
-                .Include(l => l.TeamsNav)
-                .Where(l => l.FantasyLeagueID == leagueID)
-                .FirstOrDefaultAsync();
+            if(leagueID == null)
+            {
+                return NotFound();
+            }
+
+            var league = await _fantasyLeagueService.GetLeague(leagueID.Value);
             if(league == null)
             {
                 return NotFound();
             }
 
-            var any = await _context.FantasyMatchupWeeks
-                .Where(l => l.FantasyLeagueID == leagueID)
-                .AnyAsync();
-
-            if(!any)
+            if (await _fantasyLeagueService.Create(league))
             {
-                DateTime startDate = DateTime.Today.AddDays(-1);
-                int numWeeks = (league.TeamsNav.Count() - 1) * 2;
-                List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
-
-                for(int i = 0; i < numWeeks; i++)
-                {
-                    FantasyMatchupWeeks week = new FantasyMatchupWeeks
-                    {
-                        FantasyLeagueNav = league,
-                        WeekNum = i,
-                        Date = startDate.AddDays(i),
-                    };
-                    list.Add(week);
-                }
-
-                if (ModelState.IsValid)
-                {
-                    await _context.FantasyMatchupWeeks.AddRangeAsync(list);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction("Create", "FantasyMatchups", new { leagueID = leagueID });
-                }
+                return RedirectToAction("Create", "FantasyMatchups", new { leagueID = leagueID });
             }
-            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
-        }
-        private bool FantasyMatchupWeeksExists(int id)
-        {
-            return _context.FantasyMatchupWeeks.Any(e => e.FantasyMatchupWeeksID == id);
+            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });           
         }
     }
 }

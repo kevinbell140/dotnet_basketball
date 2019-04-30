@@ -18,6 +18,17 @@ namespace NBAMvc1._1.Services
             _context = context;
             _dataService = dataService;
         }
+
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchups()
+        {
+            var matchups = await _context.FantasyMatchup
+                .Include(f => f.FantasyLeagueNav)
+                .Include(f => f.AwayTeamNav)
+                .Include(f => f.HomeTeamNav)
+                .ToListAsync();
+            return matchups;
+        }
+
         public async Task<IEnumerable<FantasyMatchup>> GetMatchupsByWeek(int leagueID, int selectedWeek)
         {
             var matchups = await _context.FantasyMatchup

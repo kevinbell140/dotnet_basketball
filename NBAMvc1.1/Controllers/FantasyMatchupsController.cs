@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -16,17 +17,21 @@ namespace NBAMvc1._1.Controllers
     public class FantasyMatchupsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly FantasyMatchupService _fantasyMatchupService;
+        private readonly FantasyLeagueService _fantasyLeagueService;
 
-        public FantasyMatchupsController(ApplicationDbContext context)
+        public FantasyMatchupsController(ApplicationDbContext context, FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService)
         {
             _context = context;
+            _fantasyMatchupService = fantasyMatchupService;
+            _fantasyLeagueService = fantasyLeagueService;
         }
 
         // GET: FantasyMatchups
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.FantasyMatchup.Include(f => f.AwayTeamNav).Include(f => f.FantasyLeagueNav).Include(f => f.HomeTeamNav);
-            return View(await applicationDbContext.ToListAsync());
+            var matchups = await _fantasyMatchupService.GetMatchups();
+            return View(matchups);
         }
 
         // GET: FantasyMatchups/Details/5
@@ -177,16 +182,13 @@ namespace NBAMvc1._1.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int leagueID)
         {
-            var fantasyLeague = await _context.FantasyLeague
-                .Include(l => l.FantasyMatchupWeeksNav)
-                .Where(l => l.FantasyLeagueID == leagueID)
-                .FirstOrDefaultAsync();
-
+            var fantasyLeague = await _fantasyLeagueService.GetLeague(leagueID);
             if(fantasyLeague == null)
             {
                 return NotFound();
             }
 
+            //needs validation
             if (!fantasyLeague.IsFull)
             {
                 return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });

@@ -19,6 +19,54 @@ namespace NBAMvc1._1.Services
             _dataService = dataService;
         }
 
+        public async Task<IEnumerable<FantasyMatchupWeeks>> GetWeeks()
+        {
+            var weeks = await _context.FantasyMatchupWeeks
+                .Include(f => f.FantasyLeagueNav)
+                .ToListAsync();
+            return weeks;
+        }
+
+        public async Task<bool> WeeksExist(int leagueID)
+        {
+            var exists = await _context.FantasyMatchupWeeks
+                .Where(l => l.FantasyLeagueID == leagueID)
+                .AnyAsync();
+            return exists;
+        }
+
+        public async Task<bool> Create(FantasyLeague fantasyLeague)
+        {
+            if(!await WeeksExist(fantasyLeague.FantasyLeagueID))
+            {
+                DateTime startDate = DateTime.Today.AddDays(-1);
+                int numWeeks = (fantasyLeague.TeamsNav.Count() - 1) * 2;
+                List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
+
+                for (int i = 0; i < numWeeks; i++)
+                {
+                    FantasyMatchupWeeks week = new FantasyMatchupWeeks
+                    {
+                        FantasyLeagueNav = fantasyLeague,
+                        WeekNum = i,
+                        Date = startDate.AddDays(i),
+                    };
+                    list.Add(week);
+                }
+                try
+                {
+                    await _context.FantasyMatchupWeeks.AddRangeAsync(list);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                catch (Exception)
+                {
+                    return false;
+                }
+            }
+            return false;
+        }
+
         public async Task<IEnumerable<FantasyMatchupWeeks>> GetFantasyMatchupWeeksByLeague(int leagueID)
         {
             var weeks = await _context.FantasyMatchupWeeks
@@ -35,5 +83,13 @@ namespace NBAMvc1._1.Services
             return thisWeek;
         }
 
+        public async Task<FantasyMatchupWeeks> GetFantasyMatchupWeeksByID(int id)
+        {
+            var fantasyMatchupWeeks = await _context.FantasyMatchupWeeks
+                .Include(f => f.FantasyLeagueNav)
+                .Where(f => f.FantasyMatchupWeeksID == id)
+                .FirstOrDefaultAsync();
+            return fantasyMatchupWeeks;
+        }
     }
 }

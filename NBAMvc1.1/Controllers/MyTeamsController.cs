@@ -17,14 +17,16 @@ namespace NBAMvc1._1.Controllers
         private readonly IAuthorizationService _auth;
         private readonly MyTeamsService _myTeamService;
         private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly FantasyLeagueService _fantasyLeagueService;
 
         public MyTeamsController(UserManager<ApplicationUser> userManager, IAuthorizationService auth,
-            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService)
+            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, FantasyLeagueService fantasyLeagueService)
         {
             _userManager = userManager;
             _auth = auth;
             _myTeamService = myTeamsService;
             _playerMyTeamService = playerMyTeamService;
+            _fantasyLeagueService = fantasyLeagueService;
         }
 
         // GET: MyTeams
@@ -81,7 +83,10 @@ namespace NBAMvc1._1.Controllers
             {
                 if (await _myTeamService.Create(myTeam))
                 {
-                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID } );
+                    if(await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID))
+                    {
+                        return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+                    }
                 }
             }
             return RedirectToAction("Index", "Home");
@@ -180,7 +185,10 @@ namespace NBAMvc1._1.Controllers
 
             if (await _myTeamService.Delete(myTeam))
             {
-                return RedirectToAction("RemoveTeam", "FantasyLeagues", new { id = leagueID });
+                if(await _fantasyLeagueService.RemoveTeamConfirm(myTeam.FantasyLeagueID))
+                {
+                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+                }
             }
             return RedirectToAction("Index", "Home");
         }

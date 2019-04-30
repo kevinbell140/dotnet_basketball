@@ -36,7 +36,9 @@ namespace NBAMvc1._1.Services
             var fantasyLeague = await _context.FantasyLeague
                 .Include(m => m.TeamsNav).ThenInclude(m => m.UserNav)
                 .Include(m => m.ComissionerNav)
-                .FirstOrDefaultAsync(m => m.FantasyLeagueID == id);
+                .Include(m => m.FantasyMatchupWeeksNav)
+                .Where(m => m.FantasyLeagueID == id)
+                .FirstOrDefaultAsync();
             return fantasyLeague;
         }
 
@@ -125,6 +127,65 @@ namespace NBAMvc1._1.Services
                 return teams;
             }
             return null;
+        }
+
+        public async Task<bool> AddTeamConfirm(int id)
+        {
+            var league = await GetLeague(id);
+            if(league == null)
+            {
+                return false;
+            }
+
+            if (league.TeamsNav.Count() < 8)
+            {
+                league.IsFull = false;
+            }
+            else
+            {
+                league.IsFull = true;
+            }
+
+            try
+            {
+                _context.Update(league);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemoveTeamConfirm(int id)
+        {
+            var league = await GetLeague(id);
+            if(league == null)
+            {
+                return false;
+            }
+            league.IsFull = false;
+            league.IsSet = false;
+
+            try
+            {
+                _context.Update(league);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
