@@ -11,15 +11,11 @@ namespace NBAMvc1._1.Services
     public class PlayerMyTeamService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
-        private readonly FantasyLeagueService _fantasyLeagueService;
         private readonly PlayersService _playersService;
 
-        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context, DataService dataService, FantasyLeagueService fantasyLeagueService)
+        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context)
         {
             _context = context;
-            _dataService = dataService;
-            _fantasyLeagueService = fantasyLeagueService;
             _playersService = playersService;
         }
 
@@ -48,7 +44,8 @@ namespace NBAMvc1._1.Services
         {
             var roster = await _context.PlayerMyTeam
                 .Include(p => p.MyTeamNav)
-                .Include(p => p.PlayerNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
                 .Where(p => p.MyTeamID == myTeamID)
                 .AsNoTracking().ToListAsync();
 
@@ -60,11 +57,44 @@ namespace NBAMvc1._1.Services
             IQueryable<PlayerMyTeam> roster;
             roster = _context.PlayerMyTeam
                 .Include(p => p.MyTeamNav)
-                .Include(p => p.PlayerNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
+                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
                 .Where(p => p.MyTeamID == myTeamID)
                 .AsNoTracking();
 
             return roster;
+        }
+
+        public async Task<IDictionary<string, Player>> GetRosterDictionaryAsync(int myTeamID)
+        {
+            var roster = await GetRoster(myTeamID);
+            Dictionary<string, Player> players = new Dictionary<string, Player>
+            {
+                { "PG1", null},
+                { "PG2", null},
+                { "SG1", null},
+                { "SG2", null},
+                { "SF1", null},
+                { "SF2", null},
+                { "PF1", null},
+                { "PF2", null},
+                { "C", null},
+            };
+
+            int posCount = 1;
+            foreach (var p in roster)
+            {
+                if (p.PlayerNav.Position == "C")
+                {
+                    players[p.PlayerNav.Position] = p.PlayerNav;
+                }
+                else
+                {
+                    players[p.PlayerNav.Position + posCount] = p.PlayerNav;
+                    posCount = (posCount == 1 ? 2 : 1);
+                }
+            }
+            return players;
         }
 
         private int GetRosterSpots(IEnumerable<PlayerMyTeam> roster, string pos)
@@ -84,7 +114,6 @@ namespace NBAMvc1._1.Services
         {
             var player = await _playersService.GetPlayer(playerMyTeam.PlayerID);
             var roster = await GetRoster(playerMyTeam.MyTeamID);
-            //its broken here
             int spots = GetRosterSpots(roster, player.Position);
 
             //need to create a custom exception for this

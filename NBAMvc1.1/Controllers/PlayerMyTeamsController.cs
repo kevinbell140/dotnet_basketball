@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Auth;
-using NBAMvc1._1.Areas.Identity;
-using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
 using NBAMvc1._1.Utils;
@@ -19,17 +14,13 @@ namespace NBAMvc1._1.Controllers
 {
     public class PlayerMyTeamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
         private readonly PlayerMyTeamService _playerMyTeamService;
         private readonly MyTeamsService _myTeamsService;
         private readonly PlayersService _playersService;
 
-        public PlayerMyTeamsController(PlayersService playersService, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth)
+        public PlayerMyTeamsController(PlayersService playersService, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, IAuthorizationService auth)
         {
-            _context = context;
-            _userManager = userManager;
             _auth = auth;
             _playerMyTeamService = playerMyTeamService;
             _myTeamsService = myTeamsService;

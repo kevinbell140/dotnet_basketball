@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
-using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
 using NBAMvc1._1.ViewModels;
@@ -19,18 +13,18 @@ namespace NBAMvc1._1.Controllers
     [Authorize]
     public class MyTeamsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
         private readonly MyTeamsService _myTeamService;
+        private readonly PlayerMyTeamService _playerMyTeamService;
 
-        public MyTeamsController(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IAuthorizationService auth,
-            MyTeamsService myTeamsService)
+        public MyTeamsController(UserManager<ApplicationUser> userManager, IAuthorizationService auth,
+            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService)
         {
-            _context = context;
             _userManager = userManager;
             _auth = auth;
             _myTeamService = myTeamsService;
+            _playerMyTeamService = playerMyTeamService;
         }
 
         // GET: MyTeams
@@ -43,61 +37,24 @@ namespace NBAMvc1._1.Controllers
         // GET: MyTeams/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-
-            var viewModel = new MyTeamDetailsViewModel();
             if (id == null)
             {
                 return NotFound();
             }
-
-            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
-            if (myTeam == null)
+            var viewModel = new MyTeamDetailsViewModel();
+            viewModel.MyTeam = await _myTeamService.GetMyTeamByID(id.Value);
+            if (viewModel.MyTeam == null)
             {
                 return NotFound();
             }
-            viewModel.MyTeam = myTeam;
 
-            //gets player roster
-            var playerMyteams = await _context.PlayerMyTeam
-                .Where(p => p.MyTeamNav.MyTeamID == id)
-                .Include(p => p.PlayerNav).ThenInclude(p => p.StatsNav)
-                .Include(p => p.PlayerNav).ThenInclude(p => p.TeamNav)
-                .OrderBy(p => p.PlayerNav.Position)
-                .AsNoTracking().ToListAsync();
-
-
-            //dictonary for roster
-            Dictionary<string, Player> players = new Dictionary<string, Player>();
-
-            int posCount = 1;
-
-            //add players to in memory dictonary
-            foreach(var p in playerMyteams)
-            {
-                if(p.PlayerNav.Position == "C")
-                {
-                    players.Add(p.PlayerNav.Position, p.PlayerNav);
-                }
-                else
-                {
-
-                    players.Add(p.PlayerNav.Position + posCount, p.PlayerNav);
-                    posCount = (posCount == 1 ? 2 : 1);
-                }
-            }
-
-            //add players to viewModel dictionary
-            foreach(KeyValuePair<string, Player> entry in players)
-            {
-                viewModel.Roster[entry.Key] = entry.Value;
-            }
-
-            if(_userManager.GetUserId(User) != myTeam.UserID)
+            var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Read);
+            if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();
             }
 
-
+            viewModel.Roster = await _playerMyTeamService.GetRosterDictionaryAsync(viewModel.MyTeam.MyTeamID);
             return View(viewModel);
         }
 
@@ -114,9 +71,7 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("MyTeamID,Name,FantasyLeagueID,UserID")] MyTeam myTeam)
         {
-            
             var isAuthorizied = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
-
             if (!isAuthorizied.Succeeded)
             {
                 return new ChallengeResult();
@@ -127,7 +82,6 @@ namespace NBAMvc1._1.Controllers
                 if (await _myTeamService.Create(myTeam))
                 {
                     return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID } );
-                    //return RedirectToAction("Create", "FantasyLeagueStandings", new { myTeamID = myTeam.MyTeamID });
                 }
             }
             return RedirectToAction("Index", "Home");
@@ -229,7 +183,6 @@ namespace NBAMvc1._1.Controllers
                 return RedirectToAction("RemoveTeam", "FantasyLeagues", new { id = leagueID });
             }
             return RedirectToAction("Index", "Home");
-
         }
     }
 }
