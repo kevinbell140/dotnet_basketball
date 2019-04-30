@@ -44,11 +44,22 @@ namespace NBAMvc1._1.Services
             return playerMyTeam;
         }
 
-        public IQueryable<PlayerMyTeam> GetRoster(int myTeamID)
+        public async Task<IEnumerable<PlayerMyTeam>> GetRoster(int myTeamID)
+        {
+            var roster = await _context.PlayerMyTeam
+                .Include(p => p.MyTeamNav)
+                .Include(p => p.PlayerNav)
+                .Where(p => p.MyTeamID == myTeamID)
+                .AsNoTracking().ToListAsync();
+
+            return roster;
+        }
+
+        public IQueryable<PlayerMyTeam> GetRosterQueryable(int myTeamID)
         {
             IQueryable<PlayerMyTeam> roster;
             roster = _context.PlayerMyTeam
-                .Include(p => p.MyTeamID)
+                .Include(p => p.MyTeamNav)
                 .Include(p => p.PlayerNav)
                 .Where(p => p.MyTeamID == myTeamID)
                 .AsNoTracking();
@@ -56,25 +67,25 @@ namespace NBAMvc1._1.Services
             return roster;
         }
 
-        public int GetRosterSpots(IEnumerable<PlayerMyTeam> roster, string pos)
+        private int GetRosterSpots(IEnumerable<PlayerMyTeam> roster, string pos)
         {
             int spots = 0;
             spots = roster.Where(p => p.PlayerNav.Position == pos).Count();
             return spots;
         }
 
-        public async Task<bool> IsPlayerOnRoster(int myTeamID, int playerID)
+        private async Task<bool> IsPlayerOnRoster(int myTeamID, int playerID)
         {
-            var roster = GetRoster(myTeamID);
+            var roster = GetRosterQueryable(myTeamID);
             return await roster.AnyAsync(x => x.PlayerID == playerID);
         }
 
         public async Task<bool> Create(PlayerMyTeam playerMyTeam)
         {
             var player = await _playersService.GetPlayer(playerMyTeam.PlayerID);
-            var roster = GetRoster(playerMyTeam.MyTeamID);
+            var roster = await GetRoster(playerMyTeam.MyTeamID);
             //its broken here
-            int spots = GetRosterSpots(roster, playerMyTeam.PlayerNav.Position);
+            int spots = GetRosterSpots(roster, player.Position);
 
             //need to create a custom exception for this
             if (player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1 || await IsPlayerOnRoster(playerMyTeam.MyTeamID, playerMyTeam.PlayerID))
