@@ -11,18 +11,16 @@ namespace NBAMvc1._1.Services
     public class FantasyMatchupService
     {
         private readonly ApplicationDbContext _context;
-        private readonly MyTeamsService _myTeamsService;
         private readonly PlayerMyTeamService _playerMyTeamService;
         private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly PlayerGameStatsService _playerGameStatsService;
         private readonly GamesService _gamesService;
 
-        public FantasyMatchupService(ApplicationDbContext context, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService,
+        public FantasyMatchupService(ApplicationDbContext context, PlayerMyTeamService playerMyTeamService,
            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerGameStatsService playerGameStatsService,
             GamesService gamesService)
         {
             _context = context;
-            _myTeamsService = myTeamsService;
             _playerMyTeamService = playerMyTeamService;
             _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _playerGameStatsService = playerGameStatsService;
@@ -41,8 +39,9 @@ namespace NBAMvc1._1.Services
 
         public async Task<bool> Create(FantasyLeague fantasyLeague)
         {
-            List<MyTeam> teams = await _myTeamsService.GetMyTeamsByLeague(fantasyLeague.FantasyLeagueID);
-            if(!await MatchupsExists(fantasyLeague.FantasyLeagueID))
+            List<MyTeam> teams = fantasyLeague.TeamsNav;
+            
+            if (!await MatchupsExists(fantasyLeague.FantasyLeagueID))
             {
                 int numWeeks = (teams.Count() - 1) * 2;
                 int halfSize = teams.Count() / 2;

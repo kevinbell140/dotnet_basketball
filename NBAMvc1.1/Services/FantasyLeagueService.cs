@@ -14,10 +14,12 @@ namespace NBAMvc1._1.Services
     public class FantasyLeagueService
     {
         private readonly ApplicationDbContext _context;
+        private readonly FantasyMatchupService _fantasyMatchupService;
 
-        public FantasyLeagueService(ApplicationDbContext context)
+        public FantasyLeagueService(ApplicationDbContext context, FantasyMatchupService fantasyMatchupService)
         {
             _context = context;
+            _fantasyMatchupService = fantasyMatchupService;
         }
         public async Task<IEnumerable<FantasyLeague>> GetLeagues()
         {
@@ -208,6 +210,49 @@ namespace NBAMvc1._1.Services
             {
                 return false;
             }
+        }
+
+        public async Task<bool> UpdateMatchups(IEnumerable<FantasyMatchup> matchups, int currentWeek)
+        {
+            List<FantasyMatchup> updateList = new List<FantasyMatchup>();
+
+            foreach (var m in matchups)
+            {
+                updateList = await UpdateMatchup(m, currentWeek, updateList);
+            }
+            try
+            {
+                _context.UpdateRange(updateList);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private async Task<List<FantasyMatchup>> UpdateMatchup(FantasyMatchup matchup, int currentWeek, List<FantasyMatchup> updateList)
+        {
+            if (matchup.Week < currentWeek)
+            {
+                matchup.Status = "Final";
+            }
+            else
+            {
+                matchup.Status = "In Progress";
+            }
+
+            var scores = await _fantasyMatchupService.CalculateScore(matchup);
+            matchup.HomeTeamScore = scores[0];
+            matchup.AwayTeamScore = scores[1];
+
+            updateList.Add(matchup);
+            return updateList;
         }
     }
 }

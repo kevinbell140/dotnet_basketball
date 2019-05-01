@@ -133,7 +133,6 @@ namespace NBAMvc1._1.Controllers
             {
                 return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
             }
-
             return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
         }
     }

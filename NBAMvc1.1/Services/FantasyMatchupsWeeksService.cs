@@ -11,12 +11,10 @@ namespace NBAMvc1._1.Services
     public class FantasyMatchupsWeeksService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
 
-        public FantasyMatchupsWeeksService(ApplicationDbContext context, DataService dataService)
+        public FantasyMatchupsWeeksService(ApplicationDbContext context)
         {
             _context = context;
-            _dataService = dataService;
         }
 
         public async Task<IEnumerable<FantasyMatchupWeeks>> GetWeeks()
