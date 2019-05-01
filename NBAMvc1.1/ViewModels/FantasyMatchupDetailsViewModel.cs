@@ -1,8 +1,6 @@
 ﻿using NBAMvc1._1.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NBAMvc1._1.ViewModels
 {
@@ -54,59 +52,5 @@ namespace NBAMvc1._1.ViewModels
 
         public DateTime Date { get; set; }
 
-        public FantasyMatchupDetailsViewModel()
-        {
-            HomeOpp = new Dictionary<string, string>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-
-            AwayOpp = new Dictionary<string, string>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-
-            HomeStats = new Dictionary<string, PlayerGameStats>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-
-            AwayStats = new Dictionary<string, PlayerGameStats>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-        }
     }
 }

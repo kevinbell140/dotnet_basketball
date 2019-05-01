@@ -11,14 +11,22 @@ namespace NBAMvc1._1.Services
     public class FantasyMatchupService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
         private readonly MyTeamsService _myTeamsService;
+        private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
+        private readonly PlayerGameStatsService _playerGameStatsService;
+        private readonly GamesService _gamesService;
 
-        public FantasyMatchupService(ApplicationDbContext context, DataService dataService, MyTeamsService myTeamsService)
+        public FantasyMatchupService(ApplicationDbContext context, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService,
+           FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerGameStatsService playerGameStatsService,
+            GamesService gamesService)
         {
             _context = context;
-            _dataService = dataService;
             _myTeamsService = myTeamsService;
+            _playerMyTeamService = playerMyTeamService;
+            _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
+            _playerGameStatsService = playerGameStatsService;
+            _gamesService = gamesService;
         }
 
         public async Task<IEnumerable<FantasyMatchup>> GetMatchups()
@@ -83,7 +91,6 @@ namespace NBAMvc1._1.Services
                     _context.FantasyMatchup.AddRange(matchups);
                     await _context.SaveChangesAsync();
                     return true;
-                    //return RedirectToAction("IsSetConfrim", "FantasyLeagues", new { id = leagueID });
                 }
                 catch (Exception)
                 {
@@ -130,5 +137,98 @@ namespace NBAMvc1._1.Services
             return matchup;
         }
 
+        public async Task<decimal[]> CalculateScore(FantasyMatchup matchup)
+        {
+            var home = await _playerMyTeamService.GetRoster(matchup.HomeTeamID.Value);
+            var away = await _playerMyTeamService.GetRoster(matchup.AwayTeamID.Value);
+            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeague(matchup.FantasyLeagueID, matchup.Week);
+
+            List<PlayerGameStats> homeStats = await GetGameStatsList(home, matchupWeek);
+            List<PlayerGameStats> awayStats = await GetGameStatsList(away, matchupWeek);
+
+            return new decimal[] { homeStats.Sum(x => x.FantasyPoints), awayStats.Sum(x => x.FantasyPoints) };
+        }
+
+        public async Task<Dictionary<string, string>> GetOpponentLogoDictionary(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
+        {
+            Dictionary<string, string> OppDictionary = new Dictionary<string, string>
+                {
+                    { "PG1", null},
+                    { "PG2", null},
+                    { "SG1", null},
+                    { "SG2", null},
+                    { "SF1", null},
+                    { "SF2", null},
+                    { "PF1", null},
+                    { "PF2", null},
+                    { "C", null},
+                };
+
+            foreach (KeyValuePair<string, Player> player in roster)
+            {
+                if (player.Value != null)
+                {
+                    var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.Value.TeamID);
+
+                    if (gameTonight != null)
+                    {
+                        OppDictionary[player.Key] = (gameTonight.AwayTeamID == player.Value.TeamID ? gameTonight.HomeTeamNav.WikipediaLogoUrl : gameTonight.AwayTeamNav.WikipediaLogoUrl);
+                    }
+                }
+            }
+            return OppDictionary;
+        }
+
+        public async Task<Dictionary<string, PlayerGameStats>> GetGameStatsDictionary(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
+        {
+            Dictionary<string, PlayerGameStats> statsDictionary = new Dictionary<string, PlayerGameStats>
+                {
+                    { "PG1", null},
+                    { "PG2", null},
+                    { "SG1", null},
+                    { "SG2", null},
+                    { "SF1", null},
+                    { "SF2", null},
+                    { "PF1", null},
+                    { "PF2", null},
+                    { "C", null},
+                };
+
+            foreach (KeyValuePair<string, Player> player in roster)
+            {
+                if (player.Value != null)
+                {
+                    var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.Value.TeamID);
+
+                    if (gameTonight != null)
+                    {
+                        var stats = await _playerGameStatsService.GetPlayerGameStatsByGame(player.Value.PlayerID, gameTonight.GameID);
+                        if (stats != null)
+                        {
+                            statsDictionary[player.Key] = stats; ;
+                        }
+                    }
+                }
+            }
+            return statsDictionary;
+        }
+
+        public async Task<List<PlayerGameStats>> GetGameStatsList(IEnumerable<PlayerMyTeam> roster, FantasyMatchupWeeks matchupWeek)
+        {
+            List<PlayerGameStats> statsList = new List<PlayerGameStats>();
+            foreach (PlayerMyTeam player in roster)
+            {
+                var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.PlayerNav.TeamID);
+                if (gameTonight != null)
+                {
+                    var stats = await _playerGameStatsService.GetPlayerGameStatsByGame(player.PlayerNav.PlayerID, gameTonight.GameID);
+                    if (stats != null)
+                    {
+                        statsList.Add(stats);
+                    }
+                }
+            }
+            return statsList;
+        }
     }
 }
