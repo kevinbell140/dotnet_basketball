@@ -14,7 +14,6 @@ namespace NBAMvc1._1.Controllers
         private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly PlayerMyTeamService _playerMyTeamService;
 
-
         public FantasyMatchupsController(FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService,
             FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerMyTeamService playerMyTeamService)
         {
