@@ -106,6 +106,18 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
+        public async Task<Game> HasGameTonight(FantasyMatchupWeeks matchupWeek, int teamID)
+        {
+            var gameTonight = await _context.Game
+                    .Include(g => g.PlayerGameStatsNav)
+                    .Include(g => g.HomeTeamNav)
+                    .Include(g => g.AwayTeamNav)
+                    .Where(g => g.DateTime.Date == matchupWeek.Date)
+                    .Where(g => g.AwayTeamID == teamID || g.HomeTeamID == teamID)
+                    .FirstOrDefaultAsync();
+            return gameTonight;
+        }
+
         public async Task<bool> Fetch(bool isPost)
         {
             List<Game> games;

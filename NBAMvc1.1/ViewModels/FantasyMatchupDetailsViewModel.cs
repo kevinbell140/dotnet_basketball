@@ -14,9 +14,9 @@ namespace NBAMvc1._1.ViewModels
 
         public MyTeam AwayTeam { get; set; }
 
-        public Dictionary<string, Player> HomeRoster { get; set; }
+        public IDictionary<string, Player> HomeRoster { get; set; }
 
-        public Dictionary<string, Player> AwayRoster { get; set; }
+        public IDictionary<string, Player> AwayRoster { get; set; }
 
         public Dictionary<string, string> HomeOpp { get; set; }
 
@@ -56,32 +56,6 @@ namespace NBAMvc1._1.ViewModels
 
         public FantasyMatchupDetailsViewModel()
         {
-            HomeRoster = new Dictionary<string, Player>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-
-            AwayRoster = new Dictionary<string, Player>
-            {
-                { "PG1", null},
-                { "PG2", null},
-                { "SG1", null},
-                { "SG2", null},
-                { "SF1", null},
-                { "SF2", null},
-                { "PF1", null},
-                { "PF2", null},
-                { "C", null},
-            };
-
             HomeOpp = new Dictionary<string, string>
             {
                 { "PG1", null},

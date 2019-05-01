@@ -30,8 +30,10 @@ namespace NBAMvc1._1.Services
         public async Task<PlayerGameStats> GetPlayerGameStatsByGame(int playerID, int gameID)
         {
             var log = await _context.PlayerGameStats
-                    .Where(a => a.GameNav.GameID == gameID && a.PlayerNav.PlayerID == playerID)
-                    .FirstOrDefaultAsync();
+                .Include(a => a.PlayerNav)
+                .Include(a => a.GameNav)
+                .Where(a => a.GameNav.GameID == gameID && a.PlayerNav.PlayerID == playerID)
+                .FirstOrDefaultAsync();
             return log;
         }
 

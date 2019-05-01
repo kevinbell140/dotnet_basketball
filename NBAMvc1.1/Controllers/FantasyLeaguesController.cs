@@ -117,7 +117,7 @@ namespace NBAMvc1._1.Controllers
                 {
                     if(m.Week <= currentWeek)
                     {
-                        updateList = await UpdateMatchupStatus(m.FantasyMatchupID, currentWeek, updateList);
+                        //updateList = await UpdateMatchupStatus(m.FantasyMatchupID, currentWeek, updateList);
                     }
                 }
                 if (ModelState.IsValid)
@@ -183,32 +183,32 @@ namespace NBAMvc1._1.Controllers
 
         //}
 
-        private async Task<List<FantasyMatchup>> UpdateMatchupStatus(int id, int currentWeek, List<FantasyMatchup> updateList)
-        {
-            var matchup = await _context.FantasyMatchup
-                .Where(x => x.FantasyMatchupID == id)
-                .AsNoTracking().FirstOrDefaultAsync();
+        //private async Task<List<FantasyMatchup>> UpdateMatchupStatus(int id, int currentWeek, List<FantasyMatchup> updateList)
+        //{
+        //    var matchup = await _context.FantasyMatchup
+        //        .Where(x => x.FantasyMatchupID == id)
+        //        .AsNoTracking().FirstOrDefaultAsync();
 
-            if(matchup.Week < currentWeek)
-            {
-                matchup.Status = "Final";
-            }else
-            {
-                matchup.Status = "In Progress";
-            }
+        //    if(matchup.Week < currentWeek)
+        //    {
+        //        matchup.Status = "Final";
+        //    }else
+        //    {
+        //        matchup.Status = "In Progress";
+        //    }
 
-            var scores = await _fantasyMatchupsController.CalculateScore(matchup.FantasyMatchupID);
+        //    var scores = await _fantasyMatchupsController.CalculateScore(matchup.FantasyMatchupID);
 
-            matchup.HomeTeamScore = scores[0];
-            matchup.AwayTeamScore = scores[1];
+        //    matchup.HomeTeamScore = scores[0];
+        //    matchup.AwayTeamScore = scores[1];
 
-            FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
-            if(updatedMatch != null)
-            {
-                updateList.Add(updatedMatch);
-            }
-            return updateList;
-        }
+        //    FantasyMatchup updatedMatch = _fantasyMatchupsController.Edit(matchup.FantasyMatchupID, matchup);
+        //    if(updatedMatch != null)
+        //    {
+        //        updateList.Add(updatedMatch);
+        //    }
+        //    return updateList;
+        //}
 
         // GET: FantasyLeagues/Create
         [Authorize(Policy = "AdminOnly")]
