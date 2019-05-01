@@ -64,6 +64,7 @@ namespace NBAMvc1._1
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
             services.AddScoped<DataService>();
             services.AddScoped<FantasyLeagueService>();
+            services.AddScoped<FantasyLeagueStandingsService>();
             services.AddScoped<FantasyMatchupService>();
             services.AddScoped<FantasyMatchupsWeeksService>();
             services.AddScoped<GamesService>();

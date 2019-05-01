@@ -125,6 +125,17 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecording(int leagueID)
+        {
+            var matchups = await _context.FantasyMatchup
+                    .Include(m => m.AwayTeamNav)
+                    .Include(m => m.HomeTeamNav)
+                    .Where(m => m.FantasyLeagueID == leagueID && m.Status == "Final" && !m.Recorded)
+                    .AsNoTracking().ToListAsync();
+
+            return matchups;
+        }
+
         public async Task<FantasyMatchup> GetMatchupByID(int id)
         {
             var matchup = await _context.FantasyMatchup

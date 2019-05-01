@@ -13,14 +13,16 @@ namespace NBAMvc1._1.Controllers
         private readonly FantasyLeagueService _fantasyLeagueService;
         private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly FantasyLeagueStandingsService _fantasyLeagueStandingsService;
 
         public FantasyMatchupsController(FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService,
-            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerMyTeamService playerMyTeamService)
+            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerMyTeamService playerMyTeamService, FantasyLeagueStandingsService fantasyLeagueStandingsService)
         {
             _fantasyMatchupService = fantasyMatchupService;
             _fantasyLeagueService = fantasyLeagueService;
             _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _playerMyTeamService = playerMyTeamService;
+            _fantasyLeagueStandingsService = fantasyLeagueStandingsService;
         }
 
         // GET: FantasyMatchups
@@ -77,10 +79,13 @@ namespace NBAMvc1._1.Controllers
             {
                 if(await _fantasyMatchupService.Create(fantasyLeague))
                 {
-                    if(await _fantasyLeagueService.IsSetConfirm(fantasyLeague.FantasyLeagueID))
+                    if(await _fantasyLeagueStandingsService.Create(fantasyLeague))
                     {
-                        return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
-                    }
+                        if (await _fantasyLeagueService.IsSetConfirm(fantasyLeague.FantasyLeagueID))
+                        {
+                            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
+                        }
+                    }                    
                 }
             }
             return RedirectToAction("Index", "Home", new { id = leagueID });

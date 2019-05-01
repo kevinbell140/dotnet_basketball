@@ -15,14 +15,17 @@ namespace NBAMvc1._1.Controllers
         private readonly FantasyLeagueService _fantasyLeagueService;
         private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly FantasyMatchupService _fantasyMatchupService;
+        private readonly FantasyLeagueStandingsService _fantasyLeagueStandingsService;
 
         public FantasyLeaguesController(FantasyLeagueService fantasyLeagueService, UserManager<ApplicationUser> userManager, 
-            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, FantasyMatchupService fantasyMatchupService)
+            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, FantasyMatchupService fantasyMatchupService,
+            FantasyLeagueStandingsService fantasyLeagueStandingsService)
         {
             _userManager = userManager;
             _fantasyLeagueService = fantasyLeagueService;
             _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _fantasyMatchupService = fantasyMatchupService;
+            _fantasyLeagueStandingsService = fantasyLeagueStandingsService;
         }
 
         // GET: FantasyLeagues
@@ -91,7 +94,9 @@ namespace NBAMvc1._1.Controllers
 
                 //all of the matchups prior to this week for updating purposes
                 var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, currentWeek);
-                await _fantasyLeagueService.UpdateMatchups(matchupUpdates, currentWeek);              
+                var test = await _fantasyLeagueService.UpdateMatchups(matchupUpdates, currentWeek);
+                var test2 = await _fantasyLeagueStandingsService.UpdateStandings(viewModel.FantasyLeague);
+                var test3 = viewModel.FantasyLeague;
             }
             return View(viewModel);
         }
