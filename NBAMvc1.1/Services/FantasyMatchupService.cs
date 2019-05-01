@@ -125,15 +125,46 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecording(int leagueID)
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecording(int leagueID, int week)
         {
             var matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav)
                     .Include(m => m.HomeTeamNav)
-                    .Where(m => m.FantasyLeagueID == leagueID && m.Status == "Final" && !m.Recorded)
+                    .Where(m => m.FantasyLeagueID == leagueID && m.Week == week && !m.Recorded)
                     .AsNoTracking().ToListAsync();
 
             return matchups;
+        }
+
+
+        public async Task<bool> StandingsRecorded(int leagueID, int week)
+        {
+            var matchups = await GetMatchupsByWeek(leagueID, week);
+            List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
+
+            foreach(var m in matchups)
+            {
+                m.Recorded = true;
+                updatedMatchups.Add(m);
+            }
+            try
+            {
+                _context.UpdateRange(updatedMatchups);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<int> WeeksThatNeedRecording(int leagueID)
+        {
+            var weeks = await _context.FantasyMatchup
+                    .Where(m => m.FantasyLeagueID == leagueID && m.Status == "Final" && !m.Recorded)
+                    .Select(m => m.Week).Distinct().CountAsync();
+            return weeks;
         }
 
         public async Task<FantasyMatchup> GetMatchupByID(int id)

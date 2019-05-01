@@ -64,20 +64,26 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        public async Task<bool> UpdateStandings(FantasyLeague fantasyLeague)
+        //public async Task<bool> UpdateByWeek(FantasyLeague fantasyLeague, int week)
+        //{
+        //    var currentStandings = (await GetStandingsByLeague(fantasyLeague)).ToList();
+
+
+        //}
+        //this mehto still isnt writing anything
+        public async Task<bool> UpdateStandings(FantasyLeague fantasyLeague, int week)
         {
             var currentStandings = (await GetStandingsByLeague(fantasyLeague)).ToList();
-            List<FantasyLeagueStandings> newStandings = new List<FantasyLeagueStandings>();
+            List<FantasyLeagueStandings> standingsUpdated = new List<FantasyLeagueStandings>();
             
-            var matchupsToRecord = await _fantasyMatchupService.GetMatchupsForRecording(fantasyLeague.FantasyLeagueID);
+            var matchupsToRecord = (await _fantasyMatchupService.GetMatchupsForRecording(fantasyLeague.FantasyLeagueID, week)).ToList();
+            List<FantasyMatchup> matchupsUpdated = new List<FantasyMatchup>();
 
             foreach(var m in matchupsToRecord)
             {
                 var homeStandings = currentStandings.Find(x => x.MyTeamID == m.HomeTeamID);
-                var homeIndex = currentStandings.IndexOf(homeStandings);
-
                 var awayStandings = currentStandings.Find(x => x.MyTeamID == m.AwayTeamID);
-                var awayIndex = currentStandings.IndexOf(awayStandings);
+
 
                 if (m.HomeTeamScore > m.AwayTeamScore)
                 {
@@ -108,12 +114,15 @@ namespace NBAMvc1._1.Services
                     awayStandings.FantasyPoints += m.AwayTeamScore.Value;
                     awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
                 }
-                
+                //m.Recorded = true;
+                matchupsUpdated.Add(m);
+                standingsUpdated.Add(homeStandings);
+                standingsUpdated.Add(awayStandings);
             }
             try
             {
-                _context.UpdateRange(currentStandings);
-                _context.UpdateRange(matchupsToRecord);
+                _context.UpdateRange(standingsUpdated);
+                //_context.UpdateRange(matchupsUpdated);
                 await _context.SaveChangesAsync();
                 return true;
             }
