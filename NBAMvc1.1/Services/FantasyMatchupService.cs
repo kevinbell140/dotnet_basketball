@@ -159,6 +159,7 @@ namespace NBAMvc1._1.Services
         //    }
         //}
 
+            //do i need this?
         public async Task<int> WeeksThatNeedRecording(int leagueID)
         {
             var weeks = await _context.FantasyMatchup
