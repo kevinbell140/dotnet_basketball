@@ -236,6 +236,27 @@ namespace NBAMvc1._1.Services
             }
         }
 
+        public async Task<bool> StandingsRecorded(IEnumerable<FantasyMatchup> matchups, int week)
+        {
+            List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
+
+            foreach (var m in matchups.Where(x => x.Week == week))
+            {
+                m.Recorded = true;
+                updatedMatchups.Add(m);
+            }
+            try
+            {
+                _context.UpdateRange(updatedMatchups);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return false;
+            }
+        }
+
         private async Task<List<FantasyMatchup>> UpdateMatchup(FantasyMatchup matchup, int currentWeek, List<FantasyMatchup> updateList)
         {
             if (matchup.Week < currentWeek)

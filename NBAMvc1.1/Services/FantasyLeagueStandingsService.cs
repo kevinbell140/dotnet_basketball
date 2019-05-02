@@ -64,24 +64,17 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        //public async Task<bool> UpdateByWeek(FantasyLeague fantasyLeague, int week)
-        //{
-        //    var currentStandings = (await GetStandingsByLeague(fantasyLeague)).ToList();
 
 
-        //}
-        //this mehto still isnt writing anything
-        public async Task<bool> UpdateStandings(FantasyLeague fantasyLeague, int week)
+        public async Task<bool> UpdateStandings(IEnumerable<FantasyMatchup> matchups, int week)
         {
-            var currentStandings = (await GetStandingsByLeague(fantasyLeague)).ToList();
+            var currentStandings = (await GetStandingsByLeague((matchups).ToList()[0].FantasyLeagueNav)).ToList();
             List<FantasyLeagueStandings> standingsUpdated = new List<FantasyLeagueStandings>();
-            
-            var matchupsToRecord = (await _fantasyMatchupService.GetMatchupsForRecording(fantasyLeague.FantasyLeagueID, week)).ToList();
-            List<FantasyMatchup> matchupsUpdated = new List<FantasyMatchup>();
 
-            foreach(var m in matchupsToRecord)
+            foreach (var m in matchups.Where(x => x.Week == week))
             {
                 var homeStandings = currentStandings.Find(x => x.MyTeamID == m.HomeTeamID);
+
                 var awayStandings = currentStandings.Find(x => x.MyTeamID == m.AwayTeamID);
 
 
@@ -94,7 +87,8 @@ namespace NBAMvc1._1.Services
                     awayStandings.Losses = awayStandings.Losses++;
                     awayStandings.FantasyPoints += m.AwayTeamScore.Value;
                     awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
-                }else if(m.HomeTeamScore < m.AwayTeamScore)
+                }
+                else if (m.HomeTeamScore < m.AwayTeamScore)
                 {
                     homeStandings.Losses = homeStandings.Losses++;
                     homeStandings.FantasyPoints += m.HomeTeamScore.Value;
@@ -114,15 +108,13 @@ namespace NBAMvc1._1.Services
                     awayStandings.FantasyPoints += m.AwayTeamScore.Value;
                     awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
                 }
-                //m.Recorded = true;
-                matchupsUpdated.Add(m);
                 standingsUpdated.Add(homeStandings);
                 standingsUpdated.Add(awayStandings);
             }
             try
             {
                 _context.UpdateRange(standingsUpdated);
-                //_context.UpdateRange(matchupsUpdated);
+
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -135,5 +127,68 @@ namespace NBAMvc1._1.Services
                 return false;
             }
         }
+
+        ////this mehto still isnt writing anything
+        //public async Task<bool> UpdateStandings(FantasyLeague fantasyLeague, int week)
+        //{
+        //    var currentStandings = (await GetStandingsByLeague(fantasyLeague)).ToList();
+        //    List<FantasyLeagueStandings> standingsUpdated = new List<FantasyLeagueStandings>();
+            
+        //    var matchupsToRecord = (await _fantasyMatchupService.GetMatchupsForRecording(fantasyLeague.FantasyLeagueID, week));
+
+        //    foreach(var m in matchupsToRecord)
+        //    {
+        //        var homeStandings = currentStandings.Find(x => x.MyTeamID == m.HomeTeamID);
+        //        var awayStandings = currentStandings.Find(x => x.MyTeamID == m.AwayTeamID);
+
+
+        //        if (m.HomeTeamScore > m.AwayTeamScore)
+        //        {
+        //            homeStandings.Wins = homeStandings.Wins++;
+        //            homeStandings.FantasyPoints += m.HomeTeamScore.Value;
+        //            homeStandings.FantasyPointsAgainst += m.AwayTeamScore.Value;
+
+        //            awayStandings.Losses = awayStandings.Losses++;
+        //            awayStandings.FantasyPoints += m.AwayTeamScore.Value;
+        //            awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
+        //        }else if(m.HomeTeamScore < m.AwayTeamScore)
+        //        {
+        //            homeStandings.Losses = homeStandings.Losses++;
+        //            homeStandings.FantasyPoints += m.HomeTeamScore.Value;
+        //            homeStandings.FantasyPointsAgainst += m.AwayTeamScore.Value;
+
+        //            awayStandings.Wins = awayStandings.Wins++;
+        //            awayStandings.FantasyPoints += m.AwayTeamScore.Value;
+        //            awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
+        //        }
+        //        else
+        //        {
+        //            homeStandings.Draws = homeStandings.Draws++;
+        //            homeStandings.FantasyPoints += m.HomeTeamScore.Value;
+        //            homeStandings.FantasyPointsAgainst += m.AwayTeamScore.Value;
+
+        //            awayStandings.Draws = awayStandings.Draws++;
+        //            awayStandings.FantasyPoints += m.AwayTeamScore.Value;
+        //            awayStandings.FantasyPointsAgainst += m.HomeTeamScore.Value;
+        //        }
+        //        standingsUpdated.Add(homeStandings);
+        //        standingsUpdated.Add(awayStandings);
+        //    }
+        //    try
+        //    {
+        //        _context.UpdateRange(standingsUpdated);
+                
+        //        await _context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        throw;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
     }
 }

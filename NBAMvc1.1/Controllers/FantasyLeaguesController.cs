@@ -96,16 +96,16 @@ namespace NBAMvc1._1.Controllers
                 var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, currentWeek);
                 var test = await _fantasyLeagueService.UpdateMatchups(matchupUpdates, currentWeek);
 
-                int numWeeks = await _fantasyMatchupService.WeeksThatNeedRecording(viewModel.FantasyLeague.FantasyLeagueID);
 
-                for(int i = currentWeek - numWeeks; i<currentWeek; i++)
-                {
-                    if(await _fantasyLeagueStandingsService.UpdateStandings(viewModel.FantasyLeague, currentWeek - numWeeks))
-                    {
-                        var test2 = await _fantasyMatchupService.StandingsRecorded(viewModel.FantasyLeague.FantasyLeagueID, currentWeek - numWeeks);
-                    }
-                }
-                var test3 = viewModel.FantasyLeague;
+
+                //int numWeeks = await _fantasyMatchupService.WeeksThatNeedRecording(viewModel.FantasyLeague.FantasyLeagueID);
+
+                //var test2 = await _fantasyLeagueStandingsService.UpdateStandings(matchupUpdates, currentWeek-1);
+
+                //var test3 = await _fantasyLeagueService.StandingsRecorded(matchupUpdates, currentWeek-1);
+
+                //var test4 = true;
+
             }
             return View(viewModel);
         }

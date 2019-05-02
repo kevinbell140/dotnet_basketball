@@ -137,27 +137,27 @@ namespace NBAMvc1._1.Services
         }
 
 
-        public async Task<bool> StandingsRecorded(int leagueID, int week)
-        {
-            var matchups = await GetMatchupsByWeek(leagueID, week);
-            List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
+        //public async Task<bool> StandingsRecorded(int leagueID, int week)
+        //{
+        //    var matchups = await GetMatchupsByWeek(leagueID, week);
+        //    List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
 
-            foreach(var m in matchups)
-            {
-                m.Recorded = true;
-                updatedMatchups.Add(m);
-            }
-            try
-            {
-                _context.UpdateRange(updatedMatchups);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //    foreach(var m in matchups)
+        //    {
+        //        m.Recorded = true;
+        //        updatedMatchups.Add(m);
+        //    }
+        //    try
+        //    {
+        //        _context.UpdateRange(updatedMatchups);
+        //        await _context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public async Task<int> WeeksThatNeedRecording(int leagueID)
         {
