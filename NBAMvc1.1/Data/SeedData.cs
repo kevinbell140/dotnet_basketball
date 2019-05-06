@@ -12,7 +12,7 @@ namespace NBAMvc1._1.Data
 {
     public class SeedData
     {
-        public static async Task Initialize(IServiceProvider serviceProvider, string pw)
+        public static async Task Initialize(IServiceProvider serviceProvider)
         {
             using(var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
