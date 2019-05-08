@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using System;
@@ -13,11 +14,13 @@ namespace NBAMvc1._1.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly DataService _dataService;
+        private readonly ILogger _logger;
 
-        public PlayersService(ApplicationDbContext context, DataService dataService)
+        public PlayersService(ApplicationDbContext context, DataService dataService, ILogger<PlayersService> logger)
         {
             _context = context;
             _dataService = dataService;
+            _logger = logger;
         }
 
         public IQueryable<Player> GetPlayers(string searchString)
@@ -169,45 +172,48 @@ namespace NBAMvc1._1.Services
             return player;
         }
 
-        public async Task<bool> Fetch()
+        public async Task FetchAsync()
         {
-            List<Player> players = await _dataService.FetchPLayers();
+            _logger.LogDebug("Fetching data");
+            List<Player> players = await _dataService.FetchPlayersAsync();
             List<Player> created = new List<Player>();
             List<Player> updated = new List<Player>();
-
+            _logger.LogDebug("Data size = {0}", players.Count();
             foreach (Player p in players)
             {
                 if (!await PlayerExists(p.PlayerID))
                 {
+                    _logger.LogDebug("Creating a new player!");
                     var createdPlayer = Create(p);
                     if (createdPlayer != null)
                     {
+                        _logger.LogDebug("Adding new player to list!");
                         created.Add(createdPlayer);
                     }
                 }
                 else
                 {
+                    _logger.LogDebug("Updating a player!");
                     var editedPlayer = Edit(p.PlayerID, p);
                     if (editedPlayer != null)
                     {
+                        _logger.LogDebug("Adding updated player to list!");
                         updated.Add(editedPlayer);
                     }
                 }
             }
             try
             {
+                _logger.LogDebug("Writing new players to the database!");
                 await _context.AddRangeAsync(created);
+                _logger.LogDebug("Updating players to the database!");
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                _logger.LogError("Crashed writing players to the database!");
+                return;
             }
         }
 

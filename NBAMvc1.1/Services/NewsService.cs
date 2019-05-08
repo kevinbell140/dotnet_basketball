@@ -50,9 +50,9 @@ namespace NBAMvc1._1.Services
             return news;
         }
 
-        public async Task<bool> Fetch()
+        public async Task FetchAsync()
         {
-            List<News> news = await _dataService.FetchNews();
+            List<News> news = await _dataService.FetchNewsAsync();
             List<News> created = new List<News>();
             List<News> updated = new List<News>();
 
@@ -80,15 +80,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 

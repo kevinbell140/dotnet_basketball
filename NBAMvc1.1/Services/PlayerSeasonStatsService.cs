@@ -28,10 +28,9 @@ namespace NBAMvc1._1.Services
             return stats;
         }
 
-        public async Task<bool> Fetch()
+        public async Task FetchAsync()
         {
-            var stats = await _dataService.FetchStats();
-
+            var stats = await _dataService.FetchSeasonStatsAsync();
             List<PlayerSeasonStats> created = new List<PlayerSeasonStats>();
             List<PlayerSeasonStats> updated = new List<PlayerSeasonStats>();
 
@@ -59,15 +58,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                return;
             }
         }
 

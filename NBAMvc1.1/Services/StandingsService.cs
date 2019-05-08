@@ -33,10 +33,9 @@ namespace NBAMvc1._1.Services
             return standings;
         }
 
-        public async Task<bool> Fetch()
+        public async Task FetchAsync()
         {
-            var standings = await _dataService.FetchStandings();
-
+            var standings = await _dataService.FetchStandingsAsync();
             List<Standings> created = new List<Standings>();
             List<Standings> updated = new List<Standings>();
 
@@ -56,15 +55,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
         private async Task<bool> StandingsExist(int teamID)

@@ -20,7 +20,7 @@ namespace NBAMvc1._1.Services
             _httpClient.DefaultRequestHeaders.Add("Ocp-Apim-Subscription-Key", "b841ecb4f4ee4e70a93858ea65ba2bfa");
         }
 
-        public async Task<List<Team>> FetchTeams()
+        public async Task<List<Team>> FetchTeamsAsync()
         {
             var response = await _httpClient.GetAsync("teams");
             response.EnsureSuccessStatusCode();
@@ -28,7 +28,7 @@ namespace NBAMvc1._1.Services
             return result;
         }
 
-        public async Task<List<Player>> FetchPLayers()
+        public async Task<List<Player>> FetchPlayersAsync()
         {
             var response = await _httpClient.GetAsync("players");
             response.EnsureSuccessStatusCode();
@@ -36,7 +36,7 @@ namespace NBAMvc1._1.Services
             return result;
         }
 
-        public async Task<List<PlayerSeasonStats>> FetchStats()
+        public async Task<List<PlayerSeasonStats>> FetchSeasonStatsAsync()
         {
             var response = await _httpClient.GetAsync("PlayerSeasonStats/2019");
             response.EnsureSuccessStatusCode();
@@ -44,7 +44,7 @@ namespace NBAMvc1._1.Services
             return result;
         }
 
-        public async Task<List<Standings>> FetchStandings()
+        public async Task<List<Standings>> FetchStandingsAsync()
         {
             var response = await _httpClient.GetAsync("standings/2019");
             response.EnsureSuccessStatusCode();
@@ -52,7 +52,7 @@ namespace NBAMvc1._1.Services
             return result;
         }
 
-        public async Task<List<Game>> FetchGames()
+        public async Task<List<Game>> FetchGamesAsync()
         {
             var response = await _httpClient.GetAsync("games/2019");
             response.EnsureSuccessStatusCode();
@@ -68,7 +68,7 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
-        public async Task<List<Game>> FetchGamesPost()
+        public async Task<List<Game>> FetchGamesPostAsync()
         {
             var response = await _httpClient.GetAsync("games/2019POST");
             response.EnsureSuccessStatusCode();
@@ -84,8 +84,7 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
-
-        public async Task<List<PlayerGameStats>> FetchGamesStats(string date)
+        public async Task<List<PlayerGameStats>> FetchGameStatsAsync(string date)
         {
             var response = await _httpClient.GetAsync("PlayerGameStatsByDate/" + date);
             response.EnsureSuccessStatusCode();
@@ -93,15 +92,13 @@ namespace NBAMvc1._1.Services
             return result;
         }
 
-
-        public async Task<List<News>> FetchNews()
+        public async Task<List<News>> FetchNewsAsync()
         {
             var response = await _httpClient.GetAsync("news");
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsAsync<List<News>>();
             return result;
         }
-
     }
 }
  

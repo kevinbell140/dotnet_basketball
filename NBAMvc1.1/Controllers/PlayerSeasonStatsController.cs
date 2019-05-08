@@ -22,14 +22,14 @@ namespace NBAMvc1._1.Controllers
             return View(stats);
         }
 
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Fetch()
-        {
-            if (await _playerSeasonStatsService.Fetch())
-            {
-                return RedirectToAction("Index", "PlayerSeasonStats");
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //[Authorize(Policy = "AdminOnly")]
+        //public async Task<IActionResult> Fetch()
+        //{
+        //    if (await _playerSeasonStatsService.Fetch())
+        //    {
+        //        return RedirectToAction("Index", "PlayerSeasonStats");
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
     }
 }

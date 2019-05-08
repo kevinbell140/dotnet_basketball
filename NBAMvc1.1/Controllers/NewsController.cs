@@ -39,13 +39,13 @@ namespace NBAMvc1._1.Controllers
             return View(news);
         }
 
-        public async Task<IActionResult> Fetch()
-        {
-            if (await _newsService.Fetch())
-            {
-                return RedirectToAction("Index", "News");
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //public async Task<IActionResult> Fetch()
+        //{
+        //    if (await _newsService.Fetch())
+        //    {
+        //        return RedirectToAction("Index", "News");
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
     }
 }

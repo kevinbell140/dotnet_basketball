@@ -76,15 +76,15 @@ namespace NBAMvc1._1.Controllers
             return View(viewModel);
         }
 
-        //GET : Teams/Fetch()
-        [Authorize(Policy ="AdminOnly")]
-        public async Task<IActionResult> Fetch()
-        {
-            if(await _teamsService.Fetch())
-            {
-                return RedirectToAction("Index", "Teams");
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        ////GET : Teams/FetchAsync()
+        //[Authorize(Policy ="AdminOnly")]
+        //public async Task<IActionResult> Fetch()
+        //{
+        //    if(await _teamsService.FetchAsync())
+        //    {
+        //        return RedirectToAction("Index", "Teams");
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
     }
 }

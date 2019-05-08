@@ -37,7 +37,7 @@ namespace NBAMvc1._1.Services
             return log;
         }
 
-        public async Task<bool> Fetch()
+        public async Task FetchAsync()
         {
             DateTime startDate = new DateTime(2019, 05, 02);
             DateTime endDate = DateTime.Today;
@@ -47,7 +47,7 @@ namespace NBAMvc1._1.Services
 
             for (DateTime d = startDate; d <= endDate; d = d.AddDays(1))
             {
-                List<PlayerGameStats> stats = await _dataService.FetchGamesStats(d.ToString("yyyy-MMM-dd"));
+                List<PlayerGameStats> stats = await _dataService.FetchGameStatsAsync(d.ToString("yyyy-MMM-dd"));
                 foreach (var p in stats)
                 {
                     if (!await PlayerGameStatsExist(p.StatID))
@@ -73,15 +73,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 

@@ -128,9 +128,9 @@ namespace NBAMvc1._1.Services
             return roster;
         }
 
-        public async Task<Boolean> Fetch()
+        public async Task FetchAsync()
         {
-            List<Team> teams = await _dataService.FetchTeams();
+            List<Team> teams = await _dataService.FetchTeamsAsync();
 
             List<Team> created = new List<Team>();
             List<Team> updated = new List<Team>();
@@ -154,15 +154,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
         }
 

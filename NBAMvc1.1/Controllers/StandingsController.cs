@@ -27,15 +27,15 @@ namespace NBAMvc1._1.Controllers
             return View(standings);
         }
 
-        //GET : Teams/Fetch()
-        [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Fetch()
-        {
-            if (await _standingsService.Fetch())
-            {
-                return RedirectToAction("Index", "Standings");
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //GET : Teams/FetchAsync()
+        //[Authorize(Policy = "AdminOnly")]
+        //public async Task<IActionResult> Fetch()
+        //{
+        //    if (await _standingsService.Fetch())
+        //    {
+        //        return RedirectToAction("Index", "Standings");
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
     }
 }

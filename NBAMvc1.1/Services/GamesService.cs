@@ -118,16 +118,53 @@ namespace NBAMvc1._1.Services
             return gameTonight;
         }
 
-        public async Task<bool> Fetch(string isPost)
+        public async Task FetchAsync()
+        {
+            List<Game> games = await _dataService.FetchGamesAsync();
+            List<Game> created = new List<Game>();
+            List<Game> updated = new List<Game>();
+
+            foreach (var g in games)
+            {
+                if (!await GameExists(g.GameID))
+                {
+                    Game createdGame = Create(g);
+                    if (createdGame != null)
+                    {
+                        created.Add(createdGame);
+                    }
+                }
+                else
+                {
+                    Game updatedGame = Edit(g.GameID, g);
+                    if (updatedGame != null)
+                    {
+                        updated.Add(updatedGame);
+                    }
+                }
+            }
+            try
+            {
+                await _context.AddRangeAsync(created);
+                _context.UpdateRange(updated);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
+        public async Task FetchAsync(string isPost)
         {
             List<Game> games;
             if (isPost != null && isPost.ToLower() == "post")
             {
-                games = await _dataService.FetchGamesPost();
+                games = await _dataService.FetchGamesPostAsync();
             }
             else
             {
-                games = await _dataService.FetchGames();
+                games = await _dataService.FetchGamesAsync();
             }
             List<Game> created = new List<Game>();
             List<Game> updated = new List<Game>();
@@ -156,15 +193,10 @@ namespace NBAMvc1._1.Services
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
             }
             catch (Exception)
             {
-                return false;
+                return;
             }
         }
 

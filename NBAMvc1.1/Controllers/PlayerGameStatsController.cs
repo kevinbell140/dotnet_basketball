@@ -24,14 +24,14 @@ namespace NBAMvc1._1.Models
             return View(stats);
         }
 
-        //GET : Teams/Fetch()
-        public async Task<IActionResult> Fetch()
-        {
-            if(await _playerGameStatsService.Fetch())
-            {
-                return RedirectToAction("Index", "Players");
-            }
-            return RedirectToAction("Index", "Home");
-        }
+        //GET : Teams/FetchAsync()
+        //public async Task<IActionResult> Fetch()
+        //{
+        //    if(await _playerGameStatsService.Fetch())
+        //    {
+        //        return RedirectToAction("Index", "Players");
+        //    }
+        //    return RedirectToAction("Index", "Home");
+        //}
     }
 }
