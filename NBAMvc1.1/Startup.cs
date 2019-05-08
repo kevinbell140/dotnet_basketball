@@ -111,6 +111,11 @@ namespace NBAMvc1._1
             app.UseMvc(routes =>
             {
                 routes.MapRoute(
+                    name: "fetchPostGames",
+                    template: "games/fetch/{isPost?}",
+                    defaults: new {controller = "Games", action = "fetch"});
+
+                routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });

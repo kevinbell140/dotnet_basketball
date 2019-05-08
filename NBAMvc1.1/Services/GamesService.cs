@@ -118,10 +118,10 @@ namespace NBAMvc1._1.Services
             return gameTonight;
         }
 
-        public async Task<bool> Fetch(bool isPost)
+        public async Task<bool> Fetch(string isPost)
         {
             List<Game> games;
-            if (isPost)
+            if (isPost != null && isPost.ToLower() == "post")
             {
                 games = await _dataService.FetchGamesPost();
             }

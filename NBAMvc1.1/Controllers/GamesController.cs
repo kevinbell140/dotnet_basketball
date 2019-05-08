@@ -71,7 +71,7 @@ namespace NBAMvc1._1.Controllers
 
         //custom route for this
         [Authorize(Policy = "AdminOnly")]
-        public async Task<IActionResult> Fetch(bool isPost)
+        public async Task<IActionResult> Fetch(string isPost)
         {
             if(await _gamesService.Fetch(isPost))
             {
