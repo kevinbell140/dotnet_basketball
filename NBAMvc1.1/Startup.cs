@@ -17,14 +17,17 @@ using NBAMvc1._1.Services;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Areas.Auth;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 
 namespace NBAMvc1._1
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        private readonly ILogger _logger;
+        public Startup(IConfiguration configuration, ILogger<Startup> logger)
         {
             Configuration = configuration;
+            _logger = logger;
         }
 
         public IConfiguration Configuration { get; }
@@ -42,6 +45,8 @@ namespace NBAMvc1._1
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+            _logger.LogInformation("Added DB context ot services");
+
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
                 .AddDefaultUI(UIFramework.Bootstrap4)
@@ -53,16 +58,18 @@ namespace NBAMvc1._1
                 microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
             });
 
-            services.AddMvc().AddControllersAsServices().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole(Constants.AdministratorRole));
             });
 
+            services.AddHttpClient<DataService>();
+
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
-            services.AddScoped<DataService>();
+            //services.AddScoped<DataService>();
             services.AddScoped<FantasyLeagueService>();
             services.AddScoped<FantasyLeagueStandingsService>();
             services.AddScoped<FantasyMatchupService>();
@@ -84,6 +91,7 @@ namespace NBAMvc1._1
         {
             if (env.IsDevelopment())
             {
+                _logger.LogInformation("In development env");
                 app.UseDeveloperExceptionPage();
                 app.UseDatabaseErrorPage();
             }

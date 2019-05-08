@@ -39,7 +39,7 @@ namespace NBAMvc1._1.Services
 
         public async Task<bool> Fetch()
         {
-            DateTime startDate = new DateTime(2019, 04, 24);
+            DateTime startDate = new DateTime(2019, 05, 02);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
