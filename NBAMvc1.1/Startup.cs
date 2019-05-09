@@ -85,6 +85,7 @@ namespace NBAMvc1._1
             services.AddScoped<TeamsService>();
 
             services.AddHostedService<FetchTimer>();
+            services.AddHostedService<CurrentWeekTimerService>();
             
         }
 

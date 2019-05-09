@@ -59,9 +59,6 @@ namespace NBAMvc1._1.Services
 
         public async Task<bool> SetLeague(FantasyLeague fantasyLeague)
         {
-            //var league = await _context.FantasyLeague
-            //    .Where(x => x.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
-            //    .FirstOrDefaultAsync();
             fantasyLeague.IsSet = true;
             fantasyLeague.IsActive = true;
             fantasyLeague.CurrentWeek = 1;

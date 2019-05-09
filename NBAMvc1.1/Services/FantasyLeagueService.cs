@@ -89,26 +89,22 @@ namespace NBAMvc1._1.Services
             return await _context.FantasyLeague.AnyAsync(e => e.FantasyLeagueID == id);
         }
 
-        public async void IsActiveFalseAsync(int id)
+        public async Task<bool> IsActiveFalseAsync(FantasyLeague fantasyLeague)
         {
-            var league = await GetLeague(id);
-            if(league != null)
+            fantasyLeague.IsActive = false;
+            try
             {
-                league.IsActive = false;
-                try
-                {
-                    _context.Update(league);
-                    await _context.SaveChangesAsync();
-                    return;
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    throw;
-                }
-                catch (Exception)
-                {
-                    return;
-                }
+                _context.Update(fantasyLeague);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
@@ -183,30 +179,24 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        //public async Task<bool> IsSetConfirm(FantasyLeague fantasyLeague)
-        //{
-        //    //var league = await  _context.FantasyLeague
-        //    //    .Where(x => x.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
-        //    //    .FirstOrDefaultAsync();
-        //    fantasyLeague.IsSet = true;
-        //    fantasyLeague.IsActive = true;
-
-        //    try
-        //    {
-        //        _context.Update(fantasyLeague);
-        //        await _context.SaveChangesAsync();
-        //        return true;
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        throw;
-        //    }
-        //    catch (Exception)
-        //    {
-        //        return false;
-        //    }
-        //}
-
+        public async Task<bool> UpdateCurrentWeek(FantasyLeague fantasyLeague, int week)
+        {
+            fantasyLeague.CurrentWeek = week;
+            try
+            {
+                _context.Update(fantasyLeague);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         public async Task<bool> UpdateMatchups(IEnumerable<FantasyMatchup> matchups, int currentWeek)
         {
             List<FantasyMatchup> updateList = new List<FantasyMatchup>();

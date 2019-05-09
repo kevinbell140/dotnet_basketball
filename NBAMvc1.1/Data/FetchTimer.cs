@@ -16,22 +16,20 @@ namespace NBAMvc1._1.Data
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
 
-
         public FetchTimer(ILogger<FetchTimer> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
-            
         }
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Fetch timer started");
-            _timer = new Timer(Fetch, _serviceProvider, TimeSpan.Zero, TimeSpan.FromDays(1));
+            _timer = new Timer(Fetch, null, TimeSpan.Zero, TimeSpan.FromDays(1));
 
             return Task.CompletedTask;
         }
 
-        private async void Fetch(object serviceProvider)
+        private async void Fetch(object state)
         {
             using(var scope = _serviceProvider.CreateScope())
             {
