@@ -11,12 +11,10 @@ namespace NBAMvc1._1.Services
     public class FantasyLeagueStandingsService
     {
         private readonly ApplicationDbContext _context;
-        private readonly FantasyMatchupService _fantasyMatchupService;
 
-        public FantasyLeagueStandingsService(ApplicationDbContext context, FantasyMatchupService fantasyMatchupService)
+        public FantasyLeagueStandingsService(ApplicationDbContext context)
         {
             _context = context;
-            _fantasyMatchupService = fantasyMatchupService;
         }
 
         public async Task<IEnumerable<FantasyLeagueStandings>> GetStandings()

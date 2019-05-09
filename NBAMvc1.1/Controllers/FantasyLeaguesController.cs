@@ -47,31 +47,12 @@ namespace NBAMvc1._1.Controllers
             {
                 FantasyLeague = await _fantasyLeagueService.GetLeague(id.Value)
             };
+            viewModel.CurrentWeek = viewModel.FantasyLeague.CurrentWeek;
 
-            int currentWeek = 0;
-
-            //gets the current week league
-            if (viewModel.FantasyLeague.IsActive)
-            {
-                var weeks = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeeksByLeague(viewModel.FantasyLeague.FantasyLeagueID);
-                var thisWeek = _fantasyMatchupsWeeksService.GetThisWeek(weeks);
-
-                if (thisWeek == null)
-                {
-                    _fantasyLeagueService.IsActiveFalseAsync(viewModel.FantasyLeague.FantasyLeagueID);
-                    currentWeek = 14;
-                }
-                else
-                {
-                    currentWeek = thisWeek.WeekNum;
-                }
-            }
-            viewModel.CurrentWeek = currentWeek;
-
-            //browse between different matchup weeks
+            //for browsing matchups
             if(selectedWeek == null)
             {
-                viewModel.SelectedWeek = currentWeek;
+                viewModel.SelectedWeek = viewModel.CurrentWeek;
             }
             else if(selectedWeek > 14)
             {
@@ -91,10 +72,11 @@ namespace NBAMvc1._1.Controllers
             {
                 //the matchups to display for the chosen week
                 viewModel.Matchups = await _fantasyMatchupService.GetMatchupsByWeek(viewModel.FantasyLeague.FantasyLeagueID, viewModel.SelectedWeek);
+                //display standings
 
                 //all of the matchups prior to this week for updating purposes
-                var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, currentWeek);
-                var test = await _fantasyLeagueService.UpdateMatchups(matchupUpdates, currentWeek);
+                //var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, currentWeek);
+                //var test = await _fantasyLeagueService.UpdateMatchups(matchupUpdates, currentWeek);
 
                 //int numWeeks = await _fantasyMatchupService.WeeksThatNeedRecording(viewModel.FantasyLeague.FantasyLeagueID);
 
@@ -198,7 +180,8 @@ namespace NBAMvc1._1.Controllers
             {
                 return RedirectToAction("Index", "FantasyLeagues");
             }
-            return RedirectToAction("Index", "Home");
+            var fantasyLeague = await _fantasyLeagueService.GetLeague(id);
+            return View(fantasyLeague);
         }
     }
 }

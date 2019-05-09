@@ -15,16 +15,18 @@ namespace NBAMvc1._1.Services
         private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly PlayerGameStatsService _playerGameStatsService;
         private readonly GamesService _gamesService;
+        private readonly FantasyLeagueStandingsService _fantasyLeagueStandingsService;
 
         public FantasyMatchupService(ApplicationDbContext context, PlayerMyTeamService playerMyTeamService,
            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerGameStatsService playerGameStatsService,
-            GamesService gamesService)
+            GamesService gamesService, FantasyLeagueStandingsService fantasyLeagueStandingsService)
         {
             _context = context;
             _playerMyTeamService = playerMyTeamService;
             _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _playerGameStatsService = playerGameStatsService;
             _gamesService = gamesService;
+            _fantasyLeagueStandingsService = fantasyLeagueStandingsService;
         }
 
         public async Task<IEnumerable<FantasyMatchup>> GetMatchups()
@@ -38,6 +40,44 @@ namespace NBAMvc1._1.Services
         }
 
         public async Task<bool> Create(FantasyLeague fantasyLeague)
+        {
+            if(await _fantasyMatchupsWeeksService.Create(fantasyLeague))
+            {
+               if(await CreateMatchups(fantasyLeague))
+                {
+                    if(await _fantasyLeagueStandingsService.Create(fantasyLeague))
+                    {
+                        if(await SetLeague(fantasyLeague))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> SetLeague(FantasyLeague fantasyLeague)
+        {
+            //var league = await _context.FantasyLeague
+            //    .Where(x => x.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
+            //    .FirstOrDefaultAsync();
+            fantasyLeague.IsSet = true;
+            fantasyLeague.IsActive = true;
+            fantasyLeague.CurrentWeek = 1;
+            try
+            {
+                _context.Update(fantasyLeague);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private async Task<bool> CreateMatchups(FantasyLeague fantasyLeague)
         {
             List<MyTeam> teams = fantasyLeague.TeamsNav;
             

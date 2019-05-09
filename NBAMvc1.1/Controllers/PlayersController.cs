@@ -88,15 +88,5 @@ namespace NBAMvc1._1.Controllers
             }
             return View(viewModel);
         }
-
-        //[Authorize(Policy = "AdminOnly")]
-        //public async Task<ActionResult> Fetch()
-        //{
-        //    if(await _playersService.Fetch())
-        //    {
-        //        return RedirectToAction("Index", "Players");
-        //    }
-        //    return RedirectToAction("Index", "Home");
-        //}
     }
 }

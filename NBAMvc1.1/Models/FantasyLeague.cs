@@ -22,6 +22,8 @@ namespace NBAMvc1._1.Models
 
         public bool IsActive { get; set; }
 
+        public int CurrentWeek { get; set; } = -1;
+
         public virtual IEnumerable<FantasyMatchupWeeks> FantasyMatchupWeeksNav { get; set; }
 
         public virtual List<MyTeam> TeamsNav { get; set; }

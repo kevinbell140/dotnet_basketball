@@ -41,7 +41,7 @@ namespace NBAMvc1._1.Services
                 int numWeeks = (fantasyLeague.TeamsNav.Count() - 1) * 2;
                 List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
 
-                for (int i = 0; i < numWeeks; i++)
+                for (int i = 1; i <= numWeeks; i++)
                 {
                     FantasyMatchupWeeks week = new FantasyMatchupWeeks
                     {

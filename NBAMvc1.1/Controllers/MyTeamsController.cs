@@ -83,10 +83,7 @@ namespace NBAMvc1._1.Controllers
             {
                 if (await _myTeamService.Create(myTeam))
                 {
-                    if(await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID))
-                    {
-                        return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
-                    }
+                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
                 }
             }
             return RedirectToAction("Index", "Home");
@@ -185,10 +182,7 @@ namespace NBAMvc1._1.Controllers
 
             if (await _myTeamService.Delete(myTeam))
             {
-                if(await _fantasyLeagueService.RemoveTeamConfirm(myTeam.FantasyLeagueID))
-                {
-                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
-                }
+                return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
             }
             return RedirectToAction("Index", "Home");
         }

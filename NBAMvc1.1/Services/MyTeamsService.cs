@@ -67,7 +67,10 @@ namespace NBAMvc1._1.Services
                     {
                         _context.Add(myTeam);
                         await _context.SaveChangesAsync();
-                        return true;
+                        if (await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID))
+                        {
+                            return true;
+                        }     
                     }
                     catch (Exception)
                     {
@@ -102,12 +105,16 @@ namespace NBAMvc1._1.Services
             {
                 _context.MyTeam.Remove(myTeam);
                 await _context.SaveChangesAsync();
-                return true;
+                if (await _fantasyLeagueService.RemoveTeamConfirm(myTeam.FantasyLeagueID))
+                {
+                    return true;
+                }
             }
             catch (Exception)
             {
                 return false;
             }
+            return false;
         }
     }
 }

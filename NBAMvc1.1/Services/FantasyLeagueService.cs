@@ -183,31 +183,29 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        public async Task<bool> IsSetConfirm(int id)
-        {
-            var league = await GetLeague(id);
-            if(league == null)
-            {
-                return false;
-            }
-            league.IsSet = true;
-            league.IsActive = true;
+        //public async Task<bool> IsSetConfirm(FantasyLeague fantasyLeague)
+        //{
+        //    //var league = await  _context.FantasyLeague
+        //    //    .Where(x => x.FantasyLeagueID == fantasyLeague.FantasyLeagueID)
+        //    //    .FirstOrDefaultAsync();
+        //    fantasyLeague.IsSet = true;
+        //    fantasyLeague.IsActive = true;
 
-            try
-            {
-                _context.Update(league);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
+        //    try
+        //    {
+        //        _context.Update(fantasyLeague);
+        //        await _context.SaveChangesAsync();
+        //        return true;
+        //    }
+        //    catch (DbUpdateConcurrencyException)
+        //    {
+        //        throw;
+        //    }
+        //    catch (Exception)
+        //    {
+        //        return false;
+        //    }
+        //}
 
         public async Task<bool> UpdateMatchups(IEnumerable<FantasyMatchup> matchups, int currentWeek)
         {
@@ -272,5 +270,7 @@ namespace NBAMvc1._1.Services
             updateList.Add(matchup);
             return updateList;
         }
+
+
     }
 }
