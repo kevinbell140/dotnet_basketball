@@ -37,12 +37,12 @@ namespace NBAMvc1._1.Data
             {
                 var services = scope.ServiceProvider;
                 await FetchTeamsAsync(services);
-                await FetchPlayersAsync((IServiceProvider)serviceProvider);
-                await FetchGamesPostAsync((IServiceProvider)serviceProvider);
-                await FetchStandingsAsync((IServiceProvider)serviceProvider);
-                await FetchPlayerSeasonStatsAsync((IServiceProvider)serviceProvider);
-                await FetchPlayerGameStatsAsync((IServiceProvider)serviceProvider);
-                await FetchNewsAsync((IServiceProvider)serviceProvider);
+                await FetchPlayersAsync(services);
+                await FetchGamesPostAsync(services);
+                await FetchStandingsAsync(services);
+                await FetchPlayerSeasonStatsAsync(services);
+                await FetchPlayerGameStatsAsync(services);
+                await FetchNewsAsync(services);
                 _logger.LogDebug("Fetch teams complete");
             }
             return;

@@ -37,7 +37,7 @@ namespace NBAMvc1._1.Services
         {
             if(!await WeeksExist(fantasyLeague.FantasyLeagueID))
             {
-                DateTime startDate = DateTime.Today;
+                DateTime startDate = DateTime.Today.AddDays(-1);
                 int numWeeks = (fantasyLeague.TeamsNav.Count() - 1) * 2;
                 List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
 

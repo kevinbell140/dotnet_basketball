@@ -19,8 +19,9 @@ namespace NBAMvc1._1.Data
                 //create admin account
                 var adminID = await EnsureUser(serviceProvider, "Password12#", "admin@fbbm.com");
                 await EnsureRole(serviceProvider, adminID, Constants.AdministratorRole);
-                
-                //fill database
+
+                //fill database - is this full replaced by the timer?
+
                 //await FetchTeamsAsync(serviceProvider);
                 //await FetchPlayersAsync(serviceProvider);
                 //await FetchGamesPostAsync(serviceProvider);
