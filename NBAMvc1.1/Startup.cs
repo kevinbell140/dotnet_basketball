@@ -83,6 +83,8 @@ namespace NBAMvc1._1
             services.AddScoped<PlayersService>();
             services.AddScoped<StandingsService>();
             services.AddScoped<TeamsService>();
+
+            services.AddHostedService<FetchTimer>();
             
         }
 

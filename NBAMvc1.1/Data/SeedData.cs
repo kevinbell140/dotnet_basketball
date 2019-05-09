@@ -16,23 +16,18 @@ namespace NBAMvc1._1.Data
         {
             using(var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>()))
             {
+                //create admin account
                 var adminID = await EnsureUser(serviceProvider, "Password12#", "admin@fbbm.com");
                 await EnsureRole(serviceProvider, adminID, Constants.AdministratorRole);
-
-
-                await FetchTeamsAsync(serviceProvider);
-                var playersTask = FetchPlayersAsync(serviceProvider);
-
-                //var gamesTask = FetchGamesAsync(serviceProvider);
-                var postGamesTask = FetchGamesPostAsync(serviceProvider);
-                var standingsTask = FetchStandingsAsync(serviceProvider);
-                Task.WaitAll(new Task[] { playersTask, postGamesTask, standingsTask });
-
-
-                var seasonStats = FetchPlayerSeasonStatsAsync(serviceProvider);
-                var gameStats = FetchPlayerGameStatsAsync(serviceProvider);
-                var news = FetchNewsAsync(serviceProvider);
-                Task.WaitAll(new Task[] { seasonStats, gameStats, news });
+                
+                //fill database
+                //await FetchTeamsAsync(serviceProvider);
+                //await FetchPlayersAsync(serviceProvider);
+                //await FetchGamesPostAsync(serviceProvider);
+                //await FetchStandingsAsync(serviceProvider);
+                //await FetchPlayerSeasonStatsAsync(serviceProvider);
+                //await FetchPlayerGameStatsAsync(serviceProvider);
+                //await FetchNewsAsync(serviceProvider);
             }
         }
 
