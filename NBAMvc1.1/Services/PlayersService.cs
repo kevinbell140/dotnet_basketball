@@ -178,7 +178,7 @@ namespace NBAMvc1._1.Services
             List<Player> players = await _dataService.FetchPlayersAsync();
             List<Player> created = new List<Player>();
             List<Player> updated = new List<Player>();
-            _logger.LogDebug("Data size = {0}", players.Count();
+            _logger.LogDebug("Data size = {0}", players.Count);
             foreach (Player p in players)
             {
                 if (!await PlayerExists(p.PlayerID))
@@ -209,6 +209,11 @@ namespace NBAMvc1._1.Services
                 _logger.LogDebug("Updating players to the database!");
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
+            }
+            catch(DbUpdateConcurrencyException)
+            {
+                _logger.LogError("DbUpdateConcurrencyException");
+                throw;
             }
             catch (Exception)
             {

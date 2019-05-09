@@ -19,29 +19,14 @@ namespace NBAMvc1._1.Data
                 var adminID = await EnsureUser(serviceProvider, "Password12#", "admin@fbbm.com");
                 await EnsureRole(serviceProvider, adminID, Constants.AdministratorRole);
 
-                //use Task.WaitAll()
-                //teams/fetch - must go first
-
-                //players/fetch - 2nd
-
-                //playerseasonstats/fetch - 3rd
-
-                //games/fetch -2nd
-
-                //games/fetchpost -2nd
-
-                //playergamesstats/fetch - 3rd
-
-                //standings/fetch -2nd
-                //news/fetch - 3rd
 
                 await FetchTeamsAsync(serviceProvider);
-                
                 var playersTask = FetchPlayersAsync(serviceProvider);
-                var gamesTask = FetchGamesAsync(serviceProvider);
+
+                //var gamesTask = FetchGamesAsync(serviceProvider);
                 var postGamesTask = FetchGamesPostAsync(serviceProvider);
                 var standingsTask = FetchStandingsAsync(serviceProvider);
-                Task.WaitAll(new Task[] { playersTask, gamesTask, postGamesTask, standingsTask });
+                Task.WaitAll(new Task[] { playersTask, postGamesTask, standingsTask });
 
 
                 var seasonStats = FetchPlayerSeasonStatsAsync(serviceProvider);
