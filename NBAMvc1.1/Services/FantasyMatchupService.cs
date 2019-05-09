@@ -151,6 +151,21 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
+        public async Task<bool> SetStatus(FantasyMatchup matchup, string status)
+        {
+            matchup.Status = status;
+            try
+            {
+                _context.Update(matchup);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForUpdate(int leagueID, int currentWeek)
         {
             var matchups = await _context.FantasyMatchup

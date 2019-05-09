@@ -86,6 +86,7 @@ namespace NBAMvc1._1
 
             services.AddHostedService<FetchTimer>();
             services.AddHostedService<CurrentWeekTimerService>();
+            services.AddHostedService<MatchupStatusUpdateTimer>();
             
         }
 

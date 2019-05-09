@@ -27,16 +27,43 @@
 //        public Task StartAsync(CancellationToken cancellationToken)
 //        {
 //            _logger.LogDebug("Update timer started");
-//            _timer = new Timer(Update, null, TimeSpan.Zero, TimeSpan.FromSeconds(5));
+//            _timer = new Timer(Update, null, TimeSpan.FromMinutes(1), TimeSpan.FromDays(1));
+//            return Task.CompletedTask;
 //        }
 
 //        private async void Update(object state)
 //        {
-//            using(var scope = _serviceProvider.CreateScope())
+//            using (var scope = _serviceProvider.CreateScope())
 //            {
 //                var services = scope.ServiceProvider;
-//                var conext = services.GetRequiredService<ApplicationDbContext>();
+//                var _leagueService = services.GetRequiredService<FantasyLeagueService>();
+//                var leagues = await _leagueService.GetLeagues();
+
+//                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
+//                var _matchupService = services.GetRequiredService<FantasyMatchupService>();
+
+//                foreach (var l in leagues)
+//                {
+//                    var week = await _scheudleService.GetFantasyMatchupWeekByLeagueByDate(l.FantasyLeagueID, DateTime.Today);
+//                    if(week != null)
+//                    {
+//                        var matchups = await _matchupService.GetMatchupsForUpdate(l.FantasyLeagueID, week.WeekNum);
+//                        foreach(var m in matchups)
+//                        {
+//                            if(week.Date == DateTime.Today)
+//                            {
+//                                await _matchupService.SetStatus(m, "Final");
+//                            }
+//                            else
+//                            {
+//                                await _matchupService.SetStatus(m, "In Progress");
+//                            }
+                            
+//                        }
+//                    }
+//                }
 //            }
+
 //            //all of the matchups prior to this week for updating purposes
 //            //var matchupUpdates = await _fantasyMatchupService.GetMatchupsForUpdate(viewModel.FantasyLeague.FantasyLeagueID, viewModel.CurrentWeek);
 //            //var test = await _fantasyLeagueService.UpdateMatchups(matchupUpdates, viewModel.CurrentWeek);
@@ -46,30 +73,6 @@
 //            //var test2 = await _fantasyLeagueStandingsService.UpdateStandings(matchupUpdates, currentWeek-1);
 
 //            //var test3 = await _fantasyLeagueService.StandingsRecorded(matchupUpdates, currentWeek-1);
-//        }
-
-//        private async Task UpdateMatchupStatuses(IServiceProvider serviceProvider)
-//        {
-//            var fantasyLeagueService = _serviceProvider.GetRequiredService<FantasyLeagueService>();
-//            var leagues = await fantasyLeagueService.GetLeagues();
-//            foreach(var l in leagues)
-//            {
-
-//            }
-
-//        }
-
-
-//        private async Task GetMatchupsForUpdate(ApplicationDbContext _context)
-//        {
-
-//            var matchups = await _context.FantasyMatchup
-//                    .Include(m => m.AwayTeamNav)
-//                    .Include(m => m.HomeTeamNav)
-//                    .Where(m => m.FantasyLeagueID == leagueID && m.Week <= currentWeek)
-//                    .AsNoTracking().ToListAsync();
-
-//            return matchups;
 //        }
 
 //        public Task StopAsync(CancellationToken cancellationToken)
@@ -82,5 +85,5 @@
 //            throw new NotImplementedException();
 //        }
 //    }
- 
+
 //}
