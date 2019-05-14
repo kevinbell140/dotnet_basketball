@@ -20,9 +20,17 @@ namespace NBAMvc1._1.Services
         {
             var leagues = await _context.FantasyLeague
                 .ToListAsync();
-
             return leagues;
         }
+
+        public async Task<IEnumerable<FantasyLeague>> GetLeagues(int[] leagueIDs)
+        {
+            var leagues = await _context.FantasyLeague
+                .Where(x => leagueIDs.Contains(x.FantasyLeagueID))
+                .ToListAsync();
+            return leagues;
+        }
+
 
         public async Task<FantasyLeague> GetLeague(int id)
         {

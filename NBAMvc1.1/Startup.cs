@@ -87,6 +87,7 @@ namespace NBAMvc1._1
             services.AddHostedService<CurrentWeekTimerService>();
             services.AddHostedService<MatchupStatusUpdateTimer>();
             services.AddHostedService<MatchupScoreUpdateTimer>();
+            services.AddHostedService<StandingsUpdateTimer>();
 
         }
 

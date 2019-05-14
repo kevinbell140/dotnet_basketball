@@ -1,7 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Data;
+using NBAMvc1._1.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,7 +28,7 @@ namespace NBAMvc1._1.Services
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Update timer started");
-            _timer = new Timer(Update, null, TimeSpan.FromSeconds(30), TimeSpan.FromDays(1));
+            _timer = new Timer(Update, null, TimeSpan.FromSeconds(10), TimeSpan.FromDays(1));
             return Task.CompletedTask;
         }
 
@@ -32,45 +37,63 @@ namespace NBAMvc1._1.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var _leagueService = services.GetRequiredService<FantasyLeagueService>();
-                var leagues = await _leagueService.GetLeagues();
-
-                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
                 var _matchupService = services.GetRequiredService<FantasyMatchupService>();
+                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
+                var _context = services.GetRequiredService<ApplicationDbContext>();
 
-                foreach (var l in leagues)
+                //var matchups = await _matchupService.GetMatchupsForUpdate();
+                var matchups = await _matchupService.GetMatchups();
+                List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
+
+                foreach (var m in matchups)
                 {
-                    var week = await _scheudleService.GetFantasyMatchupWeekByLeagueByDate(l.FantasyLeagueID, DateTime.Today);
-                    if (week != null)
+                    var weeks = await _scheudleService.GetFantasyMatchupWeeksByLeague(m.FantasyLeagueID);
+                    if (weeks != null && weeks.Any())
                     {
-                        var matchups = await _matchupService.GetMatchupsForUpdate(l.FantasyLeagueID, week.WeekNum);
-                        foreach (var m in matchups)
+                        var currentWeek = weeks.Where(x => x.Date.Date == DateTime.Today.Date).FirstOrDefault();
+                        int currentWeekNum = (currentWeek == null ? 15 : currentWeek.WeekNum);
+                        if (m.Week == currentWeekNum)
                         {
-                            if (week.Date == DateTime.Today)
-                            {
-                                await _matchupService.SetStatus(m, "In Progress");
-                            }
-                            else
-                            {
-                                await _matchupService.SetStatus(m, "Final");
-                                _logger.LogDebug("Set status of match {0}", m.FantasyMatchupID);
-                            }
-
+                            m.Status = "In Progress";
+                            m.UpdatedAt = DateTime.Now;
+                            updatedMatchups.Add(m);
                         }
-                    }
-                    else
-                    {
-                        var matchups = await _matchupService.GetMatchupsForUpdate(l.FantasyLeagueID, 14); //14 is the max week number
-                        foreach(var m in matchups)
+                        else if (m.Week < currentWeekNum)
                         {
-                            await _matchupService.SetStatus(m, "Final");
-                            _logger.LogDebug("Set status of match {0}", m.FantasyMatchupID);
+                            m.Status = "Final";
+                            m.UpdatedAt = DateTime.Now;
+                            updatedMatchups.Add(m);
+                        }
+                        else
+                        {
+                            m.Status = "Scheduled";
+                            m.UpdatedAt = DateTime.Now;
+                            updatedMatchups.Add(m);
                         }
                     }
                 }
+                try
+                {
+                    _context.UpdateRange(updatedMatchups);
+                    await _context.SaveChangesAsync();
+                    _logger.LogDebug("updated status of matches");
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    throw;
+                }
+                catch (Exception)
+                {
+                    _logger.LogError("error updating status of matches");
+                    throw;
+                }
             }
         }
-
+        public FantasyMatchup SetStatus(FantasyMatchup matchup, string status)
+        {
+            matchup.Status = status;
+            return matchup;
+        }
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Fetch timer stopped");

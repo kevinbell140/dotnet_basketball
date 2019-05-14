@@ -81,7 +81,7 @@ namespace NBAMvc1._1.Services
                 { "C", null},
             };
 
-            int posCount = 1;
+            //int posCount = 1;
             foreach (var p in roster)
             {
                 if (p.PlayerNav.Position == "C")
@@ -90,8 +90,14 @@ namespace NBAMvc1._1.Services
                 }
                 else
                 {
-                    players[p.PlayerNav.Position + posCount] = p.PlayerNav;
-                    posCount = (posCount == 1 ? 2 : 1);
+                    if (players[p.PlayerNav.Position + 1] == null)
+                    {
+                        players[p.PlayerNav.Position + 1] = p.PlayerNav;
+                    }
+                    else
+                    {
+                        players[p.PlayerNav.Position + 2] = p.PlayerNav;
+                    }
                 }
             }
             return players;

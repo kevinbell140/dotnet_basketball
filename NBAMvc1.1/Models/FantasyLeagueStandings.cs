@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Models
 {
@@ -35,7 +32,7 @@ namespace NBAMvc1._1.Models
 
         public int GamesBack { get; set; } = 0;
 
-        public DateTime Updated { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public virtual MyTeam MyTeamNav { get; set; }
 
