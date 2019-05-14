@@ -13,19 +13,14 @@ namespace NBAMvc1._1.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly FantasyLeagueService _fantasyLeagueService;
-        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
         private readonly FantasyMatchupService _fantasyMatchupService;
-        private readonly FantasyLeagueStandingsService _fantasyLeagueStandingsService;
 
         public FantasyLeaguesController(FantasyLeagueService fantasyLeagueService, UserManager<ApplicationUser> userManager, 
-            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, FantasyMatchupService fantasyMatchupService,
-            FantasyLeagueStandingsService fantasyLeagueStandingsService)
+            FantasyMatchupService fantasyMatchupService)
         {
             _userManager = userManager;
             _fantasyLeagueService = fantasyLeagueService;
-            _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _fantasyMatchupService = fantasyMatchupService;
-            _fantasyLeagueStandingsService = fantasyLeagueStandingsService;
         }
 
         // GET: FantasyLeagues

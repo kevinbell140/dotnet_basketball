@@ -69,7 +69,6 @@ namespace NBAMvc1._1
 
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
-            //services.AddScoped<DataService>();
             services.AddScoped<FantasyLeagueService>();
             services.AddScoped<FantasyLeagueStandingsService>();
             services.AddScoped<FantasyMatchupService>();
@@ -87,7 +86,8 @@ namespace NBAMvc1._1
             services.AddHostedService<FetchTimer>();
             services.AddHostedService<CurrentWeekTimerService>();
             services.AddHostedService<MatchupStatusUpdateTimer>();
-            
+            services.AddHostedService<MatchupScoreUpdateTimer>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

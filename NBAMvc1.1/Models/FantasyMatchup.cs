@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Models
 {
@@ -31,6 +28,7 @@ namespace NBAMvc1._1.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal? AwayTeamScore { get; set; }
 
+        public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public virtual MyTeam HomeTeamNav { get; set; }
 

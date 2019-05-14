@@ -177,6 +177,84 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForScoring()
+        {
+            var matchups = await _context.FantasyMatchup
+                    .Include(m => m.AwayTeamNav)
+                    .Include(m => m.HomeTeamNav)
+                    .Where(m => (m.Status == "In Progress" || m.Status == "Final") && !m.Recorded) 
+                    .AsNoTracking().ToListAsync();
+
+            return matchups;
+        }
+
+        public async Task<bool> UpdateScores(IEnumerable<FantasyMatchup> matchups)
+        {
+            List<FantasyMatchup> updateList = new List<FantasyMatchup>();
+
+            foreach (var m in matchups)
+            {
+                updateList = await UpdateScore(m, updateList);
+            }
+            try
+            {
+                _context.UpdateRange(updateList);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private async Task<List<FantasyMatchup>> UpdateScore(FantasyMatchup matchup, List<FantasyMatchup> updateList)
+        {
+            var scores = await CalculateScore(matchup);
+            matchup.HomeTeamScore = scores[0];
+            matchup.AwayTeamScore = scores[1];
+            matchup.UpdatedAt = DateTime.Now;
+
+            updateList.Add(matchup);
+            return updateList;
+        }
+
+
+        private async Task<decimal[]> CalculateScore(FantasyMatchup matchup)
+        {
+            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeague(matchup.FantasyLeagueID, matchup.Week);
+            decimal homeScore = 0;
+            decimal awayScore = 0;
+            if (matchupWeek != null)
+            {
+                var home = await _playerMyTeamService.GetRoster(matchup.HomeTeamID.Value);
+                if (home.Any() && home != null)
+                {
+                    List<PlayerGameStats> homeStats = await GetGameStatsList(home, matchupWeek);
+                    if (homeStats != null)
+                    {
+                        homeScore = homeStats.Sum(x => x.FantasyPoints);
+                    }
+                }
+
+                var away = await _playerMyTeamService.GetRoster(matchup.AwayTeamID.Value);
+                if (away.Any() && away != null)
+                {
+                    List<PlayerGameStats> awayStats = await GetGameStatsList(away, matchupWeek);
+                    if (awayStats != null)
+                    {
+                        awayScore = awayStats.Sum(x => x.FantasyPoints);
+                    }
+                }
+            }           
+            return new decimal[] { homeScore, awayScore};
+        }
+
+
         public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecording(int leagueID, int week)
         {
             var matchups = await _context.FantasyMatchup
@@ -231,17 +309,7 @@ namespace NBAMvc1._1.Services
             return matchup;
         }
 
-        public async Task<decimal[]> CalculateScore(FantasyMatchup matchup)
-        {
-            var home = await _playerMyTeamService.GetRoster(matchup.HomeTeamID.Value);
-            var away = await _playerMyTeamService.GetRoster(matchup.AwayTeamID.Value);
-            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeague(matchup.FantasyLeagueID, matchup.Week);
 
-            List<PlayerGameStats> homeStats = await GetGameStatsList(home, matchupWeek);
-            List<PlayerGameStats> awayStats = await GetGameStatsList(away, matchupWeek);
-
-            return new decimal[] { homeStats.Sum(x => x.FantasyPoints), awayStats.Sum(x => x.FantasyPoints) };
-        }
 
         public async Task<Dictionary<string, string>> GetOpponentLogoDictionary(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
         {
