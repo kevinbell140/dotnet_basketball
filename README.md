@@ -1,36 +1,8 @@
 # dotnet_basketball
+The database will automatically populate upon startup and each day on a timer. Please note the following considerations:
 
-Instructions for manually populating a clean database.
+0) Make your own free trial account and sports data and update the api key in the service class, so you dont use up all my calls. You can change the subscription key in the /Services/DataService constructor. 
 
-0)(optional) Make your own free trial account and sports data and update the api key in the service class, so you dont use up all my calls.
+1) Admin account is admin@fbbm.com, password is Password12#
 
-1)Log in as admin@fbbm.com
-
-2)/teams/fetch
-
-3)/players/fetch
-
-4)/playerseasonstats/fetch
-
-5)/games/fetch
-
-6)/games/fetchpost  (if its the post season)
-
-7)/playergamestats/fetch
-    *This method contains a loop that iterates from a chosen start date to the current day. The start date will default at 03/11/2019, but can be changed inside PlayerGameStatsController.cs. Be careful, you might use up all your api calls.
-    
-8)/standings/fetch
-
-9)/news/fetch
-
-The database should now be ready to use. 
-
-Instructions for daily updates on an existing database
-
-1)/games/fetch (or /games/fetchpost)
-
-2)/playergamestats/fetch
-
-3)/standings/fetch
-
-4)/news/fetch
+2) /Services/PlayerGameStatsService/FetchAsync() contains a start date for which all game logs after will be selected. Be careful with this date as it is easy to use up all of your api calls on the free trial account. 
