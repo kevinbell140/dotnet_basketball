@@ -139,3 +139,5 @@ C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\PlayerSeasonStats\Index.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Details.g.cshtml.cs
 C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagueStandings\Index.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagues\_DetailsBefore.g.cshtml.cs
+C:\Users\kebell\source\repos\dotnet_basketball\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyLeagues\_DetailsAfter.g.cshtml.cs

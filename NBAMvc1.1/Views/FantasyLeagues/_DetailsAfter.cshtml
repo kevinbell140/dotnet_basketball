@@ -1,0 +1,86 @@
+﻿@model NBAMvc1._1.ViewModels.FantasyLeagueDetailsViewModel;
+
+    <div class="container container-fluid bg-white">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card w-100">
+                    <div class="card-header">Standings</div>
+                    <div class="card-body">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Pos</th>
+                                    <th>Name</th>
+                                    <th>Win%</th>
+                                    <th>W</th>
+                                    <th>L</th>
+                                    <th>D</th>
+                                    <th>PF</th>
+                                    <th>PA</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (KeyValuePair<int, MyTeam> entry in Model.Teams)
+                                {
+                                    <tr>
+                                        <td>@entry.Key</td>
+                                        @if (entry.Value != null)
+                                        {
+                                            <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@entry.Value.MyTeamID">@entry.Value.Name</a></td>
+                                        }
+                                        else
+                                        {
+                                            <td></td>
+                                        }
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.WinPercent</td>
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.Wins</td>
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.Losses</td>
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.Draws</td>
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.FantasyPoints</td>
+                                        <td>@entry.Value.FantasyLeagueStandingsNav.FantasyPointsAgainst</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 matchups-div">
+                <div class="card text-center w-100">
+                    <div class="card-header">Matchups</div>
+                    <div class="card-body">
+                        <div class="current-week-flex">
+                            <a class="btn" asp-action="Details" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-selectedWeek="@(Model.SelectedWeek - 1)"><<</a>
+                            <div class="btn btn-primary">Week @Model.SelectedWeek</div>
+                            <a class="btn" asp-action="Details" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-selectedWeek="@(Model.SelectedWeek + 1)">>></a>
+                        </div>
+                        @if (Model.Matchups != null)
+                        {
+                            @foreach (var m in Model.Matchups)
+                            {
+                                <div class="card matchups-card">
+                                    <div class="card-body text-center">
+                                        <table class="table table-hover">
+                                            <tbody>
+                                                <tr>
+                                                    <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.AwayTeamID">@m.AwayTeamNav.Name</a></td>
+                                                    <td>@m.AwayTeamScore</td>
+                                                </tr>
+                                                <tr>
+                                                    <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.HomeTeamID">@m.HomeTeamNav.Name</a></td>
+                                                    <td>@m.HomeTeamScore</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card-footer text-center">
+                                        <a asp-controller="FantasyMatchups" asp-action="Details" asp-route-id="@m.FantasyMatchupID">See Matchup</a>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

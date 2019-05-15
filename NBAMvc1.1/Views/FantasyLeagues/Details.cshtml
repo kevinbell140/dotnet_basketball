@@ -4,120 +4,47 @@
 
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.FantasyLeague.Name;
 }
 
-<div class="container container-fluid bg-white">
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h3>@Model.FantasyLeague.Name</h3>
-            @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
-            {
-                <a asp-controller="FantasyMatchups" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn">Create schedule</a>
-            }
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-2">
-            <span style="color:red">@(Model.FantasyLeague.IsFull == false ? "Open" : "Full")</span>
-            @if (!Model.FantasyLeague.IsFull)
-            {
-                <a asp-controller="MyTeams" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn btn-primary">Join</a>
-            }
-        </div>
-        <div class="col-md-2">
-            <span style="color:red">@(Model.FantasyLeague.IsSet == false ? "Not set" : "Set")</span>
-        </div>
-        <div class="col-md-4">
-            <span style="color:red">Commissioner: @Model.FantasyLeague.ComissionerNav.UserName</span>
-        </div>
-        <div class="col-md-2">
-            <span style="color:red">Current Week: @Model.CurrentWeek</span>
-        </div>
-    </div>
-    <br />
-    <div class="row">
-        <div class="col-md-6">
-            <table class="table table-hover">
-                <thead>
-                    <tr>
-                        <th>Pos</th>
-                        <th>Name</th>
-                        <th>Owner</th>
-                        <th>Record</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (KeyValuePair<int, MyTeam> entry in Model.Teams)
-                    {
-                        <tr>
-                            <td>@entry.Key</td>
-                            @if (entry.Value != null)
-                            {
-                                <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@entry.Value.MyTeamID">@entry.Value.Name</a></td>
-                            }
-                            else
-                            {
-                                <td></td>
-                            }
-                            <td>@(entry.Value == null ? "" : entry.Value.UserNav.Email)</td>
-                            <td>####</td>
-                            @if (entry.Value == null)
-                            {
-                                <td> <a asp-controller="FantasyLeagues" asp-action="AddTeam" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-myTeam="@entry.Value" class="btn btn-success">Add</a></td>
-                            }
-                            else
-                            {
-
-                                <td>
-                                    <form asp-controller="MyTeams" asp-action="Delete">
-                                        <button asp-controller="MyTeams" asp-action="Delete" asp-route-id="@entry.Value.MyTeamID" class="btn btn-danger">Remove</button>
-                                    </form>
-                                </td>
-                            }
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-        <div class="col-md-5 matchups-div">
-            <h4 class="text-center">Matchups</h4>
-            <div class="current-week-flex">
-                <a class="btn" asp-action="Details" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-selectedWeek="@(Model.SelectedWeek - 1)"><<</a>
-                <div class="btn btn-primary">Week @Model.SelectedWeek</div>
-                <a class="btn" asp-action="Details" asp-route-id="@Model.FantasyLeague.FantasyLeagueID" asp-route-selectedWeek="@(Model.SelectedWeek + 1)">>></a>
-            </div>
-            @if (Model.Matchups != null)
-            {
-                @foreach (var m in Model.Matchups)
+    <div class="container container-fluid bg-white">
+        <div class="row">
+            <div class="col-md-12 text-center">
+                <h3>@Model.FantasyLeague.Name</h3>
+                @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded && !Model.FantasyLeague.IsActive)
                 {
-                    <div class="card matchups-card">
-                        <div class="card-body text-center">
-                            <table class="table table-hover">
-                                <tbody>
-                                    <tr>
-                                        <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.AwayTeamID">@m.AwayTeamNav.Name</a></td>
-                                        <td>@m.AwayTeamScore</td>
-                                    </tr>
-                                    <tr>
-                                        <td><a asp-controller="MyTeams" asp-action="Details" asp-route-id="@m.HomeTeamID">@m.HomeTeamNav.Name</a></td>
-                                        <td>@m.HomeTeamScore</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="card-footer text-center">
-                            <a asp-controller="FantasyMatchups" asp-action="Details" asp-route-id="@m.FantasyMatchupID">See Matchup</a>
-                        </div>
-                    </div>
+                    <a asp-controller="FantasyMatchups" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn">Create schedule</a>
                 }
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+                <span style="color:red">@(Model.FantasyLeague.IsFull == false ? "Open" : "Full")</span>
+                @if (!Model.FantasyLeague.IsFull)
+                {
+                    <a asp-controller="MyTeams" asp-action="Create" asp-route-leagueID="@Model.FantasyLeague.FantasyLeagueID" class="btn btn-primary">Join</a>
+                }
+            </div>
+            <div class="col-md-2">
+                <span style="color:red">@(Model.FantasyLeague.IsSet == false ? "Not set" : "Set")</span>
+            </div>
+            <div class="col-md-4">
+                <span style="color:red">Commissioner: @Model.FantasyLeague.ComissionerNav.UserName</span>
+            </div>
+            <div class="col-md-2">
+                <span style="color:red">Current Week: @Model.CurrentWeek</span>
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            @if(!Model.FantasyLeague.IsActive)
+            {
+                @await Html.PartialAsync("_DetailsBefore", Model);
+            }
+            else
+            {
+                @await Html.PartialAsync("_DetailsAfter", Model);
             }
         </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.FantasyLeague.FantasyLeagueID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>

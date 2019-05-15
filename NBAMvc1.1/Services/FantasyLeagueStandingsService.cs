@@ -26,6 +26,16 @@ namespace NBAMvc1._1.Services
             return standings;
         }
 
+        public async Task<IEnumerable<FantasyLeagueStandings>> GetStandingsActive()
+        {
+            var standings = await _context.FantasyLeagueStandings
+                .Include(x => x.FantasyLeagueNav)
+                .Include(x => x.MyTeamNav)
+                .Where(x => x.FantasyLeagueNav.IsActive && x.FantasyLeagueNav.IsSet)
+                .ToListAsync();
+            return standings;
+        }
+
         public async Task<bool> Create(FantasyLeague fantasyLeague)
         {
             var teams = fantasyLeague.TeamsNav;
@@ -70,6 +80,17 @@ namespace NBAMvc1._1.Services
                     .AsNoTracking().ToListAsync();
 
             return matchups;
+        }
+
+        public async Task UpdateGamesBack()
+        {
+            var standings = await GetStandingsActive();
+            var leagues = standings.Select(x => x.FantasyLeagueNav).Distinct();
+
+            foreach(var l in leagues)
+            {
+                //TODO : calculate GB for each league
+            }
         }
 
         public async Task<List<FantasyMatchup>> UpdateStandings()
@@ -117,7 +138,7 @@ namespace NBAMvc1._1.Services
                     currentStandings[m.HomeTeamID.Value].FantasyPointsAgainst += m.AwayTeamScore.Value;
                     currentStandings[m.HomeTeamID.Value].UpdatedAt = DateTime.Now;
 
-                    currentStandings[m.AwayTeamID.Value].Wins = currentStandings[m.AwayTeamID.Value].Wins++;
+                    currentStandings[m.AwayTeamID.Value].Wins++;
                     currentStandings[m.AwayTeamID.Value].FantasyPoints += m.AwayTeamScore.Value;
                     currentStandings[m.AwayTeamID.Value].FantasyPointsAgainst += m.HomeTeamScore.Value;
                     currentStandings[m.AwayTeamID.Value].UpdatedAt = DateTime.Now;
@@ -129,7 +150,7 @@ namespace NBAMvc1._1.Services
                     currentStandings[m.HomeTeamID.Value].FantasyPointsAgainst += m.AwayTeamScore.Value;
                     currentStandings[m.HomeTeamID.Value].UpdatedAt = DateTime.Now;
 
-                    currentStandings[m.AwayTeamID.Value].Draws = currentStandings[m.AwayTeamID.Value].Draws++;
+                    currentStandings[m.AwayTeamID.Value].Draws++;
                     currentStandings[m.AwayTeamID.Value].FantasyPoints += m.AwayTeamScore.Value;
                     currentStandings[m.AwayTeamID.Value].FantasyPointsAgainst += m.HomeTeamScore.Value;
                     currentStandings[m.AwayTeamID.Value].UpdatedAt = DateTime.Now;

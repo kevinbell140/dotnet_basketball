@@ -36,6 +36,7 @@ namespace NBAMvc1._1.Services
         {
             var fantasyLeague = await _context.FantasyLeague
                 .Include(m => m.TeamsNav).ThenInclude(m => m.UserNav)
+                .Include(m => m.TeamsNav).ThenInclude(m => m.FantasyLeagueStandingsNav)
                 .Include(m => m.ComissionerNav)
                 .Include(m => m.FantasyMatchupWeeksNav)
                 .Where(m => m.FantasyLeagueID == id)
@@ -118,13 +119,29 @@ namespace NBAMvc1._1.Services
         {
             int count = 1;
             var league = await GetLeague(leagueID);
-            if(league != null)
+            if (league != null)
             {
-                var teams = league.TeamsNav.ToDictionary(x => count++, x => x);
-                return teams;
+                try
+                {
+                    return league.TeamsNav.OrderByDescending(x => x.FantasyLeagueStandingsNav.WinPercent).ToDictionary(x => count++, x => x);
+
+                }
+                catch (Exception)
+                {
+                    try
+                    {
+                        return league.TeamsNav.ToDictionary(x => count++, x => x);
+                    }
+                    catch (Exception)
+                    {
+                        return null;
+                    }
+                   
+                }              
             }
             return null;
         }
+
 
         public async Task<bool> AddTeamConfirm(int id)
         {

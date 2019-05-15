@@ -36,7 +36,7 @@ namespace NBAMvc1._1.Data
                 var services = scope.ServiceProvider;
                 //await FetchTeamsAsync(services);
                 //await FetchPlayersAsync(services);
-               //await FetchGamesPostAsync(services);
+                //await FetchGamesPostAsync(services);
                 //await FetchStandingsAsync(services);
                 //await FetchPlayerSeasonStatsAsync(services);
                 //await FetchPlayerGameStatsAsync(services);

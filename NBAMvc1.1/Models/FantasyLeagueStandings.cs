@@ -32,6 +32,21 @@ namespace NBAMvc1._1.Models
 
         public int GamesBack { get; set; } = 0;
 
+        public decimal WinPercent
+        {
+            get
+            {
+                try
+                {
+                    return (Wins + (Draws/2) / (Wins + Losses + Draws));
+                }
+                catch(Exception)
+                {
+                    return 0;
+                }
+            }
+        }
+
         public DateTime UpdatedAt { get; set; } = DateTime.Now;
 
         public virtual MyTeam MyTeamNav { get; set; }
