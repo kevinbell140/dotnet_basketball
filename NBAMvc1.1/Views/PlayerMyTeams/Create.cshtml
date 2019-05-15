@@ -19,6 +19,7 @@
                 <div class="form-actions no-color">
                     <p>
                         Search: <input type="text" name="searchString" value="@ViewData["currentFilter"]" />
+                        <input type="hidden" name="teamID" value="@Model.MyTeam.MyTeamID" />
                         <input type="submit" value="Search" class="btn btn-primary" />
                     </p>
                 </div>
