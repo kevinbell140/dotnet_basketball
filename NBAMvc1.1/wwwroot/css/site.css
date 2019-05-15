@@ -148,12 +148,9 @@ body {
 }
 
 .splash-main{
-    margin: 0px 40px 40px 40px;
+    margin: 50px 10px 10px 50px;
 }
 
-.splash-main h4{
-    text-align: center;
-}
 
 .splash-main-headline a{
     color: black;
