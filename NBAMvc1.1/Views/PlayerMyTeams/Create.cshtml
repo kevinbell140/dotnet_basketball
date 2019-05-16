@@ -3,7 +3,7 @@
 @inject IAuthorizationService AuthorizationService
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Add player";
 }
 
 
@@ -28,6 +28,7 @@
     </div>
     <div class="row">
         <div class="col-md-12">
+            <span class="text-center" style="color:red">@TempData["PosMessage"]</span>
             <table class="table table-responsive table-hover">
                 <thead>
                     <tr>

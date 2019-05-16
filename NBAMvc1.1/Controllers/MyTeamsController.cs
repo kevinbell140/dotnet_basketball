@@ -86,7 +86,7 @@ namespace NBAMvc1._1.Controllers
                     return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
                 }
             }
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Create", new { leagueID = myTeam.FantasyLeagueID });
         }
 
         // GET: MyTeams/Edit/5

@@ -23,15 +23,5 @@ namespace NBAMvc1._1.Models
             var stats = await _playerGameStatsService.GetPlayerGameStats();
             return View(stats);
         }
-
-        //GET : Teams/FetchAsync()
-        //public async Task<IActionResult> Fetch()
-        //{
-        //    if(await _playerGameStatsService.Fetch())
-        //    {
-        //        return RedirectToAction("Index", "Players");
-        //    }
-        //    return RedirectToAction("Index", "Home");
-        //}
     }
 }

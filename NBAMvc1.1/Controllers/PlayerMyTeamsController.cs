@@ -95,6 +95,7 @@ namespace NBAMvc1._1.Controllers
         {
             var myTeam = await _myTeamsService.GetMyTeamByID(playerMyTeam.MyTeamID);
             var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
+            string pos = (await _playersService.GetPlayer(playerMyTeam.PlayerID)).Position;
             if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();
@@ -102,12 +103,28 @@ namespace NBAMvc1._1.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _playerMyTeamService.Create(playerMyTeam))
+                bool created = false;
+                try
+                {
+                    created = await _playerMyTeamService.Create(playerMyTeam);
+                }
+                catch (Exception)
+                {
+                    return BadRequest();
+                }
+                
+                if (created)
                 {
                     return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
                 }
+                else
+                {
+                    TempData["PosMessage"] = "You cannot have that many players at that position!";
+                    return RedirectToAction("Create", new { teamID = playerMyTeam.MyTeamID, posFilter = pos });
+                }
             }
-            return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
+            TempData["PosMessage"] = "An error occured!";
+            return RedirectToAction("Create", new { teamID = playerMyTeam.MyTeamID, posFilter = pos });
         }
 
         // POST: PlayerMyTeams/Delete/5

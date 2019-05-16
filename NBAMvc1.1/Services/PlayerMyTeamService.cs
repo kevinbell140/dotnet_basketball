@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using System;
@@ -12,11 +13,13 @@ namespace NBAMvc1._1.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly PlayersService _playersService;
+        private readonly ILogger _logger;
 
-        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context)
+        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context, ILogger<PlayerMyTeamService> logger)
         {
             _context = context;
             _playersService = playersService;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<PlayerMyTeam>> GetPlayerMyTeams()
@@ -122,12 +125,10 @@ namespace NBAMvc1._1.Services
             var roster = await GetRoster(playerMyTeam.MyTeamID);
             int spots = GetRosterSpots(roster, player.Position);
 
-            //need to create a custom exception for this
             if (player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1 || await IsPlayerOnRoster(playerMyTeam.MyTeamID, playerMyTeam.PlayerID))
             {
                 return false;
             }
-
             try
             {
                 await _context.AddAsync(playerMyTeam);
@@ -135,8 +136,8 @@ namespace NBAMvc1._1.Services
                 return true;
             }
             catch (Exception)
-            {
-                return false;
+            {          
+                throw;
             }
         }
 
