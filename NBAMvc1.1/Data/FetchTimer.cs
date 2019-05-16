@@ -34,7 +34,7 @@ namespace NBAMvc1._1.Data
             using(var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                //await FetchTeamsAsync(services);
+                await FetchTeamsAsync(services);
                 //await FetchPlayersAsync(services);
                 //await FetchGamesPostAsync(services);
                 //await FetchStandingsAsync(services);
@@ -49,7 +49,15 @@ namespace NBAMvc1._1.Data
         private static async Task FetchTeamsAsync(IServiceProvider serviceProvider)
         {
             var _teamsService = serviceProvider.GetRequiredService<TeamsService>();
-            await _teamsService.FetchAsync();
+            try
+            {
+                await _teamsService.FetchAsync();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            
             return;
         }
 

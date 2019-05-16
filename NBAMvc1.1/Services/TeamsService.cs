@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using System;
@@ -20,23 +19,20 @@ namespace NBAMvc1._1.Services
             _dataService = dataService;
         }
 
-        public async Task<Team> GetTeam(int id)
+        public async Task<Team> GetTeamAsync(int id)
         {
             var team = await _context.Team
                 .Include(t => t.PlayersNav).ThenInclude(p => p.StatsNav)
                 .Include(t => t.RecordNav)
                 .Where(t => t.TeamID == id)
                 .FirstOrDefaultAsync();
-
             return team;
         }
 
-        public IEnumerable<Team> GetTeams(string sortOrder)
+        public async Task<IEnumerable<Team>> GetTeamsAsync(string sortOrder)
         {
-            var teams = from t in _context.Team
-                        select t;
-
-            if (teams != null)
+            var teams = _context.Team.AsNoTracking();
+            if (teams.Any() && teams != null)
             {
                 switch (sortOrder)
                 {
@@ -59,9 +55,8 @@ namespace NBAMvc1._1.Services
                         teams = teams.OrderBy(t => t.City);
                         break;
                 }
-                return teams;
             }
-            return null;
+            return await teams.ToListAsync();
         }
 
         public Player GetPPGLeader(List<Player> players)
@@ -131,22 +126,18 @@ namespace NBAMvc1._1.Services
         public async Task FetchAsync()
         {
             List<Team> teams = await _dataService.FetchTeamsAsync();
-
             List<Team> created = new List<Team>();
             List<Team> updated = new List<Team>();
 
             foreach (Team t in teams)
             {
-
-                var exists = await _context.Team.AnyAsync(o => o.TeamID == t.TeamID);
-
-                if (!exists)
+                if (!await _context.Team.AnyAsync(o => o.TeamID == t.TeamID))
                 {
-                    created.Add(Create(t));
+                    created.Add(t);
                 }
                 else
                 {
-                    updated.Add(Edit(t.TeamID, t));
+                    updated.Add(t);
                 }
             }
             try
@@ -159,20 +150,6 @@ namespace NBAMvc1._1.Services
             {
                 throw;
             }
-        }
-
-        private Team Create([Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
-        {
-            return team;
-        }
-
-        private Team Edit(int id, [Bind("TeamID,Key,City,Name,LeagueID,Conference,Division,PrimaryColor,SecondaryColor,TertiaryColor,WikipediaLogoUrl,WikipediaWordMarkUrl,GlobalTeamID")] Team team)
-        {
-            if( id != team.TeamID)
-            {
-                return null;
-            }
-            return team;
         }
     }
 }

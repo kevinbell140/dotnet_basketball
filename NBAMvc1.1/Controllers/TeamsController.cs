@@ -31,7 +31,7 @@ namespace NBAMvc1._1.Controllers
             ViewData["NameSortParam"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["DivisionSortParam"] = sortOrder == "Division" ? "division_desc" : "Division";
 
-            var teams = _teamsService.GetTeams(sortOrder);
+            var teams = _teamsService.GetTeamsAsync(sortOrder);
 
             return View(teams);
         }
@@ -46,7 +46,7 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new TeamDetailsViewModel
             {
-                Team = await _teamsService.GetTeam(id.Value),
+                Team = await _teamsService.GetTeamAsync(id.Value),
             };
 
             if(viewModel.Team == null)
@@ -75,16 +75,5 @@ namespace NBAMvc1._1.Controllers
 
             return View(viewModel);
         }
-
-        ////GET : Teams/FetchAsync()
-        //[Authorize(Policy ="AdminOnly")]
-        //public async Task<IActionResult> Fetch()
-        //{
-        //    if(await _teamsService.FetchAsync())
-        //    {
-        //        return RedirectToAction("Index", "Teams");
-        //    }
-        //    return RedirectToAction("Index", "Home");
-        //}
     }
 }

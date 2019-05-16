@@ -12,7 +12,6 @@ namespace NBAMvc1._1.Models
         [DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int TeamID { get; set; }
 
-        [Required]
         public string Key { get; set; }
         public string City { get; set; }
         public string Name { get; set; }
@@ -23,6 +22,8 @@ namespace NBAMvc1._1.Models
         public string SecondaryColor { get; set; }
         public string TertiaryColor { get; set; }
         public string WikipediaLogoUrl { get; set; }
+
+        public DateTime Updated { get; set; } = DateTime.Now;
 
         [Display(Name="Team")]
         public string FullName
@@ -42,6 +43,5 @@ namespace NBAMvc1._1.Models
         public virtual ICollection<Game> AwayGamesNav { get; set; }
 
         public virtual Standings RecordNav { get; set; }
-
     }
 }
