@@ -108,6 +108,7 @@ namespace NBAMvc1._1.Models
         [Display(Name = "+/-")]
         public decimal PlusMinus { get; set; }
 
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(18, 2)")]
         [Display(Name = "FPS")]

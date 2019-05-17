@@ -27,7 +27,8 @@ namespace NBAMvc1._1.Models
         [ForeignKey("PlayerNav")]
         public int PlayerID { get; set; }
 
-
         public virtual Player PlayerNav { get; set; }
+
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
@@ -24,15 +23,14 @@ namespace NBAMvc1._1.Controllers
         }
 
         // GET: Teams
-        public IActionResult Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder)
         {
             //sort attributes
             ViewData["CitySortParam"] = String.IsNullOrEmpty(sortOrder) ? "city_desc" : " ";
             ViewData["NameSortParam"] = sortOrder == "Name" ? "name_desc" : "Name";
             ViewData["DivisionSortParam"] = sortOrder == "Division" ? "division_desc" : "Division";
 
-            var teams = _teamsService.GetTeams(sortOrder);
-
+            var teams = await _teamsService.GetTeamsAsync(sortOrder);
             return View(teams);
         }
 
@@ -46,7 +44,7 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new TeamDetailsViewModel
             {
-                Team = await _teamsService.GetTeam(id.Value),
+                Team = await _teamsService.GetTeamAsync(id.Value),
             };
 
             if(viewModel.Team == null)
@@ -54,10 +52,10 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            viewModel.Last5 = await _gamesService.GetLast(id.Value, 5);
-            viewModel.Next3 = await _gamesService.GetNext(id.Value, 3);
+            viewModel.Last5 = await _gamesService.GetLastAsync(id.Value, 5);
+            viewModel.Next3 = await _gamesService.GetNextAsync(id.Value, 3);
 
-            List<Standings> conferenceStandings = await _standingsService.GetStandings(viewModel.Team.Conference);
+            List<Standings> conferenceStandings = await _standingsService.GetStandingsAsync(viewModel.Team.Conference);
 
             viewModel.ConferenceRank = conferenceStandings.IndexOf(viewModel.Team.RecordNav)+1;
             viewModel.PPGLeader = _teamsService.GetPPGLeader(viewModel.Team.PlayersNav.ToList());
@@ -75,16 +73,5 @@ namespace NBAMvc1._1.Controllers
 
             return View(viewModel);
         }
-
-        ////GET : Teams/FetchAsync()
-        //[Authorize(Policy ="AdminOnly")]
-        //public async Task<IActionResult> Fetch()
-        //{
-        //    if(await _teamsService.FetchAsync())
-        //    {
-        //        return RedirectToAction("Index", "Teams");
-        //    }
-        //    return RedirectToAction("Index", "Home");
-        //}
     }
 }

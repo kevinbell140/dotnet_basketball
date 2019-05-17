@@ -20,7 +20,7 @@ namespace NBAMvc1._1.Services
             _dataService = dataService;
         }
 
-        public async Task<List<Standings>> GetStandings(string conference)
+        public async Task<List<Standings>> GetStandingsAsync(string conference)
         {
             List<Standings> standings = new List<Standings>();
 
@@ -41,13 +41,13 @@ namespace NBAMvc1._1.Services
 
             foreach (Standings s in standings)
             {
-                if (!await StandingsExist(s.TeamID))
+                if (!await StandingsExistAsync(s.TeamID))
                 {
-                    created.Add(Create(s));
+                    created.Add(s);
                 }
                 else
                 {
-                    updated.Add(Edit(s.TeamID, s));
+                    updated.Add(s);
                 }
             }
             try
@@ -56,28 +56,14 @@ namespace NBAMvc1._1.Services
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
         }
-        private async Task<bool> StandingsExist(int teamID)
+        private async Task<bool> StandingsExistAsync(int teamID)
         {
             return await _context.Standings.AnyAsync(a => a.TeamID == teamID);
-        }
-
-        private Standings Create([Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
-        {
-            return standings;
-        }
-
-        private Standings Edit(int id, [Bind("TeamID,Wins,Losses,Percentage,ConferenceWins,ConferenceLosses,DivisionWins,DivisionLosses,HomeWins,HomeLosses,AwayWins,AwayLosses,LastTenWins,LastTenLosses,Streak,GamesBack")] Standings standings)
-        {
-            if (id != standings.TeamID)
-            {
-                return null;
-            }
-            return standings;
         }
     }
 }

@@ -159,7 +159,7 @@ namespace NBAMvc1._1.Services
             return players.AsNoTracking();
         }
 
-        public async Task<Player> GetPlayer(int id)
+        public async Task<Player> GetPlayerAsync(int id)
         {
             var player = await _context.Player
                 .Include(p => p.TeamNav).ThenInclude(p => p.HomeGamesNav)
@@ -183,22 +183,16 @@ namespace NBAMvc1._1.Services
             {
                 if (!await PlayerExists(p.PlayerID))
                 {
-                    _logger.LogDebug("Creating a new player!");
-                    var createdPlayer = Create(p);
-                    if (createdPlayer != null)
+                    if (p != null)
                     {
-                        _logger.LogDebug("Adding new player to list!");
-                        created.Add(createdPlayer);
+                        created.Add(p);
                     }
                 }
                 else
                 {
-                    _logger.LogDebug("Updating a player!");
-                    var editedPlayer = Edit(p.PlayerID, p);
-                    if (editedPlayer != null)
+                    if (p != null)
                     {
-                        _logger.LogDebug("Adding updated player to list!");
-                        updated.Add(editedPlayer);
+                        updated.Add(p);
                     }
                 }
             }
@@ -215,30 +209,11 @@ namespace NBAMvc1._1.Services
                 _logger.LogError("DbUpdateConcurrencyException");
                 throw;
             }
-            catch (Exception)
-            {
-                _logger.LogError("Crashed writing players to the database!");
-                return;
-            }
         }
 
         private async Task<bool> PlayerExists(int id)
         {
             return await _context.Player.AnyAsync(x => x.PlayerID == id);
-        }
-
-        private Player Create([Bind(include: "PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
-        {
-            return player;
-        }
-
-        private Player Edit(int id, [Bind("PlayerID,Status,Jersey,Position,FirstName,LastName,Height,Weight,BirthDate,TeamID")] Player player)
-        {
-            if (id != player.PlayerID)
-            {
-                return null;
-            }
-            return player;
         }
     }
 }

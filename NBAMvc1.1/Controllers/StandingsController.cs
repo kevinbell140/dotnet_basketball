@@ -22,20 +22,9 @@ namespace NBAMvc1._1.Controllers
         public async Task<IActionResult> Index(string filter = "Eastern")
         {
             ViewData["filter"] = filter;
-            List<Standings> standings = await _standingsService.GetStandings(filter); 
+            List<Standings> standings = await _standingsService.GetStandingsAsync(filter); 
 
             return View(standings);
         }
-
-        //GET : Teams/FetchAsync()
-        //[Authorize(Policy = "AdminOnly")]
-        //public async Task<IActionResult> Fetch()
-        //{
-        //    if (await _standingsService.Fetch())
-        //    {
-        //        return RedirectToAction("Index", "Standings");
-        //    }
-        //    return RedirectToAction("Index", "Home");
-        //}
     }
 }

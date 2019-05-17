@@ -45,7 +45,7 @@ namespace NBAMvc1._1.Models
 
         public int? HomeTeamMoneyLine { get; set; }
 
-
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
         
         public virtual Team HomeTeamNav { get; set; }
 

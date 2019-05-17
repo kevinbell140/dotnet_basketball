@@ -30,7 +30,6 @@ namespace NBAMvc1._1.Models
             }
         }
 
-        
         public int? Height { get; set; }
         public int? Weight { get; set; }
 
@@ -41,9 +40,9 @@ namespace NBAMvc1._1.Models
 
         public string PhotoUrl { get; set; }
 
-
         public int TeamID { get; set; }
 
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
 
         public virtual Team TeamNav { get; set; }
 

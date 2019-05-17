@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NBAMvc1._1.Data;
 
 namespace NBAMvc1._1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190517212713_playergamestat_timestamp")]
+    partial class playergamestat_timestamp
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -381,8 +383,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.Property<int>("PlayerID");
 
                     b.Property<string>("Source");
-
-                    b.Property<DateTime>("TimeStamp");
 
                     b.Property<string>("Title");
 

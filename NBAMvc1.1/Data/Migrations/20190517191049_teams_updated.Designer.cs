@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NBAMvc1._1.Data;
 
 namespace NBAMvc1._1.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190517191049_teams_updated")]
+    partial class teams_updated
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -336,8 +338,6 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<string>("Status");
 
-                    b.Property<DateTime>("TimeStamp");
-
                     b.Property<DateTime?>("Updated");
 
                     b.HasKey("GameID");
@@ -382,8 +382,6 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<string>("Source");
 
-                    b.Property<DateTime>("TimeStamp");
-
                     b.Property<string>("Title");
 
                     b.Property<DateTime>("Updated");
@@ -420,8 +418,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.Property<string>("Status");
 
                     b.Property<int>("TeamID");
-
-                    b.Property<DateTime>("TimeStamp");
 
                     b.Property<string>("UsaTodayHeadshotUrl");
 
@@ -502,8 +498,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.Property<decimal>("ThreePointersPercentage")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<DateTime>("TimeStamp");
-
                     b.Property<decimal>("Turnovers")
                         .HasColumnType("decimal(18, 2)");
 
@@ -563,8 +557,6 @@ namespace NBAMvc1._1.Data.Migrations
                     b.Property<decimal>("ThreePointersMade")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<DateTime>("TimeStamp");
-
                     b.Property<decimal>("Turnovers")
                         .HasColumnType("decimal(18, 2)");
 
@@ -610,8 +602,6 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<int>("Streak");
 
-                    b.Property<DateTime>("TimeStamp");
-
                     b.Property<int>("Wins");
 
                     b.HasKey("TeamID");
@@ -642,7 +632,7 @@ namespace NBAMvc1._1.Data.Migrations
 
                     b.Property<string>("TertiaryColor");
 
-                    b.Property<DateTime>("TimeStamp");
+                    b.Property<DateTime>("Updated");
 
                     b.Property<string>("WikipediaLogoUrl");
 

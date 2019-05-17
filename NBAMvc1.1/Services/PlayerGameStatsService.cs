@@ -27,7 +27,7 @@ namespace NBAMvc1._1.Services
             return stats;
         }
 
-        public async Task<PlayerGameStats> GetPlayerGameStatsByGame(int playerID, int gameID)
+        public async Task<PlayerGameStats> GetPlayerGameStatsByGameAsync(int playerID, int gameID)
         {
             var log = await _context.PlayerGameStats
                 .Include(a => a.PlayerNav)
@@ -37,9 +37,21 @@ namespace NBAMvc1._1.Services
             return log;
         }
 
+        public async Task<List<PlayerGameStats>> GetGameLeadersAsync(int id)
+        {
+            var leaders = await _context.PlayerGameStats
+               .Include(p => p.GameNav)
+               .Include(p => p.PlayerNav)
+               .Where(p => p.GameID == id)
+               .OrderByDescending(p => p.Points)
+               .Take(2).ToListAsync();
+
+            return leaders;
+        }
+
         public async Task FetchAsync()
         {
-            DateTime startDate = new DateTime(2019, 05, 14);
+            DateTime startDate = new DateTime(2019, 04, 10);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
@@ -52,18 +64,16 @@ namespace NBAMvc1._1.Services
                 {
                     if (!await PlayerGameStatsExist(p.StatID))
                     {
-                        var createdStat = Create(p);
-                        if (createdStat != null)
+                        if (await PlayerAndGameExist(p.PlayerID, p.GameID))
                         {
-                            created.Add(await createdStat);
+                            created.Add(p);
                         }
                     }
                     else
                     {
-                        var editedStat = Edit(p.StatID, p);
-                        if (editedStat != null)
+                        if (await PlayerAndGameExist(p.PlayerID, p.GameID))
                         {
-                            updated.Add(await editedStat);
+                            updated.Add(p);
                         }
                     }
                 }
@@ -74,7 +84,7 @@ namespace NBAMvc1._1.Services
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
@@ -84,44 +94,10 @@ namespace NBAMvc1._1.Services
         {
             return await _context.PlayerGameStats.AnyAsync(s => s.StatID == id);
         }
-
-        private async Task<PlayerGameStats> Create([Bind("StatID,PlayerID,GameID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
+        
+        private async Task<bool> PlayerAndGameExist(int playerID, int gameID)
         {
-            Boolean playerExists = await _context.Player.AnyAsync(a => a.PlayerID == playerGameStats.PlayerID);
-            Boolean gameExists = await _context.Game.AnyAsync(a => a.GameID == playerGameStats.GameID);
-
-            if (playerExists && gameExists)
-            {
-                return playerGameStats;
-            }
-            return null;
-        }
-
-        private async Task<PlayerGameStats> Edit(int id, [Bind("StatID,PlayerID,Updated,Minutes,FieldGoalsMade,FieldGoalsAttempted,FieldGoalsPercentage,ThreePointersMade,ThreePointersAttempted,ThreePointersPercentage,FreeThrowsMade,FreeThrowsAttempted,FreeThrowsPercentage,OffensiveRebounds,DefensiveRebounds,Rebounds,Assists,Steals,BlockedShots,Turnovers,PersonalFouls,Points,PlusMinus,Started")] PlayerGameStats playerGameStats)
-        {
-            if (id != playerGameStats.StatID)
-            {
-                return null;
-            }
-            Boolean playerExists = await _context.Player.AnyAsync(a => a.PlayerID == playerGameStats.PlayerID);
-            Boolean gameExists = await _context.Game.AnyAsync(a => a.GameID == playerGameStats.GameID);
-            if (playerExists && gameExists)
-            {
-                return playerGameStats;
-            }
-            return null;
-        }
-
-        public async Task<List<PlayerGameStats>> GetGameLeaders(int id)
-        {
-            var leaders = await _context.PlayerGameStats
-               .Include(p => p.GameNav)
-               .Include(p => p.PlayerNav)
-               .Where(p => p.GameID == id)
-               .OrderByDescending(p => p.Points)
-               .Take(2).ToListAsync();
-
-            return leaders;
+            return (await _context.Player.AnyAsync(a => a.PlayerID == playerID) && await _context.Game.AnyAsync(a => a.GameID == gameID));
         }
     }
 }

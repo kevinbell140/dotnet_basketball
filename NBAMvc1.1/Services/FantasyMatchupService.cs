@@ -291,7 +291,7 @@ namespace NBAMvc1._1.Services
             {
                 if (player.Value != null)
                 {
-                    var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.Value.TeamID);
+                    var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.Value.TeamID);
 
                     if (gameTonight != null)
                     {
@@ -321,11 +321,11 @@ namespace NBAMvc1._1.Services
             {
                 if (player.Value != null)
                 {
-                    var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.Value.TeamID);
+                    var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.Value.TeamID);
 
                     if (gameTonight != null)
                     {
-                        var stats = await _playerGameStatsService.GetPlayerGameStatsByGame(player.Value.PlayerID, gameTonight.GameID);
+                        var stats = await _playerGameStatsService.GetPlayerGameStatsByGameAsync(player.Value.PlayerID, gameTonight.GameID);
                         if (stats != null)
                         {
                             statsDictionary[player.Key] = stats; ;
@@ -341,10 +341,10 @@ namespace NBAMvc1._1.Services
             List<PlayerGameStats> statsList = new List<PlayerGameStats>();
             foreach (PlayerMyTeam player in roster)
             {
-                var gameTonight = await _gamesService.HasGameTonight(matchupWeek, player.PlayerNav.TeamID);
+                var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.PlayerNav.TeamID);
                 if (gameTonight != null)
                 {
-                    var stats = await _playerGameStatsService.GetPlayerGameStatsByGame(player.PlayerNav.PlayerID, gameTonight.GameID);
+                    var stats = await _playerGameStatsService.GetPlayerGameStatsByGameAsync(player.PlayerNav.PlayerID, gameTonight.GameID);
                     if (stats != null)
                     {
                         statsList.Add(stats);

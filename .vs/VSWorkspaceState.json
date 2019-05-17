@@ -1,7 +1,8 @@
 {
   "ExpandedNodes": [
     "",
-    "\\NBAMvc1.1"
+    "\\NBAMvc1.1",
+    "\\NBAMvc1.1\\ViewModels"
   ],
   "SelectedNode": "\\NBAMvc1.1.sln",
   "PreviewInSolutionExplorer": false

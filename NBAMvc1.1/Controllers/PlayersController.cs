@@ -27,9 +27,7 @@ namespace NBAMvc1._1.Controllers
         // GET: Players
         public async Task<IActionResult> Index(string sortParam, string currentFilter, string searchString, int? pageNumber)
         {
-            //sort param
             ViewData["currentSort"] = sortParam;
-
             ViewData["playerSort"] = String.IsNullOrEmpty(sortParam) ? "player_desc" : " ";
             ViewData["fgSort"] = sortParam == "FG" ? "fg_desc" : "FG";
             ViewData["ftSort"] = sortParam == "FT" ? "ft_desc" : "FT";
@@ -50,9 +48,7 @@ namespace NBAMvc1._1.Controllers
             {
                 searchString = currentFilter;
             }
-
             ViewData["currentFilter"] = searchString;
-
             IQueryable<Player> players = _playersService.GetPlayers(searchString);
             players = _playersService.SortPLayers(players, sortParam);
             int pageSize = 20;
@@ -70,7 +66,7 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new PlayerDetailsViewModel()
             {
-                Player = await _playersService.GetPlayer(id.Value)              
+                Player = await _playersService.GetPlayerAsync(id.Value)              
             };
 
             if(viewModel.Player == null)
@@ -78,12 +74,12 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            viewModel.Games = await _gamesService.GetFinalGamesByTeam(viewModel.Player.TeamID);
+            viewModel.Games = await _gamesService.GetFinalGamesByTeamAsync(viewModel.Player.TeamID);
             viewModel.GameLogs = new List<PlayerGameStats>();
 
             foreach (Game g in viewModel.Games )
             {
-                var log = _playerGameStatsService.GetPlayerGameStatsByGame(viewModel.Player.PlayerID, g.GameID);;
+                var log = _playerGameStatsService.GetPlayerGameStatsByGameAsync(viewModel.Player.PlayerID, g.GameID);;
                 viewModel.GameLogs.Add(await log);               
             }
             return View(viewModel);

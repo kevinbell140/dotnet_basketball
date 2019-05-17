@@ -20,7 +20,7 @@ namespace NBAMvc1._1.Services
             _dataService = dataService;
         }
 
-        public async Task<IEnumerable<News>> GetNews()
+        public async Task<IEnumerable<News>> GetNewsAsync()
         {
             var news = await _context.News
                 .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
@@ -30,7 +30,7 @@ namespace NBAMvc1._1.Services
             return news;
         }
 
-        public async Task<IEnumerable<News>> GetNews(int num)
+        public async Task<IEnumerable<News>> GetNewsAsync(int num)
         {
             var news = await _context.News
                 .Include(n => n.PlayerNav).ThenInclude(n => n.TeamNav)
@@ -40,7 +40,7 @@ namespace NBAMvc1._1.Services
             return news;
         }
 
-        public async Task<News> GetNewsByID(int id)
+        public async Task<News> GetNewsByIDAsync(int id)
         {
             var news = await _context.News
                 .Include(x => x.PlayerNav).ThenInclude(x => x.TeamNav)
@@ -58,20 +58,18 @@ namespace NBAMvc1._1.Services
 
             foreach (News n in news)
             {
-                if (!await NewsExists(n.NewsID))
+                if (!await NewsExistsAsync(n.NewsID))
                 {
-                    var createdNews = Create(n);
-                    if (createdNews != null)
+                    if (n != null)
                     {
-                        created.Add(createdNews);
+                        created.Add(n);
                     }
                 }
                 else
                 {
-                    var updatedNews = Edit(n.NewsID, n);
-                    if (updatedNews != null)
+                    if (n != null)
                     {
-                        updated.Add(updatedNews);
+                        updated.Add(n);
                     }
                 }
             }
@@ -87,23 +85,9 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        private async Task<bool> NewsExists(int id)
+        private async Task<bool> NewsExistsAsync(int id)
         {
             return await _context.News.AnyAsync(x => x.NewsID == id);
-        }
-
-        private News Create([Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
-        {
-            return news;
-        }
-
-        private News Edit(int id, [Bind("NewsID,Source,Updated,Title,Content,Url,Author,PlayerID")] News news)
-        {
-            if (id != news.NewsID)
-            {
-                return null;
-            }
-            return news;
         }
     }
 }

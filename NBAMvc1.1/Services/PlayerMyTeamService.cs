@@ -121,7 +121,7 @@ namespace NBAMvc1._1.Services
 
         public async Task<bool> Create(PlayerMyTeam playerMyTeam)
         {
-            var player = await _playersService.GetPlayer(playerMyTeam.PlayerID);
+            var player = await _playersService.GetPlayerAsync(playerMyTeam.PlayerID);
             var roster = await GetRoster(playerMyTeam.MyTeamID);
             int spots = GetRosterSpots(roster, player.Position);
 

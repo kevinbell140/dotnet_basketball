@@ -20,7 +20,7 @@ namespace NBAMvc1._1.Services
             _dataService = dataService;
         }
 
-        public async Task<Game> GetGame(int id)
+        public async Task<Game> GetGameAsync(int id)
         {
             var game = await _context.Game
                 .Include(g => g.AwayTeamNav)
@@ -31,7 +31,7 @@ namespace NBAMvc1._1.Services
 
             return game;
         }
-        public async Task<IEnumerable<Game>> GetLast(int num)
+        public async Task<IEnumerable<Game>> GetLastAsync(int num)
         {
             var last5 = await _context.Game
                 .Include(g => g.HomeTeamNav)
@@ -43,19 +43,7 @@ namespace NBAMvc1._1.Services
             return last5;
         }
 
-        public async Task<IEnumerable<Game>> GetNext(int num)
-        {
-            var next3 = await _context.Game
-                .Include(g => g.HomeTeamNav)
-                .Include(g => g.AwayTeamNav)
-                .Where(g => g.Status == "Scheduled")
-                .OrderBy(g => g.DateTime)
-                .Take(num).ToListAsync();
-
-            return next3;
-        }
-
-        public async Task<IEnumerable<Game>> GetLast(int teamID, int num)
+        public async Task<IEnumerable<Game>> GetLastAsync(int teamID, int num)
         {
             var last5 = await _context.Game
                 .Include(g => g.HomeTeamNav)
@@ -67,7 +55,19 @@ namespace NBAMvc1._1.Services
             return last5;
         }
 
-        public async Task<IEnumerable<Game>> GetNext(int teamID, int num)
+        public async Task<IEnumerable<Game>> GetNextAsync(int num)
+        {
+            var next3 = await _context.Game
+                .Include(g => g.HomeTeamNav)
+                .Include(g => g.AwayTeamNav)
+                .Where(g => g.Status == "Scheduled")
+                .OrderBy(g => g.DateTime)
+                .Take(num).ToListAsync();
+
+            return next3;
+        }
+
+        public async Task<IEnumerable<Game>> GetNextAsync(int teamID, int num)
         {
             var next3 = await _context.Game
                 .Include(g => g.HomeTeamNav)
@@ -79,7 +79,7 @@ namespace NBAMvc1._1.Services
             return next3;
         }
 
-        public async Task<IEnumerable<Game>> GetFinalGamesByTeam(int id)
+        public async Task<IEnumerable<Game>> GetFinalGamesByTeamAsync(int id)
         {
             List<Game> games = new List<Game>();
             games = await _context.Game
@@ -93,7 +93,7 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
-        public async Task<IEnumerable<Game>> GetGamesByDate(DateTime dayOf)
+        public async Task<IEnumerable<Game>> GetGamesByDateAsync(DateTime dayOf)
         {
             var games = await _context.Game
                 .Include(g => g.AwayTeamNav)
@@ -106,7 +106,7 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
-        public async Task<Game> HasGameTonight(FantasyMatchupWeeks matchupWeek, int teamID)
+        public async Task<Game> HasGameTonightAsync(FantasyMatchupWeeks matchupWeek, int teamID)
         {
             var gameTonight = await _context.Game
                     .Include(g => g.PlayerGameStatsNav)
@@ -128,18 +128,16 @@ namespace NBAMvc1._1.Services
             {
                 if (!await GameExists(g.GameID))
                 {
-                    Game createdGame = Create(g);
-                    if (createdGame != null)
+                    if (g != null)
                     {
-                        created.Add(createdGame);
+                        created.Add(g);
                     }
                 }
                 else
                 {
-                    Game updatedGame = Edit(g.GameID, g);
-                    if (updatedGame != null)
+                    if (g != null)
                     {
-                        updated.Add(updatedGame);
+                        updated.Add(g);
                     }
                 }
             }
@@ -149,9 +147,9 @@ namespace NBAMvc1._1.Services
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return;
+                throw;
             }
         }
 
@@ -173,18 +171,16 @@ namespace NBAMvc1._1.Services
             {
                 if (!await GameExists(g.GameID))
                 {
-                    Game createdGame = Create(g);
-                    if (createdGame != null)
+                    if (g != null)
                     {
-                        created.Add(createdGame);
+                        created.Add(g);
                     }
                 }
                 else
                 {
-                    Game updatedGame = Edit(g.GameID, g);
-                    if (updatedGame != null)
+                    if (g != null)
                     {
-                        updated.Add(updatedGame);
+                        updated.Add(g);
                     }                  
                 }
             }
@@ -194,33 +190,15 @@ namespace NBAMvc1._1.Services
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return;
+                throw;
             }
         }
 
         private async Task<bool> GameExists(int id)
         {
             return await _context.Game.AnyAsync(a => a.GameID == id);
-        }
-
-        private Game Create([Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
-        {
-            if (game.Status == "Canceled" || game.DateTime.Year != 2019)
-            {
-                return null;
-            }
-            return game;
-        }
-
-        private Game Edit(int id, [Bind("GameID,Season,SeasonType,Status,DateTime,HomeTeamID,AwayTeamID,HomeTeamScore,AwayTeamScore,Updated,PointSpread,OverUnder,AwayTeamMoneyLine,HomeTeamMoneyLine")] Game game)
-        {
-            if (id != game.GameID)
-            {
-                return null;
-            }
-            return game;
         }
     }
 }

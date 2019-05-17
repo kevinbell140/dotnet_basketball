@@ -110,6 +110,8 @@ namespace NBAMvc1._1.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal GamesBack { get; set; }
 
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
+
         public virtual Team TeamNav { get; set; }
     }
 }

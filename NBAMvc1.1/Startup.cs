@@ -97,7 +97,8 @@ namespace NBAMvc1._1
             if (env.IsDevelopment())
             {
                 _logger.LogInformation("In development env");
-                app.UseDeveloperExceptionPage();
+                //app.UseDeveloperExceptionPage();
+                app.UseExceptionHandler("/Home/Error");
                 app.UseDatabaseErrorPage();
             }
             else

@@ -24,6 +24,8 @@ namespace NBAMvc1._1.Models
         public string TertiaryColor { get; set; }
         public string WikipediaLogoUrl { get; set; }
 
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
+
         [Display(Name="Team")]
         public string FullName
         {

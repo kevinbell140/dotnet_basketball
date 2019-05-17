@@ -34,13 +34,12 @@ namespace NBAMvc1._1.Controllers
                 viewModel.dayOf = DateTime.Today.Date;
             }
 
-            viewModel.Games = await _gamesService.GetGamesByDate(viewModel.dayOf.Value);
+            viewModel.Games = await _gamesService.GetGamesByDateAsync(viewModel.dayOf.Value);
 
             int count = 0;
-
             foreach (var g in viewModel.Games)
             {
-                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeaders(g.GameID);
+                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeadersAsync(g.GameID);
 
                 if (leaders.Count() == 2)
                 {
@@ -54,15 +53,7 @@ namespace NBAMvc1._1.Controllers
         // GET: Games/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-            var game = await _gamesService.GetGame(id.Value);
-            if (game == null)
-            {
-                return NotFound();
-            }
+            var game = await _gamesService.GetGameAsync(id.Value);
             return View(game);
         }
     }

@@ -5,8 +5,6 @@ using NBAMvc1._1.Services;
 
 namespace NBAMvc1._1.Controllers
 {
-
-
     public class NewsController : Controller
     {
         private readonly NewsService _newsService;
@@ -19,23 +17,14 @@ namespace NBAMvc1._1.Controllers
         // GET: News
         public async Task<IActionResult> Index()
         {
-            var news = await _newsService.GetNews();
+            var news = await _newsService.GetNewsAsync();
             return View(news);
         }
 
         // GET: News/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var news = await _newsService.GetNewsByID(id.Value);
-            if (news == null)
-            {
-                return NotFound();
-            }
+            var news = await _newsService.GetNewsByIDAsync(id.Value);
             return View(news);
         }
     }

@@ -95,7 +95,7 @@ namespace NBAMvc1._1.Controllers
         {
             var myTeam = await _myTeamsService.GetMyTeamByID(playerMyTeam.MyTeamID);
             var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
-            string pos = (await _playersService.GetPlayer(playerMyTeam.PlayerID)).Position;
+            string pos = (await _playersService.GetPlayerAsync(playerMyTeam.PlayerID)).Position;
             if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();

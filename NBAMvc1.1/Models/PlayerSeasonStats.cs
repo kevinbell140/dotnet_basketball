@@ -17,6 +17,8 @@ namespace NBAMvc1._1.Models
         [ForeignKey("PlayerNav")]
         public int PlayerID { get; set; }
 
+        public virtual Player PlayNav { get; set; }
+
         public int Games { get; set; }
 
         [Column(TypeName = "decimal(18, 2)")]
@@ -46,6 +48,7 @@ namespace NBAMvc1._1.Models
         [Column(TypeName = "decimal(18, 2)")]
         public decimal Turnovers { get; set; }
 
+        public DateTime TimeStamp { get; set; } = DateTime.Now;
 
         [Column(TypeName = "decimal(18, 2)")]
 
@@ -161,14 +164,5 @@ namespace NBAMvc1._1.Models
                 }
             }
         }
-
-
-
-
-        public virtual Player PlayNav { get; set; }
-
-
-
-
     }
 }

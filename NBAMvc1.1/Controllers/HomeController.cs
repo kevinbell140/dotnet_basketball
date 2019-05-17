@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Areas.Identity;
@@ -34,16 +35,16 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new HomeIndexViewModel()
             {
-                Last4 = await _gamesService.GetLast(4),
-                Next4 = await _gamesService.GetNext(4),
-                News = await _newsService.GetNews(5),
+                Last4 = await _gamesService.GetLastAsync(4),
+                Next4 = await _gamesService.GetNextAsync(4),
+                News = await _newsService.GetNewsAsync(5),
                 MyTeams = await _myTeamsService.GetMyTeamsByUserID(_userManager.GetUserId(User)),
             };
 
             int count = 0;
             foreach(var g in viewModel.Last4)
             {
-                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeaders(g.GameID);
+                List<PlayerGameStats> leaders = await _playerGameStatsService.GetGameLeadersAsync(g.GameID);
 
                 if(leaders.Count() == 2)
                 {
@@ -62,7 +63,16 @@ namespace NBAMvc1._1.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            var viewModel = new ErrorViewModel
+            {
+                Code = exceptionFeature.Error.HResult,
+                Message = exceptionFeature.Error.Message,
+                Path = exceptionFeature.Path,
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+            };
+
+            return View(viewModel);
         }
     }
 }
