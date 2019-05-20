@@ -41,7 +41,7 @@ namespace NBAMvc1._1.Data
                 //await FetchStandingsAsync(services);
                 //await FetchPlayerSeasonStatsAsync(services);
                 //await FetchPlayerGameStatsAsync(services);
-                await FetchNewsAsync(services);
+                //await FetchNewsAsync(services);
                 _logger.LogDebug("Fetch complete");
             }
             return;

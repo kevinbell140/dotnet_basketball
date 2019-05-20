@@ -69,7 +69,7 @@ namespace NBAMvc1._1.Controllers
                 Player = await _playersService.GetPlayerAsync(id.Value)              
             };
 
-            if(viewModel.Player == null)
+            if (viewModel.Player == null)
             {
                 return NotFound();
             }

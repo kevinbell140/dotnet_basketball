@@ -30,7 +30,7 @@ namespace NBAMvc1._1.Services
             return myTeam;
         }
 
-        public async Task<MyTeam> GetMyTeamByID(int myTeamID)
+        public async Task<MyTeam> GetMyTeamByIDAsync(int myTeamID)
         {
             var myTeam = await _context.MyTeam
                 .Include(m => m.PlayerMyTeamNav)

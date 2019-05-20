@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -41,10 +42,10 @@ namespace NBAMvc1._1.Controllers
             var viewModel = new PlayerMyTeamCreateViewModel();
             if (teamID == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            viewModel.MyTeam = await _myTeamsService.GetMyTeamByID(teamID.Value);
+            viewModel.MyTeam = await _myTeamsService.GetMyTeamByIDAsync(teamID.Value);
 
             var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Create);
             if (!isAuthorized.Succeeded)
@@ -93,27 +94,33 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("PlayerID,MyTeamID")] PlayerMyTeam playerMyTeam)
         {
-            var myTeam = await _myTeamsService.GetMyTeamByID(playerMyTeam.MyTeamID);
+            string pos = "";
+            MyTeam myTeam = null;
+            var playerTask = (_playersService.GetPlayerAsync(playerMyTeam.PlayerID));
+            var myTeamTask = _myTeamsService.GetMyTeamByIDAsync(playerMyTeam.MyTeamID);
+            var tasks = new List<Task> { playerTask, myTeamTask };
+            while (tasks.Any())
+            {
+                Task finished = await Task.WhenAny(tasks);
+                if(finished == playerTask)
+                {
+                    tasks.Remove(playerTask);
+                    pos = (await playerTask).Position;
+                }else if(finished == myTeamTask)
+                {
+                    tasks.Remove(myTeamTask);
+                    myTeam = await myTeamTask;
+                }
+            }
             var isAuthorized = await _auth.AuthorizeAsync(User, myTeam, Operations.Create);
-            string pos = (await _playersService.GetPlayerAsync(playerMyTeam.PlayerID)).Position;
             if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();
             }
 
             if (ModelState.IsValid)
-            {
-                bool created = false;
-                try
-                {
-                    created = await _playerMyTeamService.Create(playerMyTeam);
-                }
-                catch (Exception)
-                {
-                    return BadRequest();
-                }
-                
-                if (created)
+            {              
+                if (await _playerMyTeamService.Create(playerMyTeam))
                 {
                     return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
                 }
@@ -132,24 +139,18 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int playerID, int myTeamID)
         {
-            var playerMyTeam = await _playerMyTeamService.GetPlayerMyTeam(playerID, myTeamID);
-
+            var playerMyTeam = await _playerMyTeamService.GetPlayerMyTeamAsync(playerID, myTeamID);
             if(playerMyTeam == null)
             {
                 return NotFound();
             }
-
             var isAuthorized = await _auth.AuthorizeAsync(User, playerMyTeam, Operations.Delete);
-
             if (!isAuthorized.Succeeded)
             {
                 return new ChallengeResult();
             }
 
-            if (await _playerMyTeamService.Delete(playerMyTeam))
-            {
-                return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
-            }
+            await _playerMyTeamService.Delete(playerMyTeam);
             return RedirectToAction("Details", "MyTeams", new { id = playerMyTeam.MyTeamID });
         }
     }

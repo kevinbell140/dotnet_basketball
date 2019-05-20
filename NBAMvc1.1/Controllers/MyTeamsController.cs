@@ -44,7 +44,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
             var viewModel = new MyTeamDetailsViewModel();
-            viewModel.MyTeam = await _myTeamService.GetMyTeamByID(id.Value);
+            viewModel.MyTeam = await _myTeamService.GetMyTeamByIDAsync(id.Value);
             if (viewModel.MyTeam == null)
             {
                 return NotFound();
@@ -97,7 +97,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
+            var myTeam = await _myTeamService.GetMyTeamByIDAsync(id.Value);
             if (myTeam == null)
             {
                 return NotFound();
@@ -117,7 +117,7 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Name,MyTeamID,FantasyLeagueID,UserID")] MyTeam myTeam)
         {
-            var oldTeam = await _myTeamService.GetMyTeamByID(id);
+            var oldTeam = await _myTeamService.GetMyTeamByIDAsync(id);
             if(oldTeam == null)
             {
                 return NotFound();
@@ -147,7 +147,7 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var myTeam = await _myTeamService.GetMyTeamByID(id.Value);
+            var myTeam = await _myTeamService.GetMyTeamByIDAsync(id.Value);
             if (myTeam == null)
             {
                 return NotFound();
@@ -166,7 +166,7 @@ namespace NBAMvc1._1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var myTeam = await _myTeamService.GetMyTeamByID(id);
+            var myTeam = await _myTeamService.GetMyTeamByIDAsync(id);
             int leagueID = myTeam.FantasyLeagueID;
 
             if(myTeam == null)

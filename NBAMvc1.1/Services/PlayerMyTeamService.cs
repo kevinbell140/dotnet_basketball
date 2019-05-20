@@ -13,13 +13,11 @@ namespace NBAMvc1._1.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly PlayersService _playersService;
-        private readonly ILogger _logger;
 
-        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context, ILogger<PlayerMyTeamService> logger)
+        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context)
         {
             _context = context;
             _playersService = playersService;
-            _logger = logger;
         }
 
         public async Task<IEnumerable<PlayerMyTeam>> GetPlayerMyTeams()
@@ -32,7 +30,7 @@ namespace NBAMvc1._1.Services
             return players;
         }
 
-        public async Task<PlayerMyTeam> GetPlayerMyTeam(int playerID, int myTeamID)
+        public async Task<PlayerMyTeam> GetPlayerMyTeamAsync(int playerID, int myTeamID)
         {
             var playerMyTeam = await _context.PlayerMyTeam
                 .Include(p => p.MyTeamNav)
@@ -43,7 +41,7 @@ namespace NBAMvc1._1.Services
             return playerMyTeam;
         }
 
-        public async Task<IEnumerable<PlayerMyTeam>> GetRoster(int myTeamID)
+        public async Task<IEnumerable<PlayerMyTeam>> GetRosterAsync(int myTeamID)
         {
             var roster = await _context.PlayerMyTeam
                 .Include(p => p.MyTeamNav)
@@ -70,7 +68,7 @@ namespace NBAMvc1._1.Services
 
         public async Task<IDictionary<string, Player>> GetRosterDictionaryAsync(int myTeamID)
         {
-            var roster = await GetRoster(myTeamID);
+            var roster = await GetRosterAsync(myTeamID);
             Dictionary<string, Player> players = new Dictionary<string, Player>
             {
                 { "PG1", null},
@@ -121,10 +119,30 @@ namespace NBAMvc1._1.Services
 
         public async Task<bool> Create(PlayerMyTeam playerMyTeam)
         {
-            var player = await _playersService.GetPlayerAsync(playerMyTeam.PlayerID);
-            var roster = await GetRoster(playerMyTeam.MyTeamID);
-            int spots = GetRosterSpots(roster, player.Position);
+            Player player = null;
+            IEnumerable<PlayerMyTeam> roster = null;
+            var playerTask = _playersService.GetPlayerAsync(playerMyTeam.PlayerID);
+            var rosterTask =  GetRosterAsync(playerMyTeam.MyTeamID);
+            var tasks = new List<Task> { playerTask, rosterTask };
+            while (tasks.Any())
+            {
+                Task finshed = await Task.WhenAny(tasks);
+                if(finshed == playerTask)
+                {
+                    tasks.Remove(playerTask);
+                    player = await playerTask;
+                }else if(finshed == rosterTask)
+                {
+                    tasks.Remove(rosterTask);
+                    roster = await rosterTask;
+                }
+                else
+                {
+                    tasks.Remove(finshed);
+                }
+            }
 
+            int spots = GetRosterSpots(roster, player.Position);
             if (player.Position == "C" && spots > 0 || player.Position != "C" && spots > 1 || await IsPlayerOnRoster(playerMyTeam.MyTeamID, playerMyTeam.PlayerID))
             {
                 return false;
@@ -135,27 +153,22 @@ namespace NBAMvc1._1.Services
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {          
                 throw;
             }
         }
 
-        public async Task<bool> Delete(PlayerMyTeam playerMyTeam)
+        public async Task Delete(PlayerMyTeam playerMyTeam)
         {
             try
             {
                 _context.PlayerMyTeam.Remove(playerMyTeam);
                 await _context.SaveChangesAsync();
-                return true;
             }
-            catch (DbUpdateException)
+            catch (DbUpdateConcurrencyException)
             {
                 throw;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
     }

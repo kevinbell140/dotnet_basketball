@@ -237,7 +237,7 @@ namespace NBAMvc1._1.Services
             decimal awayScore = 0;
             if (matchupWeek != null)
             {
-                var home = await _playerMyTeamService.GetRoster(matchup.HomeTeamID.Value);
+                var home = await _playerMyTeamService.GetRosterAsync(matchup.HomeTeamID.Value);
                 if (home.Any() && home != null)
                 {
                     List<PlayerGameStats> homeStats = await GetGameStatsList(home, matchupWeek);
@@ -247,7 +247,7 @@ namespace NBAMvc1._1.Services
                     }
                 }
 
-                var away = await _playerMyTeamService.GetRoster(matchup.AwayTeamID.Value);
+                var away = await _playerMyTeamService.GetRosterAsync(matchup.AwayTeamID.Value);
                 if (away.Any() && away != null)
                 {
                     List<PlayerGameStats> awayStats = await GetGameStatsList(away, matchupWeek);

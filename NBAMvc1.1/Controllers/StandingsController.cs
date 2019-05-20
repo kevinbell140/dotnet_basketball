@@ -23,7 +23,6 @@ namespace NBAMvc1._1.Controllers
         {
             ViewData["filter"] = filter;
             List<Standings> standings = await _standingsService.GetStandingsAsync(filter); 
-
             return View(standings);
         }
     }
