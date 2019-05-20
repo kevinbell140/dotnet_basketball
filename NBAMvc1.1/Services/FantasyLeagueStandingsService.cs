@@ -17,7 +17,7 @@ namespace NBAMvc1._1.Services
             _context = context;
         }
 
-        public async Task<IEnumerable<FantasyLeagueStandings>> GetStandings()
+        public async Task<IEnumerable<FantasyLeagueStandings>> GetStandingsAsync()
         {
             var standings = await _context.FantasyLeagueStandings
                 .Include(x => x.FantasyLeagueNav)
@@ -26,7 +26,7 @@ namespace NBAMvc1._1.Services
             return standings;
         }
 
-        public async Task<IEnumerable<FantasyLeagueStandings>> GetStandingsActive()
+        public async Task<IEnumerable<FantasyLeagueStandings>> GetStandingsActiveAsync()
         {
             var standings = await _context.FantasyLeagueStandings
                 .Include(x => x.FantasyLeagueNav)
@@ -54,7 +54,7 @@ namespace NBAMvc1._1.Services
             await _context.SaveChangesAsync();
             return;
         }
-        private async Task<FantasyLeagueStandings> GetStandingsByTeam(int teamID)
+        private async Task<FantasyLeagueStandings> GetStandingsByTeamAsync(int teamID)
         {
             var standing = await _context.FantasyLeagueStandings
                 .Include(x => x.FantasyLeagueNav)
@@ -64,7 +64,7 @@ namespace NBAMvc1._1.Services
             return standing;
         }
 
-        private async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecording()
+        private async Task<IEnumerable<FantasyMatchup>> GetMatchupsForRecordingAsync()
         {
             var matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav).ThenInclude(x => x.FantasyLeagueStandingsNav)
@@ -75,24 +75,13 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        public async Task UpdateGamesBack()
-        {
-            var standings = await GetStandingsActive();
-            var leagues = standings.Select(x => x.FantasyLeagueNav).Distinct();
-
-            foreach(var l in leagues)
-            {
-                //TODO : calculate GB for each league
-            }
-        }
-
-        public async Task<List<FantasyMatchup>> UpdateStandings()
+        public async Task<List<FantasyMatchup>> UpdateStandingsAsync()
         {
             List<FantasyLeagueStandings> standingsUpdated = new List<FantasyLeagueStandings>();
             List<FantasyMatchup> matchupsUpdated = new List<FantasyMatchup>();
             
             //all matchups that need updating
-            var matchups = await GetMatchupsForRecording();
+            var matchups = await GetMatchupsForRecordingAsync();
             matchups = matchups.Where(x => x.HomeTeamNav.FantasyLeagueStandingsNav != null && x.AwayTeamNav.FantasyLeagueStandingsNav != null).ToList();
             var homeTeamIDs = matchups.Select(x => x.HomeTeamID).Distinct();
             var awayTeamsIDs = matchups.Select(x => x.AwayTeamID).Distinct();
@@ -103,7 +92,7 @@ namespace NBAMvc1._1.Services
             
             foreach (var id in teamIDs)
             {
-                var standing = await GetStandingsByTeam(id.Value);
+                var standing = await GetStandingsByTeamAsync(id.Value);
                 if(standing != null)
                 {
                     currentStandings.Add(id.Value, standing);
@@ -157,10 +146,6 @@ namespace NBAMvc1._1.Services
                 return matchups.ToList();
             }
             catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
-            catch (Exception)
             {
                 throw;
             }

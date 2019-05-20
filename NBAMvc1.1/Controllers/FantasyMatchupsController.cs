@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Data;
@@ -43,16 +45,63 @@ namespace NBAMvc1._1.Controllers
                 FantasyMatchup = await _fantasyMatchupService.GetMatchupByID(id.Value)
             };
 
-            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeague(viewModel.FantasyMatchup.FantasyLeagueID, viewModel.FantasyMatchup.Week);
+            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(viewModel.FantasyMatchup.FantasyLeagueID, viewModel.FantasyMatchup.Week);
             viewModel.Date = matchupWeek.Date;
 
-            viewModel.HomeRoster = await _playerMyTeamService.GetRosterDictionaryAsync(viewModel.FantasyMatchup.HomeTeamID.Value);
-            viewModel.HomeOpp = await _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.HomeRoster, matchupWeek);
-            viewModel.HomeStats = await _fantasyMatchupService.GetGameStatsDictionary(viewModel.HomeRoster, matchupWeek);
-
-            viewModel.AwayRoster = await _playerMyTeamService.GetRosterDictionaryAsync(viewModel.FantasyMatchup.AwayTeamID.Value);
-            viewModel.AwayOpp = await _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.AwayRoster, matchupWeek);
-            viewModel.AwayStats = await _fantasyMatchupService.GetGameStatsDictionary(viewModel.AwayRoster, matchupWeek);
+            var homeRosterTask = _playerMyTeamService.GetRosterDictionaryAsync(viewModel.FantasyMatchup.HomeTeamID.Value);
+            var awayRosterTask = _playerMyTeamService.GetRosterDictionaryAsync(viewModel.FantasyMatchup.AwayTeamID.Value);
+            var rosterTasks = new List<Task> { homeRosterTask, awayRosterTask };
+            while (rosterTasks.Any())
+            {
+                Task finsihed = await Task.WhenAny(rosterTasks);
+                if (finsihed == homeRosterTask)
+                {
+                    rosterTasks.Remove(homeRosterTask);
+                    viewModel.HomeRoster = await homeRosterTask;
+                }
+                else if (finsihed == awayRosterTask)
+                {
+                    rosterTasks.Remove(awayRosterTask);
+                    viewModel.AwayRoster = await awayRosterTask;
+                }
+                else
+                {
+                    rosterTasks.Remove(finsihed);
+                }
+            }
+            
+            var homeOppTask = _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.HomeRoster, matchupWeek);
+            var homeStatsTask = _fantasyMatchupService.GetGameStatsDictionary(viewModel.HomeRoster, matchupWeek);
+            var awayOppTask = _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.AwayRoster, matchupWeek);
+            var awayStatsTask = _fantasyMatchupService.GetGameStatsDictionary(viewModel.AwayRoster, matchupWeek);
+            var viewTasks = new List<Task> { homeStatsTask, homeOppTask, awayOppTask, awayStatsTask };
+            while (viewTasks.Any())
+            {
+                Task finished = await Task.WhenAny(viewTasks);
+                if(finished == homeOppTask)
+                {
+                    viewTasks.Remove(homeOppTask);
+                    viewModel.HomeOpp = await homeOppTask;
+                }
+                else if(finished == homeStatsTask)
+                {
+                    viewTasks.Remove(homeStatsTask);
+                    viewModel.HomeStats = await homeStatsTask;
+                }
+                else if(finished == awayOppTask)
+                {
+                    viewTasks.Remove(awayOppTask);
+                    viewModel.AwayOpp = await awayOppTask;
+                }
+                else if(finished == awayStatsTask)
+                {
+                    viewTasks.Remove(awayStatsTask);
+                    viewModel.AwayStats = await awayStatsTask;
+                }
+                else {
+                    viewTasks.Remove(finished);
+                }
+            }
 
             return View(viewModel);
         }

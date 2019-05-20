@@ -216,7 +216,7 @@ namespace NBAMvc1._1.Services
 
         private async Task<decimal[]> CalculateScore(FantasyMatchup matchup)
         {
-            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeague(matchup.FantasyLeagueID, matchup.Week);
+            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(matchup.FantasyLeagueID, matchup.Week);
             decimal homeScore = 0;
             decimal awayScore = 0;
             if (matchupWeek != null)

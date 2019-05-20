@@ -33,7 +33,7 @@ namespace NBAMvc1._1.Services
             {
                 var services = scope.ServiceProvider;
                 var _standingsService = services.GetRequiredService<FantasyLeagueStandingsService>();
-                var recordedMatchups = await _standingsService.UpdateStandings();
+                var recordedMatchups = await _standingsService.UpdateStandingsAsync();
                 var _matchupService = services.GetRequiredService<FantasyMatchupService>();
                 await _matchupService.SetRecorded(recordedMatchups, true);
                 _logger.LogDebug("Matchups set to recorded!");
