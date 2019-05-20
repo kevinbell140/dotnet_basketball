@@ -85,7 +85,7 @@ namespace NBAMvc1._1.Services
             return leader;
         }
 
-        public IEnumerable<Player> GetRoster(List<Player> players, string sortOrder)
+        public IEnumerable<Player> SortRoster(List<Player> players, string sortOrder)
         {
             List<Player> roster = new List<Player>();
             switch (sortOrder)

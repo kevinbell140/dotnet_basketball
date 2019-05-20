@@ -52,15 +52,33 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            viewModel.Last5 = await _gamesService.GetLastAsync(id.Value, 5);
-            viewModel.Next3 = await _gamesService.GetNextAsync(id.Value, 3);
+            Task<IEnumerable<Game>> last5Task  = _gamesService.GetLastAsync(id.Value, 5);
+            Task<IEnumerable<Game>> next3Task = _gamesService.GetNextAsync(id.Value, 3);
+            Task<List<Standings>> confStandingTask = _standingsService.GetStandingsAsync(viewModel.Team.Conference);
+            var allTasks = new List<Task> { last5Task, next3Task, confStandingTask };
+            while (allTasks.Any())
+            {
+                Task finished = await Task.WhenAny(allTasks);
+                if(finished == last5Task)
+                {
+                    allTasks.Remove(last5Task);
+                    viewModel.Last5 = await last5Task;
+                }else if(finished == next3Task)
+                {
+                    allTasks.Remove(next3Task);
+                    viewModel.Next3 = await next3Task;
+                }else if(finished == confStandingTask)
+                {
+                    allTasks.Remove(confStandingTask);
+                    var standings = await confStandingTask;
+                    viewModel.ConferenceRank = standings.IndexOf(viewModel.Team.RecordNav) + 1;
+                }
+            }
 
-            List<Standings> conferenceStandings = await _standingsService.GetStandingsAsync(viewModel.Team.Conference);
-
-            viewModel.ConferenceRank = conferenceStandings.IndexOf(viewModel.Team.RecordNav)+1;
             viewModel.PPGLeader = _teamsService.GetPPGLeader(viewModel.Team.PlayersNav.ToList());
             viewModel.RPGLeader = _teamsService.GetRPGLeader(viewModel.Team.PlayersNav.ToList());
             viewModel.APGLeader = _teamsService.GetAPGLeader(viewModel.Team.PlayersNav.ToList());
+            viewModel.Players = _teamsService.SortRoster(viewModel.Team.PlayersNav.ToList(), sortOrder);
 
             //for sorting
             ViewData["PosSortParam"] = String.IsNullOrEmpty(sortOrder) ? "pos_desc" : " ";
@@ -68,8 +86,6 @@ namespace NBAMvc1._1.Controllers
             ViewData["PPGSortParam"] = sortOrder == "PPG" ? "ppg_desc" : "PPG";
             ViewData["RPGSortParam"] = sortOrder == "RPG" ? "rpg_desc" : "RPG";
             ViewData["APGSortParam"] = sortOrder == "APG" ? "apg_desc" : "APG";
-
-            viewModel.Players = _teamsService.GetRoster(viewModel.Team.PlayersNav.ToList(), sortOrder);
 
             return View(viewModel);
         }
