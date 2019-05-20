@@ -36,7 +36,7 @@ namespace NBAMvc1._1.Services
             return standings;
         }
 
-        public async Task<bool> Create(FantasyLeague fantasyLeague)
+        public async Task Create(FantasyLeague fantasyLeague)
         {
             var teams = fantasyLeague.TeamsNav;
             List<FantasyLeagueStandings> createdStandings = new List<FantasyLeagueStandings>();
@@ -50,16 +50,9 @@ namespace NBAMvc1._1.Services
                 };
                 createdStandings.Add(created);
             }
-            try
-            {
-                await _context.AddRangeAsync(createdStandings);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            await _context.AddRangeAsync(createdStandings);
+            await _context.SaveChangesAsync();
+            return;
         }
         private async Task<FantasyLeagueStandings> GetStandingsByTeam(int teamID)
         {

@@ -61,23 +61,18 @@ namespace NBAMvc1._1.Controllers
         [HttpGet]
         public async Task<IActionResult> Create(int leagueID)
         {
-            var fantasyLeague = await _fantasyLeagueService.GetLeague(leagueID);
+            var fantasyLeague = await _fantasyLeagueService.GetLeagueAsync(leagueID);
             if(fantasyLeague == null)
             {
                 return NotFound();
             }
-
-            //needs validation
             if (!fantasyLeague.IsFull)
             {
+                TempData["NotSet"] = "League needs to be set first boss...";
                 return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
             }
-
-            if (await _fantasyMatchupService.Create(fantasyLeague))
-            {
-                return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
-            }
-            return RedirectToAction("Index", "Home", new { id = leagueID });
+            await _fantasyMatchupService.Create(fantasyLeague);
+            return RedirectToAction("Details", "FantasyLeagues", new { id = leagueID });
         }
     }
 }

@@ -33,11 +33,11 @@ namespace NBAMvc1._1.Services
             return exists;
         }
 
-        public async Task<bool> Create(FantasyLeague fantasyLeague)
+        public async Task Create(FantasyLeague fantasyLeague)
         {
-            if(!await WeeksExist(fantasyLeague.FantasyLeagueID))
+            if (!await WeeksExist(fantasyLeague.FantasyLeagueID))
             {
-                DateTime startDate = DateTime.Today.AddDays(-3);
+                DateTime startDate = DateTime.Today.AddDays(-1);
                 int numWeeks = (fantasyLeague.TeamsNav.Count() - 1) * 2;
                 List<FantasyMatchupWeeks> list = new List<FantasyMatchupWeeks>();
 
@@ -51,18 +51,10 @@ namespace NBAMvc1._1.Services
                     };
                     list.Add(week);
                 }
-                try
-                {
-                    await _context.FantasyMatchupWeeks.AddRangeAsync(list);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                await _context.FantasyMatchupWeeks.AddRangeAsync(list);
+                await _context.SaveChangesAsync();
+                return;
             }
-            return false;
         }
 
         public async Task<IEnumerable<FantasyMatchupWeeks>> GetFantasyMatchupWeeksByLeague(int leagueID)

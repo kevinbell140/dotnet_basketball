@@ -39,25 +39,16 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        public async Task<bool> Create(FantasyLeague fantasyLeague)
+        public async Task Create(FantasyLeague fantasyLeague)
         {
-            if(await _fantasyMatchupsWeeksService.Create(fantasyLeague))
-            {
-               if(await CreateMatchups(fantasyLeague))
-                {
-                    if(await _fantasyLeagueStandingsService.Create(fantasyLeague))
-                    {
-                        if(await SetLeague(fantasyLeague))
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
+            await _fantasyMatchupsWeeksService.Create(fantasyLeague);
+            await CreateMatchups(fantasyLeague);
+            await _fantasyLeagueStandingsService.Create(fantasyLeague);
+            await SetLeague(fantasyLeague);
+            return;
         }
 
-        public async Task<bool> SetLeague(FantasyLeague fantasyLeague)
+        public async Task SetLeague(FantasyLeague fantasyLeague)
         {
             fantasyLeague.IsSet = true;
             fantasyLeague.IsActive = true;
@@ -66,18 +57,18 @@ namespace NBAMvc1._1.Services
             {
                 _context.Update(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return false;
+                throw;
             }
         }
 
-        private async Task<bool> CreateMatchups(FantasyLeague fantasyLeague)
+        private async Task CreateMatchups(FantasyLeague fantasyLeague)
         {
             List<MyTeam> teams = fantasyLeague.TeamsNav;
-            
+
             if (!await MatchupsExists(fantasyLeague.FantasyLeagueID))
             {
                 int numWeeks = (teams.Count() - 1) * 2;
@@ -122,26 +113,19 @@ namespace NBAMvc1._1.Services
                         matchups.Add(nextMatchup);
                     }
                 }
-                try
-                {
-                    _context.FantasyMatchup.AddRange(matchups);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                catch (Exception)
-                {
-                    return false;
-                }
+                _context.FantasyMatchup.AddRange(matchups);
+                await _context.SaveChangesAsync();
+                return;
             }
-            return false;
         }
+
         
         private async Task<bool> MatchupsExists(int leagueID)
         {
             return await _context.FantasyMatchup.Where(m => m.FantasyLeagueID == leagueID).AnyAsync();
         }
 
-        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsByWeek(int leagueID, int selectedWeek)
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsByWeekAsync(int leagueID, int selectedWeek)
         {
             var matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav)

@@ -16,14 +16,14 @@ namespace NBAMvc1._1.Services
         {
             _context = context;
         }
-        public async Task<IEnumerable<FantasyLeague>> GetLeagues()
+        public async Task<IEnumerable<FantasyLeague>> GetLeaguesAsync()
         {
             var leagues = await _context.FantasyLeague
                 .ToListAsync();
             return leagues;
         }
 
-        public async Task<IEnumerable<FantasyLeague>> GetLeagues(int[] leagueIDs)
+        public async Task<IEnumerable<FantasyLeague>> GetLeaguesAsync(int[] leagueIDs)
         {
             var leagues = await _context.FantasyLeague
                 .Where(x => leagueIDs.Contains(x.FantasyLeagueID))
@@ -32,7 +32,7 @@ namespace NBAMvc1._1.Services
         }
 
 
-        public async Task<FantasyLeague> GetLeague(int id)
+        public async Task<FantasyLeague> GetLeagueAsync(int id)
         {
             var fantasyLeague = await _context.FantasyLeague
                 .Include(m => m.TeamsNav).ThenInclude(m => m.UserNav)
@@ -44,50 +44,39 @@ namespace NBAMvc1._1.Services
             return fantasyLeague;
         }
 
-        public async Task<bool> Create(FantasyLeague fantasyLeague)
+        public async Task Create(FantasyLeague fantasyLeague)
         {
-            try
-            {
-                _context.Add(fantasyLeague);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
+            _context.Add(fantasyLeague);
+            await _context.SaveChangesAsync();
+            return;
         }
 
-        public async Task<bool> Edit(FantasyLeague fantasyLeague)
+        public async Task Edit(FantasyLeague fantasyLeague)
         {
             try
             {
                 _context.Update(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> Delete(int id)
+        public async Task Delete(int id)
         {
             var fantasyLeague = await _context.FantasyLeague.FindAsync(id);
             try
             {       
                 _context.FantasyLeague.Remove(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return false;
+                throw;
             }
         }
 
@@ -115,16 +104,15 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        public async Task<Dictionary<int, MyTeam>> GetTeamsDictionary(int leagueID)
+        public async Task<Dictionary<int, MyTeam>> GetTeamsDictionaryAsync(int leagueID)
         {
             int count = 1;
-            var league = await GetLeague(leagueID);
+            var league = await GetLeagueAsync(leagueID);
             if (league != null)
             {
                 try
                 {
                     return league.TeamsNav.OrderByDescending(x => x.FantasyLeagueStandingsNav.WinPercent).ToDictionary(x => count++, x => x);
-
                 }
                 catch (Exception)
                 {
@@ -136,21 +124,14 @@ namespace NBAMvc1._1.Services
                     {
                         return null;
                     }
-                   
                 }              
             }
             return null;
         }
 
-
-        public async Task<bool> AddTeamConfirm(int id)
+        public async Task AddTeamConfirm(int id)
         {
-            var league = await GetLeague(id);
-            if(league == null)
-            {
-                return false;
-            }
-
+            var league = await GetLeagueAsync(id);
             if (league.TeamsNav.Count() < 8)
             {
                 league.IsFull = false;
@@ -159,30 +140,21 @@ namespace NBAMvc1._1.Services
             {
                 league.IsFull = true;
             }
-
             try
             {
                 _context.Update(league);
                 await _context.SaveChangesAsync();
-                return true;
+                return; 
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> RemoveTeamConfirm(int id)
+        public async Task RemoveTeamConfirm(int id)
         {
-            var league = await GetLeague(id);
-            if(league == null)
-            {
-                return false;
-            }
+            var league = await GetLeagueAsync(id);
             league.IsFull = false;
             league.IsSet = false;
 
@@ -190,15 +162,11 @@ namespace NBAMvc1._1.Services
             {
                 _context.Update(league);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
 

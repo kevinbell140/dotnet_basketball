@@ -56,65 +56,40 @@ namespace NBAMvc1._1.Services
             return myTeam;
         }
 
-        public async Task<bool> Create(MyTeam myTeam)
+        public async Task Create(MyTeam myTeam)
         {
-            var league = await _fantasyLeagueService.GetLeague(myTeam.FantasyLeagueID);
+            var league = await _fantasyLeagueService.GetLeagueAsync(myTeam.FantasyLeagueID);
             if(league != null)
             {
                 if (!league.IsFull)
                 {
-                    try
-                    {
-                        _context.Add(myTeam);
-                        await _context.SaveChangesAsync();
-                        if (await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID))
-                        {
-                            return true;
-                        }     
-                    }
-                    catch (Exception)
-                    {
-                        return false;
-                    }
+                    _context.Add(myTeam);
+                    await _context.SaveChangesAsync();
+                    await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID);
                 }
             }
-            return false;
         }
 
-        public async Task<bool> Edit(MyTeam myTeam)
+        public async Task Edit(MyTeam myTeam)
         {
             try
             {
                 _context.Update(myTeam);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
-        public async Task<bool> Delete(MyTeam myTeam)
+        public async Task Delete(MyTeam myTeam)
         {
-            try
-            {
-                _context.MyTeam.Remove(myTeam);
-                await _context.SaveChangesAsync();
-                if (await _fantasyLeagueService.RemoveTeamConfirm(myTeam.FantasyLeagueID))
-                {
-                    return true;
-                }
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-            return false;
+            _context.MyTeam.Remove(myTeam);
+            await _context.SaveChangesAsync();
+            await _fantasyLeagueService.RemoveTeamConfirm(myTeam.FantasyLeagueID);
+            return;
         }
     }
 }

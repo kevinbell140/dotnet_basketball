@@ -32,7 +32,7 @@ namespace NBAMvc1._1.Services
             {
                 var services = scope.ServiceProvider;
                 var _leagueService = services.GetRequiredService<FantasyLeagueService>();
-                var leagues = await _leagueService.GetLeagues();
+                var leagues = await _leagueService.GetLeaguesAsync();
 
                 var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
                 

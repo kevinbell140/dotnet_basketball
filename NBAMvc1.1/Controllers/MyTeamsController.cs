@@ -17,16 +17,14 @@ namespace NBAMvc1._1.Controllers
         private readonly IAuthorizationService _auth;
         private readonly MyTeamsService _myTeamService;
         private readonly PlayerMyTeamService _playerMyTeamService;
-        private readonly FantasyLeagueService _fantasyLeagueService;
 
         public MyTeamsController(UserManager<ApplicationUser> userManager, IAuthorizationService auth,
-            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, FantasyLeagueService fantasyLeagueService)
+            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService)
         {
             _userManager = userManager;
             _auth = auth;
             _myTeamService = myTeamsService;
             _playerMyTeamService = playerMyTeamService;
-            _fantasyLeagueService = fantasyLeagueService;
         }
 
         // GET: MyTeams
@@ -81,12 +79,10 @@ namespace NBAMvc1._1.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _myTeamService.Create(myTeam))
-                {
-                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
-                }
+                await _myTeamService.Create(myTeam);
+                return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
             }
-            return RedirectToAction("Create", new { leagueID = myTeam.FantasyLeagueID });
+            return View();
         }
 
         // GET: MyTeams/Edit/5
@@ -131,10 +127,8 @@ namespace NBAMvc1._1.Controllers
 
             if (ModelState.IsValid)
             {
-                if (await _myTeamService.Edit(myTeam))
-                {
-                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
-                }
+                await _myTeamService.Edit(myTeam);
+                return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
             }
             return View(myTeam);
         }
@@ -167,8 +161,6 @@ namespace NBAMvc1._1.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var myTeam = await _myTeamService.GetMyTeamByIDAsync(id);
-            int leagueID = myTeam.FantasyLeagueID;
-
             if(myTeam == null)
             {
                 return NotFound();
@@ -180,11 +172,8 @@ namespace NBAMvc1._1.Controllers
                 return new ChallengeResult();
             }
 
-            if (await _myTeamService.Delete(myTeam))
-            {
-                return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
-            }
-            return RedirectToAction("Index", "Home");
+            await _myTeamService.Delete(myTeam);
+            return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
         }
     }
 }
