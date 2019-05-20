@@ -102,7 +102,6 @@ namespace NBAMvc1._1.Controllers
                     viewTasks.Remove(finished);
                 }
             }
-
             return View(viewModel);
         }
 

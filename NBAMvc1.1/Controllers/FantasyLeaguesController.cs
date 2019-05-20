@@ -62,7 +62,6 @@ namespace NBAMvc1._1.Controllers
             }
 
             viewModel.Teams = await _fantasyLeagueService.GetTeamsDictionaryAsync(viewModel.FantasyLeague.FantasyLeagueID);
-
             if (viewModel.FantasyLeague.IsSet)
             {
                 viewModel.Matchups = await _fantasyMatchupService.GetMatchupsByWeekAsync(viewModel.FantasyLeague.FantasyLeagueID, viewModel.SelectedWeek);
