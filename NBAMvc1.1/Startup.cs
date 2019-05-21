@@ -56,8 +56,8 @@ namespace NBAMvc1._1
 
             services.AddAuthentication().AddMicrosoftAccount(microsoftOptions =>
             {
-                microsoftOptions.ClientId = Configuration["Authentication:Microsoft:ApplicationId"];
-                microsoftOptions.ClientSecret = Configuration["Authentication:Microsoft:Password"];
+                microsoftOptions.ClientId = "b5497e1f-93ff-4eb6-9865-bf39efd150e3";
+                microsoftOptions.ClientSecret = "eiZCH8195|qamnaPFUY9?*?";
             });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);

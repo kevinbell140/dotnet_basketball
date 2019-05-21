@@ -17,7 +17,6 @@ namespace NBAMvc1._1
     {
         public static void Main(string[] args)
         {
-            //CreateWebHostBuilder(args).Build().Run();
             var host = CreateWebHostBuilder(args).Build();
 
             using (var scope = host.Services.CreateScope())
@@ -36,11 +35,6 @@ namespace NBAMvc1._1
                 }
             }
             host.Run();
-        }
-
-        private static int AplicationDbContext()
-        {
-            throw new NotImplementedException();
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
