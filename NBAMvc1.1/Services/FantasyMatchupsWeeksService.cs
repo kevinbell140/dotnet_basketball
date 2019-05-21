@@ -74,7 +74,7 @@ namespace NBAMvc1._1.Services
             return matchupWeek;
         }
 
-        public async Task<FantasyMatchupWeeks> GetFantasyMatchupWeekByLeagueByDate(int leagueID, DateTime date)
+        public async Task<FantasyMatchupWeeks> GetFantasyMatchupWeekByLeagueByDateAsync(int leagueID, DateTime date)
         {
             var matchupWeek = await _context.FantasyMatchupWeeks
                     .Where(x => x.FantasyLeagueID == leagueID)

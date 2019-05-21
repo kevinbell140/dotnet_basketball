@@ -2,23 +2,25 @@
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NBAMvc1._1.Services
+namespace NBAMvc1._1.Services.Timers
 {
-    public class CurrentWeekTimerService : IHostedService, IDisposable
+    public class TimerCurrentWeek : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
 
-        public CurrentWeekTimerService(ILogger<CurrentWeekTimerService> logger, IServiceProvider serviceProvider)
+        public TimerCurrentWeek(ILogger<TimerCurrentWeek> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
-   
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _timer = new Timer(UpdateWeeks, null, TimeSpan.FromSeconds(10), TimeSpan.FromDays(1));
@@ -35,15 +37,15 @@ namespace NBAMvc1._1.Services
                 var leagues = await _leagueService.GetLeaguesAsync();
 
                 var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
-                
-                foreach(var l in leagues)
+
+                foreach (var l in leagues)
                 {
-                    var week = await _scheudleService.GetFantasyMatchupWeekByLeagueByDate(l.FantasyLeagueID, DateTime.Today);
-                    if(week != null)
+                    var week = await _scheudleService.GetFantasyMatchupWeekByLeagueByDateAsync(l.FantasyLeagueID, DateTime.Today);
+                    if (week != null)
                     {
                         try
                         {
-                            await _leagueService.UpdateCurrentWeek(l, week.WeekNum);
+                            await _leagueService.UpdateCurrentWeekAsync(l, week.WeekNum);
                         }
                         catch (Exception)
                         {
@@ -81,3 +83,4 @@ namespace NBAMvc1._1.Services
         }
     }
 }
+

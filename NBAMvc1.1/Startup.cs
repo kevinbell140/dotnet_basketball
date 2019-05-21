@@ -18,6 +18,7 @@ using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Areas.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Services.Timers;
 
 namespace NBAMvc1._1
 {
@@ -83,11 +84,11 @@ namespace NBAMvc1._1
             services.AddScoped<StandingsService>();
             services.AddScoped<TeamsService>();
 
-            services.AddHostedService<FetchTimer>();
-            services.AddHostedService<CurrentWeekTimerService>();
-            services.AddHostedService<MatchupStatusUpdateTimer>();
-            services.AddHostedService<MatchupScoreUpdateTimer>();
-            services.AddHostedService<StandingsUpdateTimer>();
+            services.AddHostedService<TimerFetch>();
+            services.AddHostedService<TimerCurrentWeek>();
+            services.AddHostedService<TimerMatchupStatus>();
+            services.AddHostedService<TimerMatchupScores>();
+            services.AddHostedService<TimerLeagueStandings>();
 
         }
 

@@ -42,7 +42,7 @@ namespace NBAMvc1._1.Controllers
 
             var viewModel = new FantasyMatchupDetailsViewModel
             {
-                FantasyMatchup = await _fantasyMatchupService.GetMatchupByID(id.Value)
+                FantasyMatchup = await _fantasyMatchupService.GetMatchupByIDAsync(id.Value)
             };
 
             var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(viewModel.FantasyMatchup.FantasyLeagueID, viewModel.FantasyMatchup.Week);
@@ -70,10 +70,10 @@ namespace NBAMvc1._1.Controllers
                 }
             }
             
-            var homeOppTask = _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.HomeRoster, matchupWeek);
-            var homeStatsTask = _fantasyMatchupService.GetGameStatsDictionary(viewModel.HomeRoster, matchupWeek);
-            var awayOppTask = _fantasyMatchupService.GetOpponentLogoDictionary(viewModel.AwayRoster, matchupWeek);
-            var awayStatsTask = _fantasyMatchupService.GetGameStatsDictionary(viewModel.AwayRoster, matchupWeek);
+            var homeOppTask = _fantasyMatchupService.GetOpponentLogoDictionaryAsync(viewModel.HomeRoster, matchupWeek);
+            var homeStatsTask = _fantasyMatchupService.GetGameStatsDictionaryAsync(viewModel.HomeRoster, matchupWeek);
+            var awayOppTask = _fantasyMatchupService.GetOpponentLogoDictionaryAsync(viewModel.AwayRoster, matchupWeek);
+            var awayStatsTask = _fantasyMatchupService.GetGameStatsDictionaryAsync(viewModel.AwayRoster, matchupWeek);
             var viewTasks = new List<Task> { homeStatsTask, homeOppTask, awayOppTask, awayStatsTask };
             while (viewTasks.Any())
             {

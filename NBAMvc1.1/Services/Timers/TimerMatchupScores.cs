@@ -7,23 +7,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NBAMvc1._1.Services
+namespace NBAMvc1._1.Services.Timers
 {
-    public class StandingsUpdateTimer : IHostedService, IDisposable
+    public class TimerMatchupScores : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
 
-        public StandingsUpdateTimer(ILogger<StandingsUpdateTimer> logger, IServiceProvider serviceProvider)
+        public TimerMatchupScores(ILogger<TimerMatchupScores> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
         }
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _logger.LogDebug("Standings update timer started");
-            _timer = new Timer(Update, null, TimeSpan.FromSeconds(60), TimeSpan.FromDays(1));
+            _logger.LogDebug("Update timer started");
+            _timer = new Timer(Update, null, TimeSpan.FromSeconds(30), TimeSpan.FromMinutes(10));
             return Task.CompletedTask;
         }
 
@@ -32,11 +33,18 @@ namespace NBAMvc1._1.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var _standingsService = services.GetRequiredService<FantasyLeagueStandingsService>();
-                var recordedMatchups = await _standingsService.UpdateStandingsAsync();
                 var _matchupService = services.GetRequiredService<FantasyMatchupService>();
-                await _matchupService.SetRecorded(recordedMatchups, true);
-                _logger.LogDebug("Matchups set to recorded!");
+                var matchups = await _matchupService.GetMatchupsForScoringAsync();
+                try
+                {
+                    _logger.LogDebug("Updating scores");
+                    await _matchupService.UpdateScoresAsync(matchups);
+                }
+                catch (Exception)
+                {
+                    _logger.LogError("Error updating scores");
+                }
+
             }
         }
 

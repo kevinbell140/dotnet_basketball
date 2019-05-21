@@ -42,13 +42,13 @@ namespace NBAMvc1._1.Services
         public async Task Create(FantasyLeague fantasyLeague)
         {
             await _fantasyMatchupsWeeksService.Create(fantasyLeague);
-            await CreateMatchups(fantasyLeague);
+            await CreateMatchupsAsync(fantasyLeague);
             await _fantasyLeagueStandingsService.Create(fantasyLeague);
-            await SetLeague(fantasyLeague);
+            await SetLeagueAsync(fantasyLeague);
             return;
         }
 
-        public async Task SetLeague(FantasyLeague fantasyLeague)
+        public async Task SetLeagueAsync(FantasyLeague fantasyLeague)
         {
             fantasyLeague.IsSet = true;
             fantasyLeague.IsActive = true;
@@ -65,7 +65,7 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        private async Task CreateMatchups(FantasyLeague fantasyLeague)
+        private async Task CreateMatchupsAsync(FantasyLeague fantasyLeague)
         {
             List<MyTeam> teams = fantasyLeague.TeamsNav;
 
@@ -137,7 +137,7 @@ namespace NBAMvc1._1.Services
 
         
 
-        public async Task<bool> SetRecorded(List<FantasyMatchup> matchups, bool status)
+        public async Task SetRecordedAsync(List<FantasyMatchup> matchups, bool status)
         {
             foreach(var m in matchups)
             {
@@ -148,11 +148,11 @@ namespace NBAMvc1._1.Services
             {
                 _context.UpdateRange(matchups);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
-            catch (Exception)
+            catch (DbUpdateConcurrencyException)
             {
-                return false;
+                throw;
             }
         }
 
@@ -167,7 +167,7 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForScoring()
+        public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForScoringAsync()
         {
             var matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav)
@@ -178,33 +178,29 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        public async Task<bool> UpdateScores(IEnumerable<FantasyMatchup> matchups)
+        public async Task UpdateScoresAsync(IEnumerable<FantasyMatchup> matchups)
         {
             List<FantasyMatchup> updateList = new List<FantasyMatchup>();
 
             foreach (var m in matchups)
             {
-                updateList = await UpdateScore(m, updateList);
+                updateList = await UpdateScoreAsync(m, updateList);
             }
             try
             {
                 _context.UpdateRange(updateList);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
             }
-            catch (Exception)
-            {
-                return false;
-            }
         }
 
-        private async Task<List<FantasyMatchup>> UpdateScore(FantasyMatchup matchup, List<FantasyMatchup> updateList)
+        private async Task<List<FantasyMatchup>> UpdateScoreAsync(FantasyMatchup matchup, List<FantasyMatchup> updateList)
         {
-            var scores = await CalculateScore(matchup);
+            var scores = await CalculateScoreAsync(matchup);
             matchup.HomeTeamScore = scores[0];
             matchup.AwayTeamScore = scores[1];
             matchup.UpdatedAt = DateTime.Now;
@@ -214,7 +210,7 @@ namespace NBAMvc1._1.Services
         }
 
 
-        private async Task<decimal[]> CalculateScore(FantasyMatchup matchup)
+        private async Task<decimal[]> CalculateScoreAsync(FantasyMatchup matchup)
         {
             var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(matchup.FantasyLeagueID, matchup.Week);
             decimal homeScore = 0;
@@ -224,7 +220,7 @@ namespace NBAMvc1._1.Services
                 var home = await _playerMyTeamService.GetRosterAsync(matchup.HomeTeamID.Value);
                 if (home.Any() && home != null)
                 {
-                    List<PlayerGameStats> homeStats = await GetGameStatsList(home, matchupWeek);
+                    List<PlayerGameStats> homeStats = await GetGameStatsListAsync(home, matchupWeek);
                     if (homeStats != null)
                     {
                         homeScore = homeStats.Sum(x => x.FantasyPoints);
@@ -234,7 +230,7 @@ namespace NBAMvc1._1.Services
                 var away = await _playerMyTeamService.GetRosterAsync(matchup.AwayTeamID.Value);
                 if (away.Any() && away != null)
                 {
-                    List<PlayerGameStats> awayStats = await GetGameStatsList(away, matchupWeek);
+                    List<PlayerGameStats> awayStats = await GetGameStatsListAsync(away, matchupWeek);
                     if (awayStats != null)
                     {
                         awayScore = awayStats.Sum(x => x.FantasyPoints);
@@ -245,7 +241,7 @@ namespace NBAMvc1._1.Services
         }
 
 
-        public async Task<FantasyMatchup> GetMatchupByID(int id)
+        public async Task<FantasyMatchup> GetMatchupByIDAsync(int id)
         {
             var matchup = await _context.FantasyMatchup
                 .Include(f => f.AwayTeamNav).ThenInclude(f => f.UserNav)
@@ -256,7 +252,7 @@ namespace NBAMvc1._1.Services
             return matchup;
         }
 
-        public async Task<Dictionary<string, string>> GetOpponentLogoDictionary(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
+        public async Task<Dictionary<string, string>> GetOpponentLogoDictionaryAsync(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
         {
             Dictionary<string, string> OppDictionary = new Dictionary<string, string>
                 {
@@ -286,7 +282,7 @@ namespace NBAMvc1._1.Services
             return OppDictionary;
         }
 
-        public async Task<Dictionary<string, PlayerGameStats>> GetGameStatsDictionary(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
+        public async Task<Dictionary<string, PlayerGameStats>> GetGameStatsDictionaryAsync(IDictionary<string, Player> roster, FantasyMatchupWeeks matchupWeek)
         {
             Dictionary<string, PlayerGameStats> statsDictionary = new Dictionary<string, PlayerGameStats>
                 {
@@ -320,7 +316,7 @@ namespace NBAMvc1._1.Services
             return statsDictionary;
         }
 
-        public async Task<List<PlayerGameStats>> GetGameStatsList(IEnumerable<PlayerMyTeam> roster, FantasyMatchupWeeks matchupWeek)
+        public async Task<List<PlayerGameStats>> GetGameStatsListAsync(IEnumerable<PlayerMyTeam> roster, FantasyMatchupWeeks matchupWeek)
         {
             List<PlayerGameStats> statsList = new List<PlayerGameStats>();
             foreach (PlayerMyTeam player in roster)
@@ -336,6 +332,49 @@ namespace NBAMvc1._1.Services
                 }
             }
             return statsList;
+        }
+
+        public async Task UpdateCurrentWeek(IEnumerable<FantasyMatchup> matchups)
+        {
+            List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
+
+            foreach (var m in matchups)
+            {
+                var weeks = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeeksByLeague(m.FantasyLeagueID);
+                if (weeks != null && weeks.Any())
+                {
+                    var currentWeek = weeks.Where(x => x.Date.Date == DateTime.Today.Date).FirstOrDefault();
+                    int currentWeekNum = (currentWeek == null ? 15 : currentWeek.WeekNum);
+                    if (m.Week == currentWeekNum)
+                    {
+                        m.Status = "In Progress";
+                        m.UpdatedAt = DateTime.Now;
+                        updatedMatchups.Add(m);
+                    }
+                    else if (m.Week < currentWeekNum)
+                    {
+                        m.Status = "Final";
+                        m.UpdatedAt = DateTime.Now;
+                        updatedMatchups.Add(m);
+                    }
+                    else
+                    {
+                        m.Status = "Scheduled";
+                        m.UpdatedAt = DateTime.Now;
+                        updatedMatchups.Add(m);
+                    }
+                }
+            }
+            try
+            {
+                _context.UpdateRange(updatedMatchups);
+                await _context.SaveChangesAsync();
+                return;
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
+            }
         }
     }
 }

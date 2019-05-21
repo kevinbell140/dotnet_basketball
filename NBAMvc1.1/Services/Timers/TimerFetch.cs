@@ -1,22 +1,21 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using NBAMvc1._1.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NBAMvc1._1.Data
+namespace NBAMvc1._1.Services.Timers
 {
-    internal class FetchTimer : IHostedService, IDisposable
+    public class TimerFetch : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
 
-        public FetchTimer(ILogger<FetchTimer> logger, IServiceProvider serviceProvider)
+        public TimerFetch(ILogger<TimerFetch> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
@@ -31,17 +30,17 @@ namespace NBAMvc1._1.Data
 
         private async void Fetch(object state)
         {
-            using(var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 //await FetchTeamsAsync(services);
                 //await FetchPlayersAsync(services);
                 //await FetchGamesAsync(services);
-                //await FetchGamesPostAsync(services);
+                await FetchGamesPostAsync(services);
                 //await FetchStandingsAsync(services);
                 //await FetchPlayerSeasonStatsAsync(services);
-                //await FetchPlayerGameStatsAsync(services);
-                //await FetchNewsAsync(services);
+                await FetchPlayerGameStatsAsync(services);
+                await FetchNewsAsync(services);
                 _logger.LogDebug("Fetch complete");
             }
             return;

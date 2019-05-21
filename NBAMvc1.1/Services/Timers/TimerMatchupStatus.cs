@@ -1,51 +1,56 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Data;
+using NBAMvc1._1.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NBAMvc1._1.Services
+namespace NBAMvc1._1.Services.Timers
 {
-    public class MatchupScoreUpdateTimer : IHostedService, IDisposable
+    public class TimerMatchupStatus : IHostedService, IDisposable
     {
         private readonly ILogger _logger;
         private Timer _timer;
         private readonly IServiceProvider _serviceProvider;
 
-        public MatchupScoreUpdateTimer(ILogger<MatchupScoreUpdateTimer> logger, IServiceProvider serviceProvider)
+
+        public TimerMatchupStatus(ILogger<TimerMatchupStatus> logger, IServiceProvider serviceProvider)
         {
             _logger = logger;
             _serviceProvider = serviceProvider;
+
         }
-    
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Update timer started");
-            _timer = new Timer(Update, null, TimeSpan.FromSeconds(30), TimeSpan.FromMinutes(10));
+            _timer = new Timer(Update, null, TimeSpan.FromSeconds(10), TimeSpan.FromDays(1));
             return Task.CompletedTask;
         }
 
         private async void Update(object state)
         {
-            using(var scope = _serviceProvider.CreateScope())
+            using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
                 var _matchupService = services.GetRequiredService<FantasyMatchupService>();
-                var matchups = await _matchupService.GetMatchupsForScoring();
-                try
-                {
-                    _logger.LogDebug("Updating scores");
-                    await _matchupService.UpdateScores(matchups);
-                }
-                catch (Exception)
-                {
-                    _logger.LogError("Error updating scores");
-                }
-                
+                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
+                var _context = services.GetRequiredService<ApplicationDbContext>();
+
+                var matchups = await _matchupService.GetMatchups();
+                await _matchupService.UpdateCurrentWeek(matchups);
+                _logger.LogDebug("Updated current matchup weeks");
             }
         }
-
+        public FantasyMatchup SetStatus(FantasyMatchup matchup, string status)
+        {
+            matchup.Status = status;
+            return matchup;
+        }
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Fetch timer stopped");

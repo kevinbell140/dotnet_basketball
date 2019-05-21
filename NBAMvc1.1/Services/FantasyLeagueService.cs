@@ -85,22 +85,18 @@ namespace NBAMvc1._1.Services
             return await _context.FantasyLeague.AnyAsync(e => e.FantasyLeagueID == id);
         }
 
-        public async Task<bool> IsActiveFalseAsync(FantasyLeague fantasyLeague)
+        public async Task IsActiveFalseAsync(FantasyLeague fantasyLeague)
         {
             fantasyLeague.IsActive = false;
             try
             {
                 _context.Update(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
 
@@ -170,22 +166,18 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        public async Task<bool> UpdateCurrentWeek(FantasyLeague fantasyLeague, int week)
+        public async Task UpdateCurrentWeekAsync(FantasyLeague fantasyLeague, int week)
         {
             fantasyLeague.CurrentWeek = week;
             try
             {
                 _context.Update(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
                 throw;
-            }
-            catch (Exception)
-            {
-                return false;
             }
         }
 
