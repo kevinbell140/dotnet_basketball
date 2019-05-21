@@ -6,14 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 
 namespace NBAMvc1._1.Controllers
 {
     public class StandingsController : Controller
     {
-        private readonly StandingsService _standingsService;
+        private readonly IStandingsService _standingsService;
 
-        public StandingsController(StandingsService standingsService)
+        public StandingsController(IStandingsService standingsService)
         {
             _standingsService = standingsService;
         }

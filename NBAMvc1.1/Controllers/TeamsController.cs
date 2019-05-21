@@ -5,17 +5,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
     public class TeamsController : Controller
     {
-        private readonly TeamsService _teamsService;
-        private readonly GamesService _gamesService;
-        private readonly StandingsService _standingsService;
+        private readonly ITeamsService _teamsService;
+        private readonly IGamesService _gamesService;
+        private readonly IStandingsService _standingsService;
 
-        public TeamsController(TeamsService teamsService, GamesService gamesService, StandingsService standingsService)
+        public TeamsController(ITeamsService teamsService, IGamesService gamesService, IStandingsService standingsService)
         {
             _teamsService = teamsService;
             _gamesService = gamesService;

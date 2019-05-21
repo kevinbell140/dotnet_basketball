@@ -19,6 +19,7 @@ using NBAMvc1._1.Areas.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Services.Timers;
+using NBAMvc1._1.Services.Interfaces;
 
 namespace NBAMvc1._1
 {
@@ -66,23 +67,23 @@ namespace NBAMvc1._1
                 options.AddPolicy("AdminOnly", policy => policy.RequireRole(Constants.AdministratorRole));
             });
 
-            services.AddHttpClient<DataService>();
+            services.AddHttpClient<IDataService, DataService>();
 
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
-            services.AddScoped<FantasyLeagueService>();
-            services.AddScoped<FantasyLeagueStandingsService>();
-            services.AddScoped<FantasyMatchupService>();
-            services.AddScoped<FantasyMatchupsWeeksService>();
-            services.AddScoped<GamesService>();
-            services.AddScoped<MyTeamsService>();
-            services.AddScoped<NewsService>();
-            services.AddScoped<PlayerGameStatsService>();
-            services.AddScoped<PlayerMyTeamService>();
-            services.AddScoped<PlayerSeasonStatsService>();
-            services.AddScoped<PlayersService>();
-            services.AddScoped<StandingsService>();
-            services.AddScoped<TeamsService>();
+            services.AddScoped<IFantasyLeagueService, FantasyLeagueService>();
+            services.AddScoped<IFantasyLeagueStandingsService, FantasyLeagueStandingsService>();
+            services.AddScoped<IFantasyMatchupService, FantasyMatchupService>();
+            services.AddScoped<IFantasyMatchupsWeeksService, FantasyMatchupsWeeksService>();
+            services.AddScoped<IGamesService, GamesService>();
+            services.AddScoped<IMyTeamsService, MyTeamsService>();
+            services.AddScoped<INewsService, NewsService>();
+            services.AddScoped<IPlayerGameStatsService, PlayerGameStatsService>();
+            services.AddScoped<IPlayerMyTeamService, PlayerMyTeamService>();
+            services.AddScoped<IPlayerSeasonStatsService, PlayerSeasonStatsService>();
+            services.AddScoped<IPlayersService, PlayersService>();
+            services.AddScoped<IStandingsService, StandingsService>();
+            services.AddScoped<ITeamsService, TeamsService>();
 
             services.AddHostedService<TimerFetch>();
             services.AddHostedService<TimerCurrentWeek>();

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -12,11 +13,11 @@ namespace NBAMvc1._1.Controllers
     public class FantasyLeaguesController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly FantasyLeagueService _fantasyLeagueService;
-        private readonly FantasyMatchupService _fantasyMatchupService;
+        private readonly IFantasyLeagueService _fantasyLeagueService;
+        private readonly IFantasyMatchupService _fantasyMatchupService;
 
-        public FantasyLeaguesController(FantasyLeagueService fantasyLeagueService, UserManager<ApplicationUser> userManager, 
-            FantasyMatchupService fantasyMatchupService)
+        public FantasyLeaguesController(IFantasyLeagueService fantasyLeagueService, UserManager<ApplicationUser> userManager, 
+            IFantasyMatchupService fantasyMatchupService)
         {
             _userManager = userManager;
             _fantasyLeagueService = fantasyLeagueService;

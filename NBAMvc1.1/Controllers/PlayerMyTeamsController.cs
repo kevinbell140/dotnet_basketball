@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.Utils;
 using NBAMvc1._1.ViewModels;
 
@@ -16,11 +17,11 @@ namespace NBAMvc1._1.Controllers
     public class PlayerMyTeamsController : Controller
     {
         private readonly IAuthorizationService _auth;
-        private readonly PlayerMyTeamService _playerMyTeamService;
-        private readonly MyTeamsService _myTeamsService;
-        private readonly PlayersService _playersService;
+        private readonly IPlayerMyTeamService _playerMyTeamService;
+        private readonly IMyTeamsService _myTeamsService;
+        private readonly IPlayersService _playersService;
 
-        public PlayerMyTeamsController(PlayersService playersService, MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService, IAuthorizationService auth)
+        public PlayerMyTeamsController(IPlayersService playersService, IMyTeamsService myTeamsService, IPlayerMyTeamService playerMyTeamService, IAuthorizationService auth)
         {
             _auth = auth;
             _playerMyTeamService = playerMyTeamService;

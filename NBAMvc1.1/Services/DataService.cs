@@ -1,4 +1,5 @@
 ﻿using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using System.Web;
 
 namespace NBAMvc1._1.Services
 {
-    public class DataService
+    public class DataService : IDataService
     {
         private readonly HttpClient _httpClient;
 

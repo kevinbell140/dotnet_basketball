@@ -2,14 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 
 namespace NBAMvc1._1.Controllers
 {
     public class NewsController : Controller
     {
-        private readonly NewsService _newsService;
+        private readonly INewsService _newsService;
 
-        public NewsController(ApplicationDbContext context, NewsService newsService)
+        public NewsController(ApplicationDbContext context, INewsService newsService)
         {
             _newsService = newsService;
         }

@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class PlayerGameStatsService
+    public class PlayerGameStatsService : IPlayerGameStatsService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public PlayerGameStatsService(ApplicationDbContext context, DataService dataService)
+        public PlayerGameStatsService(ApplicationDbContext context, IDataService dataService)
         {
             _context = context;
             _dataService = dataService;
@@ -37,12 +38,12 @@ namespace NBAMvc1._1.Services
             return log;
         }
 
-        public async Task<List<PlayerGameStats>> GetGameLeadersAsync(int id)
+        public async Task<List<PlayerGameStats>> GetGameLeadersAsync(int gameID)
         {
             var leaders = await _context.PlayerGameStats
                .Include(p => p.GameNav)
                .Include(p => p.PlayerNav)
-               .Where(p => p.GameID == id)
+               .Where(p => p.GameID == gameID)
                .OrderByDescending(p => p.Points)
                .Take(2).ToListAsync();
 
@@ -94,7 +95,7 @@ namespace NBAMvc1._1.Services
         {
             return await _context.PlayerGameStats.AnyAsync(s => s.StatID == id);
         }
-        
+
         private async Task<bool> PlayerAndGameExist(int playerID, int gameID)
         {
             return (await _context.Player.AnyAsync(a => a.PlayerID == playerID) && await _context.Game.AnyAsync(a => a.GameID == gameID));

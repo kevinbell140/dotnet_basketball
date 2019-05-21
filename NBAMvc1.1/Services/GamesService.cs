@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class GamesService
+    public class GamesService : IGamesService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public GamesService(ApplicationDbContext context, DataService dataService)
+        public GamesService(ApplicationDbContext context, IDataService dataService)
         {
             _context = context;
             _dataService = dataService;
@@ -106,18 +107,6 @@ namespace NBAMvc1._1.Services
             return games;
         }
 
-        public async Task<Game> HasGameTonightAsync(FantasyMatchupWeeks matchupWeek, int teamID)
-        {
-            var gameTonight = await _context.Game
-                    .Include(g => g.PlayerGameStatsNav)
-                    .Include(g => g.HomeTeamNav)
-                    .Include(g => g.AwayTeamNav)
-                    .Where(g => g.DateTime.Date == matchupWeek.Date)
-                    .Where(g => g.AwayTeamID == teamID || g.HomeTeamID == teamID)
-                    .FirstOrDefaultAsync();
-            return gameTonight;
-        }
-
         public async Task FetchAsync()
         {
             List<Game> games = await _dataService.FetchGamesAsync();
@@ -167,7 +156,7 @@ namespace NBAMvc1._1.Services
             List<Game> created = new List<Game>();
             List<Game> updated = new List<Game>();
 
-            foreach(var g in games)
+            foreach (var g in games)
             {
                 if (!await GameExists(g.GameID))
                 {
@@ -181,7 +170,7 @@ namespace NBAMvc1._1.Services
                     if (g != null)
                     {
                         updated.Add(g);
-                    }                  
+                    }
                 }
             }
             try

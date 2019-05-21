@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class FantasyLeagueStandingsService
+    public class FantasyLeagueStandingsService : IFantasyLeagueStandingsService
     {
         private readonly ApplicationDbContext _context;
 
@@ -79,7 +80,7 @@ namespace NBAMvc1._1.Services
         {
             List<FantasyLeagueStandings> standingsUpdated = new List<FantasyLeagueStandings>();
             List<FantasyMatchup> matchupsUpdated = new List<FantasyMatchup>();
-            
+
             //all matchups that need updating
             var matchups = await GetMatchupsForRecordingAsync();
             matchups = matchups.Where(x => x.HomeTeamNav.FantasyLeagueStandingsNav != null && x.AwayTeamNav.FantasyLeagueStandingsNav != null).ToList();
@@ -89,11 +90,11 @@ namespace NBAMvc1._1.Services
 
             //get standings dictionary
             Dictionary<int, FantasyLeagueStandings> currentStandings = new Dictionary<int, FantasyLeagueStandings>();
-            
+
             foreach (var id in teamIDs)
             {
                 var standing = await GetStandingsByTeamAsync(id.Value);
-                if(standing != null)
+                if (standing != null)
                 {
                     currentStandings.Add(id.Value, standing);
                 }

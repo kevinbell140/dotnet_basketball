@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class PlayerSeasonStatsService
+    public class PlayerSeasonStatsService : IPlayerSeasonStatsService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public PlayerSeasonStatsService(ApplicationDbContext context, DataService dataService)
+        public PlayerSeasonStatsService(ApplicationDbContext context, IDataService dataService)
         {
             _context = context;
             _dataService = dataService;

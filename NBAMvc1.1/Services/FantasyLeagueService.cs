@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class FantasyLeagueService
+    public class FantasyLeagueService : IFantasyLeagueService
     {
         private readonly ApplicationDbContext _context;
 
@@ -22,15 +23,6 @@ namespace NBAMvc1._1.Services
                 .ToListAsync();
             return leagues;
         }
-
-        public async Task<IEnumerable<FantasyLeague>> GetLeaguesAsync(int[] leagueIDs)
-        {
-            var leagues = await _context.FantasyLeague
-                .Where(x => leagueIDs.Contains(x.FantasyLeagueID))
-                .ToListAsync();
-            return leagues;
-        }
-
 
         public async Task<FantasyLeague> GetLeagueAsync(int id)
         {
@@ -69,7 +61,7 @@ namespace NBAMvc1._1.Services
         {
             var fantasyLeague = await _context.FantasyLeague.FindAsync(id);
             try
-            {       
+            {
                 _context.FantasyLeague.Remove(fantasyLeague);
                 await _context.SaveChangesAsync();
                 return;
@@ -120,7 +112,7 @@ namespace NBAMvc1._1.Services
                     {
                         return null;
                     }
-                }              
+                }
             }
             return null;
         }
@@ -140,7 +132,7 @@ namespace NBAMvc1._1.Services
             {
                 _context.Update(league);
                 await _context.SaveChangesAsync();
-                return; 
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -181,24 +173,20 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        public async Task<bool> StandingsRecorded(IEnumerable<FantasyMatchup> matchups, int week)
+        public async Task SetLeagueAsync(FantasyLeague fantasyLeague)
         {
-            List<FantasyMatchup> updatedMatchups = new List<FantasyMatchup>();
-
-            foreach (var m in matchups.Where(x => x.Week == week))
-            {
-                m.Recorded = true;
-                updatedMatchups.Add(m);
-            }
+            fantasyLeague.IsSet = true;
+            fantasyLeague.IsActive = true;
+            fantasyLeague.CurrentWeek = 1;
             try
             {
-                _context.UpdateRange(updatedMatchups);
+                _context.Update(fantasyLeague);
                 await _context.SaveChangesAsync();
-                return true;
+                return;
             }
             catch (DbUpdateConcurrencyException)
             {
-                return false;
+                throw;
             }
         }
     }

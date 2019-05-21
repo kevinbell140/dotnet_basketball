@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class TeamsService
+    public class TeamsService : ITeamsService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
 
-        public TeamsService(ApplicationDbContext context, DataService dataService)
+        public TeamsService(ApplicationDbContext context, IDataService dataService)
         {
             _context = context;
             _dataService = dataService;
@@ -32,7 +33,7 @@ namespace NBAMvc1._1.Services
         }
 
         public async Task<IEnumerable<Team>> GetTeamsAsync(string sortOrder)
-        {;
+        {
             var teams = _context.Team.AsNoTracking();
             if (teams != null && await teams.AnyAsync())
             {
@@ -56,7 +57,7 @@ namespace NBAMvc1._1.Services
                     default:
                         teams = teams.OrderBy(t => t.City);
                         break;
-                }         
+                }
             }
             return teams;
         }

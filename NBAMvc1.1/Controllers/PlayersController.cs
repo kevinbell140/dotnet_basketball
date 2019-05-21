@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.Utils;
 using NBAMvc1._1.ViewModels;
 
@@ -13,11 +14,11 @@ namespace NBAMvc1._1.Controllers
 {
     public class PlayersController : Controller
     {
-        private readonly PlayersService _playersService;
-        private readonly GamesService _gamesService;
-        private readonly PlayerGameStatsService _playerGameStatsService;
+        private readonly IPlayersService _playersService;
+        private readonly IGamesService _gamesService;
+        private readonly IPlayerGameStatsService _playerGameStatsService;
 
-        public PlayersController(PlayersService playersService, GamesService gamesService, PlayerGameStatsService playerGameStatsService)
+        public PlayersController(IPlayersService playersService, IGamesService gamesService, IPlayerGameStatsService playerGameStatsService)
         {
             _playersService = playersService;
             _gamesService = gamesService;

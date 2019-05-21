@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -48,55 +49,55 @@ namespace NBAMvc1._1.Services.Timers
 
         private static async Task FetchTeamsAsync(IServiceProvider serviceProvider)
         {
-            var _teamsService = serviceProvider.GetRequiredService<TeamsService>();
+            var _teamsService = serviceProvider.GetRequiredService<ITeamsService>();
             await _teamsService.FetchAsync();
             return;
         }
 
         private static async Task FetchPlayersAsync(IServiceProvider serviceProvider)
         {
-            var _playersService = serviceProvider.GetRequiredService<PlayersService>();
+            var _playersService = serviceProvider.GetRequiredService<IPlayersService>();
             await _playersService.FetchAsync();
             return;
         }
 
         private static async Task FetchGamesAsync(IServiceProvider serviceProvider)
         {
-            var _gamesService = serviceProvider.GetRequiredService<GamesService>();
+            var _gamesService = serviceProvider.GetRequiredService<IGamesService>();
             await _gamesService.FetchAsync();
             return;
         }
 
         private static async Task FetchGamesPostAsync(IServiceProvider serviceProvider)
         {
-            var _gamesService = serviceProvider.GetRequiredService<GamesService>();
+            var _gamesService = serviceProvider.GetRequiredService<IGamesService>();
             await _gamesService.FetchAsync("post");
             return;
         }
 
         private static async Task FetchStandingsAsync(IServiceProvider serviceProvider)
         {
-            var _standingsService = serviceProvider.GetRequiredService<StandingsService>();
+            var _standingsService = serviceProvider.GetRequiredService<IStandingsService>();
             await _standingsService.FetchAsync();
             return;
         }
 
         private static async Task FetchPlayerSeasonStatsAsync(IServiceProvider serviceProvider)
         {
-            var _service = serviceProvider.GetRequiredService<PlayerSeasonStatsService>();
+            var _service = serviceProvider.GetRequiredService<IPlayerSeasonStatsService>();
             await _service.FetchAsync();
             return;
         }
         private static async Task FetchPlayerGameStatsAsync(IServiceProvider serviceProvider)
         {
-            var _service = serviceProvider.GetRequiredService<PlayerGameStatsService>();
+            var _service = serviceProvider.GetRequiredService<IPlayerGameStatsService>();
             await _service.FetchAsync();
             return;
         }
 
         private static async Task FetchNewsAsync(IServiceProvider serviceProvider)
         {
-            var _service = serviceProvider.GetRequiredService<NewsService>();
+            var _service = serviceProvider.GetRequiredService<INewsService>();
             await _service.FetchAsync();
             return;
         }

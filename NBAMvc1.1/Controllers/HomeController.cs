@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -15,13 +16,13 @@ namespace NBAMvc1._1.Controllers
     public class HomeController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly NewsService _newsService;
-        private readonly GamesService _gamesService;
-        private readonly MyTeamsService _myTeamsService;
-        private readonly PlayerGameStatsService _playerGameStatsService;
+        private readonly INewsService _newsService;
+        private readonly IGamesService _gamesService;
+        private readonly IMyTeamsService _myTeamsService;
+        private readonly IPlayerGameStatsService _playerGameStatsService;
 
-        public HomeController(UserManager<ApplicationUser> userManager, NewsService newsService, GamesService gamesService, 
-            MyTeamsService myTeamsService, PlayerGameStatsService playerGameStatsService)
+        public HomeController(UserManager<ApplicationUser> userManager, INewsService newsService, IGamesService gamesService, 
+            IMyTeamsService myTeamsService, IPlayerGameStatsService playerGameStatsService)
         {
             _userManager = userManager;
             _newsService = newsService;

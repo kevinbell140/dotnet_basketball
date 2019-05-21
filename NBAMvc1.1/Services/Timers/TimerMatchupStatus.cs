@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,11 +38,11 @@ namespace NBAMvc1._1.Services.Timers
             using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var _matchupService = services.GetRequiredService<FantasyMatchupService>();
-                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
+                var _matchupService = services.GetRequiredService<IFantasyMatchupService>();
+                var _scheudleService = services.GetRequiredService<IFantasyMatchupsWeeksService>();
                 var _context = services.GetRequiredService<ApplicationDbContext>();
 
-                var matchups = await _matchupService.GetMatchups();
+                var matchups = await _matchupService.GetMatchupsForUpdate();
                 await _matchupService.UpdateCurrentWeek(matchups);
                 _logger.LogDebug("Updated current matchup weeks");
             }

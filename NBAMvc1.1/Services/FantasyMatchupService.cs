@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,25 +9,25 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class FantasyMatchupService
+    public class FantasyMatchupService : IFantasyMatchupService
     {
         private readonly ApplicationDbContext _context;
-        private readonly PlayerMyTeamService _playerMyTeamService;
-        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
-        private readonly PlayerGameStatsService _playerGameStatsService;
-        private readonly GamesService _gamesService;
-        private readonly FantasyLeagueStandingsService _fantasyLeagueStandingsService;
+        private readonly IPlayerMyTeamService _playerMyTeamService;
+        private readonly IFantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
+        private readonly IPlayerGameStatsService _playerGameStatsService;
+        private readonly IFantasyLeagueStandingsService _fantasyLeagueStandingsService;
+        private readonly IFantasyLeagueService _fantasyLeagueService;
 
-        public FantasyMatchupService(ApplicationDbContext context, PlayerMyTeamService playerMyTeamService,
-           FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerGameStatsService playerGameStatsService,
-            GamesService gamesService, FantasyLeagueStandingsService fantasyLeagueStandingsService)
+        public FantasyMatchupService(ApplicationDbContext context, IPlayerMyTeamService playerMyTeamService,
+           IFantasyMatchupsWeeksService fantasyMatchupsWeeksService, IPlayerGameStatsService playerGameStatsService,
+           IFantasyLeagueStandingsService fantasyLeagueStandingsService, IFantasyLeagueService fantasyLeagueService)
         {
             _context = context;
             _playerMyTeamService = playerMyTeamService;
             _fantasyMatchupsWeeksService = fantasyMatchupsWeeksService;
             _playerGameStatsService = playerGameStatsService;
-            _gamesService = gamesService;
             _fantasyLeagueStandingsService = fantasyLeagueStandingsService;
+            _fantasyLeagueService = fantasyLeagueService;
         }
 
         public async Task<IEnumerable<FantasyMatchup>> GetMatchups()
@@ -44,25 +45,8 @@ namespace NBAMvc1._1.Services
             await _fantasyMatchupsWeeksService.Create(fantasyLeague);
             await CreateMatchupsAsync(fantasyLeague);
             await _fantasyLeagueStandingsService.Create(fantasyLeague);
-            await SetLeagueAsync(fantasyLeague);
+            await _fantasyLeagueService.SetLeagueAsync(fantasyLeague);
             return;
-        }
-
-        public async Task SetLeagueAsync(FantasyLeague fantasyLeague)
-        {
-            fantasyLeague.IsSet = true;
-            fantasyLeague.IsActive = true;
-            fantasyLeague.CurrentWeek = 1;
-            try
-            {
-                _context.Update(fantasyLeague);
-                await _context.SaveChangesAsync();
-                return;
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw;
-            }
         }
 
         private async Task CreateMatchupsAsync(FantasyLeague fantasyLeague)
@@ -119,7 +103,7 @@ namespace NBAMvc1._1.Services
             }
         }
 
-        
+
         private async Task<bool> MatchupsExists(int leagueID)
         {
             return await _context.FantasyMatchup.Where(m => m.FantasyLeagueID == leagueID).AnyAsync();
@@ -135,11 +119,9 @@ namespace NBAMvc1._1.Services
             return matchups;
         }
 
-        
-
         public async Task SetRecordedAsync(List<FantasyMatchup> matchups, bool status)
         {
-            foreach(var m in matchups)
+            foreach (var m in matchups)
             {
                 m.Recorded = status;
                 m.UpdatedAt = DateTime.Now;
@@ -159,6 +141,7 @@ namespace NBAMvc1._1.Services
         public async Task<IEnumerable<FantasyMatchup>> GetMatchupsForUpdate()
         {
             var matchups = await _context.FantasyMatchup
+                    .Include(m => m.FantasyLeagueNav)
                     .Include(m => m.AwayTeamNav)
                     .Include(m => m.HomeTeamNav)
                     .Where(m => m.Status != "Final")
@@ -172,7 +155,7 @@ namespace NBAMvc1._1.Services
             var matchups = await _context.FantasyMatchup
                     .Include(m => m.AwayTeamNav)
                     .Include(m => m.HomeTeamNav)
-                    .Where(m => (m.Status == "In Progress" || m.Status == "Final") && !m.Recorded) 
+                    .Where(m => (m.Status == "In Progress" || m.Status == "Final") && !m.Recorded)
                     .AsNoTracking().ToListAsync();
 
             return matchups;
@@ -236,8 +219,8 @@ namespace NBAMvc1._1.Services
                         awayScore = awayStats.Sum(x => x.FantasyPoints);
                     }
                 }
-            }           
-            return new decimal[] { homeScore, awayScore};
+            }
+            return new decimal[] { homeScore, awayScore };
         }
 
 
@@ -271,7 +254,7 @@ namespace NBAMvc1._1.Services
             {
                 if (player.Value != null)
                 {
-                    var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.Value.TeamID);
+                    var gameTonight = await HasGameTonightAsync(matchupWeek, player.Value.TeamID);
 
                     if (gameTonight != null)
                     {
@@ -301,7 +284,7 @@ namespace NBAMvc1._1.Services
             {
                 if (player.Value != null)
                 {
-                    var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.Value.TeamID);
+                    var gameTonight = await HasGameTonightAsync(matchupWeek, player.Value.TeamID);
 
                     if (gameTonight != null)
                     {
@@ -321,7 +304,7 @@ namespace NBAMvc1._1.Services
             List<PlayerGameStats> statsList = new List<PlayerGameStats>();
             foreach (PlayerMyTeam player in roster)
             {
-                var gameTonight = await _gamesService.HasGameTonightAsync(matchupWeek, player.PlayerNav.TeamID);
+                var gameTonight = await HasGameTonightAsync(matchupWeek, player.PlayerNav.TeamID);
                 if (gameTonight != null)
                 {
                     var stats = await _playerGameStatsService.GetPlayerGameStatsByGameAsync(player.PlayerNav.PlayerID, gameTonight.GameID);
@@ -332,6 +315,18 @@ namespace NBAMvc1._1.Services
                 }
             }
             return statsList;
+        }
+
+        private async Task<Game> HasGameTonightAsync(FantasyMatchupWeeks matchupWeek, int teamID)
+        {
+            var gameTonight = await _context.Game
+                    .Include(g => g.PlayerGameStatsNav)
+                    .Include(g => g.HomeTeamNav)
+                    .Include(g => g.AwayTeamNav)
+                    .Where(g => g.DateTime.Date == matchupWeek.Date)
+                    .Where(g => g.AwayTeamID == teamID || g.HomeTeamID == teamID)
+                    .FirstOrDefaultAsync();
+            return gameTonight;
         }
 
         public async Task UpdateCurrentWeek(IEnumerable<FantasyMatchup> matchups)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,9 +33,9 @@ namespace NBAMvc1._1.Services.Timers
             using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var _standingsService = services.GetRequiredService<FantasyLeagueStandingsService>();
+                var _standingsService = services.GetRequiredService<IFantasyLeagueStandingsService>();
                 var recordedMatchups = await _standingsService.UpdateStandingsAsync();
-                var _matchupService = services.GetRequiredService<FantasyMatchupService>();
+                var _matchupService = services.GetRequiredService<IFantasyMatchupService>();
                 await _matchupService.SetRecordedAsync(recordedMatchups, true);
                 _logger.LogDebug("Matchups set to recorded!");
             }

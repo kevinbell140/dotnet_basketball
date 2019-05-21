@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,10 +34,10 @@ namespace NBAMvc1._1.Services.Timers
             using (var scope = _serviceProvider.CreateScope())
             {
                 var services = scope.ServiceProvider;
-                var _leagueService = services.GetRequiredService<FantasyLeagueService>();
+                var _leagueService = services.GetRequiredService<IFantasyLeagueService>();
                 var leagues = await _leagueService.GetLeaguesAsync();
 
-                var _scheudleService = services.GetRequiredService<FantasyMatchupsWeeksService>();
+                var _scheudleService = services.GetRequiredService<IFantasyMatchupsWeeksService>();
 
                 foreach (var l in leagues)
                 {

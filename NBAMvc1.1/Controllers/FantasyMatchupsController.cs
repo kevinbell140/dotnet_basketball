@@ -5,19 +5,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
 {
     public class FantasyMatchupsController : Controller
     {
-        private readonly FantasyMatchupService _fantasyMatchupService;
-        private readonly FantasyLeagueService _fantasyLeagueService;
-        private readonly FantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
-        private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly IFantasyMatchupService _fantasyMatchupService;
+        private readonly IFantasyLeagueService _fantasyLeagueService;
+        private readonly IFantasyMatchupsWeeksService _fantasyMatchupsWeeksService;
+        private readonly IPlayerMyTeamService _playerMyTeamService;
 
-        public FantasyMatchupsController(FantasyMatchupService fantasyMatchupService, FantasyLeagueService fantasyLeagueService,
-            FantasyMatchupsWeeksService fantasyMatchupsWeeksService, PlayerMyTeamService playerMyTeamService)
+        public FantasyMatchupsController(IFantasyMatchupService fantasyMatchupService, IFantasyLeagueService fantasyLeagueService,
+            IFantasyMatchupsWeeksService fantasyMatchupsWeeksService, IPlayerMyTeamService playerMyTeamService)
         {
             _fantasyMatchupService = fantasyMatchupService;
             _fantasyLeagueService = fantasyLeagueService;

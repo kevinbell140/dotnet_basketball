@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class PlayerMyTeamService
+    public class PlayerMyTeamService : IPlayerMyTeamService
     {
         private readonly ApplicationDbContext _context;
-        private readonly PlayersService _playersService;
+        private readonly IPlayersService _playersService;
 
-        public PlayerMyTeamService(PlayersService playersService, ApplicationDbContext context)
+        public PlayerMyTeamService(IPlayersService playersService, ApplicationDbContext context)
         {
             _context = context;
             _playersService = playersService;
@@ -82,7 +83,6 @@ namespace NBAMvc1._1.Services
                 { "C", null},
             };
 
-            //int posCount = 1;
             foreach (var p in roster)
             {
                 if (p.PlayerNav.Position == "C")
@@ -122,16 +122,17 @@ namespace NBAMvc1._1.Services
             Player player = null;
             IEnumerable<PlayerMyTeam> roster = null;
             var playerTask = _playersService.GetPlayerAsync(playerMyTeam.PlayerID);
-            var rosterTask =  GetRosterAsync(playerMyTeam.MyTeamID);
+            var rosterTask = GetRosterAsync(playerMyTeam.MyTeamID);
             var tasks = new List<Task> { playerTask, rosterTask };
             while (tasks.Any())
             {
                 Task finshed = await Task.WhenAny(tasks);
-                if(finshed == playerTask)
+                if (finshed == playerTask)
                 {
                     tasks.Remove(playerTask);
                     player = await playerTask;
-                }else if(finshed == rosterTask)
+                }
+                else if (finshed == rosterTask)
                 {
                     tasks.Remove(rosterTask);
                     roster = await rosterTask;
@@ -154,7 +155,7 @@ namespace NBAMvc1._1.Services
                 return true;
             }
             catch (DbUpdateConcurrencyException)
-            {          
+            {
                 throw;
             }
         }

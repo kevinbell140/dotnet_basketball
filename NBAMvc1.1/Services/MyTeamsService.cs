@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +9,12 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class MyTeamsService
+    public class MyTeamsService : IMyTeamsService
     {
         private readonly ApplicationDbContext _context;
-        private readonly FantasyLeagueService _fantasyLeagueService;
+        private readonly IFantasyLeagueService _fantasyLeagueService;
 
-        public MyTeamsService(ApplicationDbContext context, FantasyLeagueService fantasyLeagueService)
+        public MyTeamsService(ApplicationDbContext context, IFantasyLeagueService fantasyLeagueService)
         {
             _context = context;
             _fantasyLeagueService = fantasyLeagueService;
@@ -59,7 +60,7 @@ namespace NBAMvc1._1.Services
         public async Task Create(MyTeam myTeam)
         {
             var league = await _fantasyLeagueService.GetLeagueAsync(myTeam.FantasyLeagueID);
-            if(league != null)
+            if (league != null)
             {
                 if (!league.IsFull)
                 {

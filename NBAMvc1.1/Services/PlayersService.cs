@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,13 +11,13 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class PlayersService
+    public class PlayersService : IPlayersService
     {
         private readonly ApplicationDbContext _context;
-        private readonly DataService _dataService;
+        private readonly IDataService _dataService;
         private readonly ILogger _logger;
 
-        public PlayersService(ApplicationDbContext context, DataService dataService, ILogger<PlayersService> logger)
+        public PlayersService(ApplicationDbContext context, IDataService dataService, ILogger<PlayersService> logger)
         {
             _context = context;
             _dataService = dataService;
@@ -54,7 +55,8 @@ namespace NBAMvc1._1.Services
                     .Include(p => p.StatsNav)
                     .Where(p => p.StatsNav != null && p.FullName.ToLower().Contains(searchString.ToLower()))
                     .Where(p => p.StatsNav.Games > 10);
-            }else if(posFilter != null)
+            }
+            else if (posFilter != null)
             {
                 players = _context.Player
                     .Include(p => p.TeamNav)
@@ -72,7 +74,7 @@ namespace NBAMvc1._1.Services
             return players.AsNoTracking();
         }
 
-        public IQueryable<Player>SortPLayers(IQueryable<Player> players, string sortParam)
+        public IQueryable<Player> SortPLayers(IQueryable<Player> players, string sortParam)
         {
             switch (sortParam)
             {
@@ -204,7 +206,7 @@ namespace NBAMvc1._1.Services
                 _context.UpdateRange(updated);
                 await _context.SaveChangesAsync();
             }
-            catch(DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException)
             {
                 _logger.LogError("DbUpdateConcurrencyException");
                 throw;

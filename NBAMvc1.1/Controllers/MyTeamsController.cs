@@ -6,6 +6,7 @@ using NBAMvc1._1.Areas.Auth;
 using NBAMvc1._1.Areas.Identity;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
+using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
 
 namespace NBAMvc1._1.Controllers
@@ -15,11 +16,11 @@ namespace NBAMvc1._1.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IAuthorizationService _auth;
-        private readonly MyTeamsService _myTeamService;
-        private readonly PlayerMyTeamService _playerMyTeamService;
+        private readonly IMyTeamsService _myTeamService;
+        private readonly IPlayerMyTeamService _playerMyTeamService;
 
         public MyTeamsController(UserManager<ApplicationUser> userManager, IAuthorizationService auth,
-            MyTeamsService myTeamsService, PlayerMyTeamService playerMyTeamService)
+            IMyTeamsService myTeamsService, IPlayerMyTeamService playerMyTeamService)
         {
             _userManager = userManager;
             _auth = auth;

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
+using NBAMvc1._1.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace NBAMvc1._1.Services
 {
-    public class FantasyMatchupsWeeksService
+    public class FantasyMatchupsWeeksService : IFantasyMatchupsWeeksService
     {
         private readonly ApplicationDbContext _context;
 
@@ -81,23 +82,6 @@ namespace NBAMvc1._1.Services
                     .Where(x => x.Date == date)
                     .FirstOrDefaultAsync();
             return matchupWeek;
-        }
-
-        public FantasyMatchupWeeks GetThisWeek(IEnumerable<FantasyMatchupWeeks> weeks)
-        {
-            var thisWeek = weeks
-                    .Where(w => w.Date == DateTime.Today)
-                    .FirstOrDefault();
-            return thisWeek;
-        }
-
-        public async Task<FantasyMatchupWeeks> GetFantasyMatchupWeeksByID(int id)
-        {
-            var fantasyMatchupWeeks = await _context.FantasyMatchupWeeks
-                .Include(f => f.FantasyLeagueNav)
-                .Where(f => f.FantasyMatchupWeeksID == id)
-                .FirstOrDefaultAsync();
-            return fantasyMatchupWeeks;
         }
     }
 }
