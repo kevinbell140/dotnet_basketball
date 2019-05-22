@@ -30,8 +30,11 @@
             </table>
         </div>
         <div class="card-footer text-center">
-            <div class="text-center">@(p1.PlayerNav.LastName) : @p1.Points p, @p1.Assists a, @p1.Rebounds r </div>
-            <div class="text-center">@p2.PlayerNav.LastName: @p2.Points p, @p2.Assists a, @p2.Rebounds r  </div>
+            @if (p1 != null && p2 != null)
+            {
+                <div class="text-center">@(p1.PlayerNav.LastName) : @p1.Points p, @p1.Assists a, @p1.Rebounds r </div>
+                <div class="text-center">@p2.PlayerNav.LastName: @p2.Points p, @p2.Assists a, @p2.Rebounds r  </div>
+            }
             <a asp-controller="Games" asp-action="Details" asp-route-id="@Model.GameID" class="btn btn-block">Box Score</a>
         </div>
     </div>

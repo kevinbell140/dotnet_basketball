@@ -100,7 +100,7 @@ namespace NBAMvc1._1.Services
                 .Include(g => g.AwayTeamNav)
                 .Include(g => g.HomeTeamNav)
                 .Include(g => g.PlayerGameStatsNav)
-                .Where(g => g.DateTime.Date == dayOf)
+                .Where(g => g.DateTime.Date == dayOf && g.Status != "Canceled")
                 .OrderBy(g => g.DateTime)
                 .ToListAsync();
 
