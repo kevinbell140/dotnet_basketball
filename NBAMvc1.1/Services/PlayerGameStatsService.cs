@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using NBAMvc1._1.Data;
 using NBAMvc1._1.Models;
 using NBAMvc1._1.Services.Interfaces;
@@ -14,11 +15,14 @@ namespace NBAMvc1._1.Services
     {
         private readonly ApplicationDbContext _context;
         private readonly IDataService _dataService;
+        private readonly ILogger _logger;
 
-        public PlayerGameStatsService(ApplicationDbContext context, IDataService dataService)
+        public PlayerGameStatsService(ApplicationDbContext context, IDataService dataService,
+            ILogger<PlayerGameStatsService> logger)
         {
             _context = context;
             _dataService = dataService;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<PlayerGameStats>> GetPlayerGameStats()
@@ -52,7 +56,8 @@ namespace NBAMvc1._1.Services
 
         public async Task FetchAsync()
         {
-            DateTime startDate = new DateTime(2019, 05, 15);
+            //DateTime startDate = DateTime.Today.AddDays(-1);
+            DateTime startDate = _context.PlayerGameStats.Max(x => x.TimeStamp);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
@@ -68,6 +73,7 @@ namespace NBAMvc1._1.Services
                         if (await PlayerAndGameExist(p.PlayerID, p.GameID))
                         {
                             created.Add(p);
+                            _logger.LogDebug("Added game log to created list");
                         }
                     }
                     else
@@ -75,6 +81,7 @@ namespace NBAMvc1._1.Services
                         if (await PlayerAndGameExist(p.PlayerID, p.GameID))
                         {
                             updated.Add(p);
+                            _logger.LogDebug("Added game log to updated list");
                         }
                     }
                 }
@@ -83,7 +90,9 @@ namespace NBAMvc1._1.Services
             {
                 await _context.AddRangeAsync(created);
                 _context.UpdateRange(updated);
+                _logger.LogDebug("Attempting to save to the database");
                 await _context.SaveChangesAsync();
+                _logger.LogDebug("Saved logs to database");
             }
             catch (DbUpdateConcurrencyException)
             {

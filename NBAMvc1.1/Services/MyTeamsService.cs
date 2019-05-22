@@ -57,18 +57,21 @@ namespace NBAMvc1._1.Services
             return myTeam;
         }
 
-        public async Task Create(MyTeam myTeam)
+        public async Task<bool> Create(MyTeam myTeam)
         {
             var league = await _fantasyLeagueService.GetLeagueAsync(myTeam.FantasyLeagueID);
             if (league != null)
             {
-                if (!league.IsFull)
+                var teamNames = league.TeamsNav.Select(x => x.Name);
+                if (!league.IsFull && !teamNames.Contains(myTeam.Name))
                 {
                     _context.Add(myTeam);
                     await _context.SaveChangesAsync();
                     await _fantasyLeagueService.AddTeamConfirm(myTeam.FantasyLeagueID);
+                    return true;
                 }
             }
+            return false;
         }
 
         public async Task Edit(MyTeam myTeam)

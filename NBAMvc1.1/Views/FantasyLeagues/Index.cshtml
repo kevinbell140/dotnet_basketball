@@ -1,4 +1,4 @@
-﻿@model IEnumerable<NBAMvc1._1.Models.FantasyLeague>
+﻿@model NBAMvc1._1.ViewModels.FantasyLeagueIndexViewModel
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 
@@ -10,7 +10,7 @@
     <div class="container container-fluid bg-white">
         <div class="row">
             <div class="col-md-12">
-                <h3>Active Leagues</h3>
+                <h3>Fantasy Leagues</h3>
             </div>
         </div>
         @if ((await AuthorizationService.AuthorizeAsync(User, "AdminOnly")).Succeeded)
@@ -23,6 +23,7 @@
         }
         <div class="row">
             <div class="col-md-12">
+                <h4>Open Leagues</h4>
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -32,7 +33,40 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var t in Model)
+                        @foreach (var t in Model.OpenLeagues)
+                        {
+                            <tr>
+                                <td><a asp-action="Details" asp-route-id="@t.FantasyLeagueID">@t.Name</a></td>
+                                <td>@(t.IsFull ? "Closed" : "Open")</td>
+                                <td>
+                                    @if (!t.IsFull)
+                                    {
+                                        <a asp-controller="MyTeams" asp-action="Create" asp-route-leagueID="@t.FantasyLeagueID" class="btn btn-primary">Join</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@t.FantasyLeagueID" class="btn btn-primary">View</a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <h4>Closed Leagues</h4>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var t in Model.ClosedLeagues)
                         {
                             <tr>
                                 <td><a asp-action="Details" asp-route-id="@t.FantasyLeagueID">@t.Name</a></td>

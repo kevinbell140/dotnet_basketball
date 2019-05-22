@@ -47,7 +47,7 @@ namespace NBAMvc1._1
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            _logger.LogInformation("Added DB context ot services");
+            _logger.LogInformation("Added DB context to services");
 
             services.AddDefaultIdentity<ApplicationUser>()
                 .AddRoles<IdentityRole>()
@@ -71,6 +71,7 @@ namespace NBAMvc1._1
 
             services.AddScoped<IAuthorizationHandler, MyTeamOwnerAuthHandler>();
             services.AddScoped<IAuthorizationHandler, PlayerMyTeamOwnerAuthHandler>();
+
             services.AddScoped<IFantasyLeagueService, FantasyLeagueService>();
             services.AddScoped<IFantasyLeagueStandingsService, FantasyLeagueStandingsService>();
             services.AddScoped<IFantasyMatchupService, FantasyMatchupService>();
@@ -100,12 +101,11 @@ namespace NBAMvc1._1
             {
                 _logger.LogInformation("In development env");
                 app.UseDeveloperExceptionPage();
-                
-                //app.UseExceptionHandler("/Home/Error");
                 app.UseDatabaseErrorPage();
             }
             else
             {
+                _logger.LogInformation("In prod env");
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -114,16 +114,9 @@ namespace NBAMvc1._1
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-
             app.UseAuthentication();
-
             app.UseMvc(routes =>
             {
-                routes.MapRoute(
-                    name: "fetchPostGames",
-                    template: "games/fetch/{isPost?}",
-                    defaults: new {controller = "Games", action = "fetch"});
-
                 routes.MapRoute(
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");

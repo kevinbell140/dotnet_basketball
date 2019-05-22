@@ -24,6 +24,22 @@ namespace NBAMvc1._1.Services
             return leagues;
         }
 
+        public async Task<IEnumerable<FantasyLeague>> GetOpenLeaguesAsync()
+        {
+            var leagues = await _context.FantasyLeague
+                .Where(x => !x.IsFull)
+                .ToListAsync();
+            return leagues;
+        }
+
+        public async Task<IEnumerable<FantasyLeague>> GetClosedLeaguesAsync()
+        {
+            var leagues = await _context.FantasyLeague
+                .Where(x => x.IsFull)
+                .ToListAsync();
+            return leagues;
+        }
+
         public async Task<FantasyLeague> GetLeagueAsync(int id)
         {
             var fantasyLeague = await _context.FantasyLeague

@@ -1,0 +1,198 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+  white-space: normal;
+  text-align: center;
+  word-break: break-all;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  font-size: 14px;
+}
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.border-top {
+  border-top: 1px solid #e5e5e5;
+}
+.border-bottom {
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+  font-size: 1rem;
+  line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  white-space: nowrap;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  line-height: 60px; /* Vertically center the text there */
+}
+
+.teamLogo {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 60px;
+    height: 60px;
+}
+
+.teamLogoHeader {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px;
+    width: 200px;
+    height: 200px;
+}
+
+.teamLogoSM {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 55px;
+    height: 35px;
+}
+
+
+.playerHeadShot {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 60px;
+    height: 75px;
+    background-color: white;
+}
+
+.playerHeaderPhoto {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 135px;
+    height: 160px;
+    background-color: white;
+}
+
+.playerNewsPhoto {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 5px;
+    width: 100px;
+    height: 115px;
+    background-color: white;
+}
+
+
+.playerNewsPhotoDiv {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center
+}
+
+.playerNewsDiv {
+    padding: 10px;
+    background-color: white;
+}
+
+.playerNewsHash {
+    font-weight: normal;
+}
+
+.playerNewsHash:hover {
+    font-weight: bold;
+}
+
+.nav-header-brand {
+    background-image: url('../lib/img/basket-ball-header.jpg');
+    background-repeat: no-repeat;
+    background-position-x: right;
+    background-color: black;
+}
+
+.brand-logo {
+    border: 1px solid black;
+    border-radius: 4px;
+    padding: 5px;
+    width: 50px;
+    height: 50px;
+}
+
+.results-card-leaders{
+    font-size: 11px;
+
+}
+
+.splash-main{
+    margin: 10px 10px 10px 10px
+}
+
+
+.splash-main-headline a{
+    color: black;
+    text-decoration: underline;
+    font-style: italic;
+}
+
+.game-index-dates{
+    margin-bottom: 20px;
+}
+
+.current-week-flex{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.layout-background{
+    background-color: lightgray;
+}
+
+.results-card{
+    margin: 5px 5px 5px 5px;
+}
+
+.matchups-div{
+    margin-left: 70px;
+}
+
+.matchups-card {
+    margin: 5px 5px 20px 5px;
+}
+
+.matchup-header-winner {
+    margin: 5px 5px 5px 5px;
+    border: 5px solid #28a745
+}
+
+.in-progress{
+    color: red;
+}
+
+.not-in-progress{
+    color: black;
+}

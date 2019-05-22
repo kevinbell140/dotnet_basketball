@@ -1,4 +1,7 @@
 ﻿@model NBAMvc1._1.ViewModels.MyTeamDetailsViewModel
+@using Microsoft.AspNetCore.Authorization
+@using NBAMvc1._1.Areas.Auth
+@inject IAuthorizationService AuthorizationService
 
 @{
     ViewData["Title"] = "Details";
@@ -34,46 +37,44 @@
                 <tbody>
                     @foreach (KeyValuePair<string, Player> entry in Model.Roster)
                     {
-                        <tr>
-                            <td><strong>@entry.Key</strong></td>
-                            <td>@(entry.Value != null ? entry.Value.FullName : "")</td>
-                            <td> <img src="@(entry.Value != null ? entry.Value.TeamNav.WikipediaLogoUrl : "#")" alt="Add a player shithead" class="teamLogoSM"/></td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.FieldGoalsPercentage : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.FreeThrowsPercentage : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.ThreePointersMade : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.PPG : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.APG : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.RPG : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.SPG : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.BPG : 0)</td>
-                            <td>@(entry.Value != null ? entry.Value.StatsNav.TPG : 0)</td>
-                            @if (entry.Value == null)
+                    <tr>
+                        <td><strong>@entry.Key</strong></td>
+                        <td>@(entry.Value != null ? entry.Value.FullName : "")</td>
+                        <td> <img src="@(entry.Value != null ? entry.Value.TeamNav.WikipediaLogoUrl : "#")" alt="Add a player shithead" class="teamLogoSM" /></td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.FieldGoalsPercentage : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.FreeThrowsPercentage : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.ThreePointersMade : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.PPG : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.APG : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.RPG : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.SPG : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.BPG : 0)</td>
+                        <td>@(entry.Value != null ? entry.Value.StatsNav.TPG : 0)</td>
+                        @if (entry.Value == null)
+                        {
+                            @if ((await AuthorizationService.AuthorizeAsync(User, Model.MyTeam, Operations.Read)).Succeeded)
                             {
-                                
                                 <td><a asp-controller="PlayerMyTeams" asp-action="Create" asp-route-posFilter="@(entry.Key.TrimEnd("12".ToCharArray()))" asp-route-teamID="@Model.MyTeam.MyTeamID" class="btn btn-success">Add</a> </td>
                             }
-                            else
+                        }
+                        else
+                        {
+                            @if ((await AuthorizationService.AuthorizeAsync(User, Model.MyTeam, Operations.Read)).Succeeded)
                             {
-                        <td>
-                            @using (Html.BeginForm("Delete", "PlayerMyTeams"))
-                            {
-                                @Html.Hidden("playerID", entry.Value.PlayerID)
-                                @Html.Hidden("myTeamID", Model.MyTeam.MyTeamID)
-                                <input type="submit" value="Cut" class="btn btn-danger" />
+                                <td>
+                                    @using (Html.BeginForm("Delete", "PlayerMyTeams"))
+                                    {
+                                        @Html.Hidden("playerID", entry.Value.PlayerID)
+                                        @Html.Hidden("myTeamID", Model.MyTeam.MyTeamID)
+                                        <input type="submit" value="Cut" class="btn btn-danger" />
+                                    }
+                                </td>
                             }
-                        </td>
-                            }
-                        </tr>
+                        }
+                    </tr>
                     }
                 </tbody>
             </table>
         </div>
     </div>
 </div>
-
-
-<div>
-    <a asp-action="Edit" asp-route-id="@Model.MyTeam.MyTeamID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-

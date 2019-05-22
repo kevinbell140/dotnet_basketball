@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +29,29 @@ namespace NBAMvc1._1.Controllers
         // GET: FantasyLeagues
         public async Task<IActionResult> Index()
         {
-            var leagues = await  _fantasyLeagueService.GetLeaguesAsync();
-            return View(leagues);
+            var viewModel = new FantasyLeagueIndexViewModel();
+
+            var openTask = _fantasyLeagueService.GetOpenLeaguesAsync();
+            var closedTask = _fantasyLeagueService.GetClosedLeaguesAsync();
+            var tasks = new List<Task> { openTask, closedTask };
+            while (tasks.Any())
+            {
+                var finished = await Task.WhenAny(tasks);
+                if(finished == openTask)
+                {
+                    tasks.Remove(openTask);
+                    viewModel.OpenLeagues = await openTask;
+                }else if(finished == closedTask)
+                {
+                    tasks.Remove(closedTask);
+                    viewModel.ClosedLeagues = await closedTask;
+                }
+                else
+                {
+                    tasks.Remove(finished);
+                }
+            }
+            return View(viewModel);
         }
 
         // GET: FantasyLeagues/Details/5

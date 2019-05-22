@@ -49,11 +49,11 @@ namespace NBAMvc1._1.Controllers
                 return NotFound();
             }
 
-            var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Read);
-            if (!isAuthorized.Succeeded)
-            {
-                return new ChallengeResult();
-            }
+            //var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Read);
+            //if (!isAuthorized.Succeeded)
+            //{
+            //    return new ChallengeResult();
+            //}
 
             viewModel.Roster = await _playerMyTeamService.GetRosterDictionaryAsync(viewModel.MyTeam.MyTeamID);
             return View(viewModel);
@@ -80,8 +80,16 @@ namespace NBAMvc1._1.Controllers
 
             if (ModelState.IsValid)
             {
-                await _myTeamService.Create(myTeam);
-                return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+                if(await _myTeamService.Create(myTeam))
+                {
+                    return RedirectToAction("Details", "FantasyLeagues", new { id = myTeam.FantasyLeagueID });
+                }
+                else
+                {
+                    TempData["NameMessage"] = "There is already a team with that name in this league";
+                    ViewData["LeagueID"] = myTeam.FantasyLeagueID;
+                    ViewData["UserID"] = _userManager.GetUserId(User);
+                }     
             }
             return View();
         }

@@ -18,5 +18,7 @@ namespace NBAMvc1._1.Services.Interfaces
         Task RemoveTeamConfirm(int id);
         Task UpdateCurrentWeekAsync(FantasyLeague fantasyLeague, int week);
         Task SetLeagueAsync(FantasyLeague fantasyLeague);
+        Task<IEnumerable<FantasyLeague>> GetOpenLeaguesAsync();
+        Task<IEnumerable<FantasyLeague>> GetClosedLeaguesAsync();
     }
 }

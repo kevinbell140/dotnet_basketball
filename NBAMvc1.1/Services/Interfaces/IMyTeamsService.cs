@@ -6,7 +6,7 @@ namespace NBAMvc1._1.Services.Interfaces
 {
     public interface IMyTeamsService
     {
-        Task Create(MyTeam myTeam);
+        Task<bool> Create(MyTeam myTeam);
         Task Delete(MyTeam myTeam);
         Task Edit(MyTeam myTeam);
         Task<MyTeam> GetMyTeamByIDAsync(int myTeamID);

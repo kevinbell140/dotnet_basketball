@@ -31,7 +31,7 @@ namespace NBAMvc1._1.Areas.Auth
                 return Task.CompletedTask;
             }
 
-            if(resource.UserID == _userManager.GetUserId(context.User))
+            if (resource.UserID == _userManager.GetUserId(context.User))
             {
                 context.Succeed(requirement);
             }
