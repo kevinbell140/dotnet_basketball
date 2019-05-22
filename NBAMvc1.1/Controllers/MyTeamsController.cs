@@ -48,13 +48,6 @@ namespace NBAMvc1._1.Controllers
             {
                 return NotFound();
             }
-
-            //var isAuthorized = await _auth.AuthorizeAsync(User, viewModel.MyTeam, Operations.Read);
-            //if (!isAuthorized.Succeeded)
-            //{
-            //    return new ChallengeResult();
-            //}
-
             viewModel.Roster = await _playerMyTeamService.GetRosterDictionaryAsync(viewModel.MyTeam.MyTeamID);
             return View(viewModel);
         }

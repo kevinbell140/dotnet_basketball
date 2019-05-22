@@ -31,6 +31,7 @@
                 <thead>
                     <tr>
                         <td>#</td>
+                        <td></td>
                         <td>@Html.DisplayNameFor(m => m.TeamNav.FullName)</td>
                         <td>@Html.DisplayNameFor(m => m.Wins)</td>
                         <td>@Html.DisplayNameFor(m => m.Losses)</td>
@@ -51,7 +52,8 @@
                         {
                             <tr>
                                 <td>@(count++)  </td>
-                                <td><img src="@item.TeamNav.WikipediaLogoUrl" class="teamLogo" /> @Html.ActionLink(item.TeamNav.FullName, "Details", "Teams", new { id = item.TeamID })</td>
+                                <td><a asp-controller="Teams" asp-action="Details" asp-route-id="@item.TeamID"><img src="@item.TeamNav.WikipediaLogoUrl" class="teamLogo" /></a></td>
+                                <td>@Html.ActionLink(item.TeamNav.FullName, "Details", "Teams", new { id = item.TeamID })</td>
                                 <td>@Html.DisplayFor(m => item.Wins)</td>
                                 <td>@Html.DisplayFor(m => item.Losses)</td>
                                 <td>@Html.DisplayFor(m => item.Percentage)</td>

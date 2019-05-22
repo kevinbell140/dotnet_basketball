@@ -116,7 +116,13 @@ namespace NBAMvc1._1.Services
             {
                 try
                 {
-                    return league.TeamsNav.OrderByDescending(x => x.FantasyLeagueStandingsNav.WinPercent).ToDictionary(x => count++, x => x);
+                    return league.TeamsNav
+                        .OrderByDescending(x => x.FantasyLeagueStandingsNav.Wins)
+                        .ThenByDescending(x => x.FantasyLeagueStandingsNav.Draws)
+                        .ThenBy(x => x.FantasyLeagueStandingsNav.Losses)
+                        .ThenByDescending(x => x.FantasyLeagueStandingsNav.FantasyPoints)
+                        .ThenBy(x => x.FantasyLeagueStandingsNav.FantasyPointsAgainst)
+                        .ToDictionary(x => count++, x => x);
                 }
                 catch (Exception)
                 {

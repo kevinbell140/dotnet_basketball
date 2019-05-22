@@ -38,7 +38,7 @@ namespace NBAMvc1._1.Models
             {
                 try
                 {
-                    return (Wins + (Draws/2) / (Wins + Losses + Draws));
+                    return (Wins) / (Wins + Losses + Draws);
                 }
                 catch(Exception)
                 {

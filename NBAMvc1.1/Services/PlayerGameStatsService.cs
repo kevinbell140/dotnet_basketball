@@ -56,8 +56,7 @@ namespace NBAMvc1._1.Services
 
         public async Task FetchAsync()
         {
-            //DateTime startDate = DateTime.Today.AddDays(-1);
-            DateTime startDate = _context.PlayerGameStats.Max(x => x.TimeStamp);
+            DateTime startDate = (_context.PlayerGameStats.Max(x => x.TimeStamp)).AddDays(-1);
             DateTime endDate = DateTime.Today;
 
             List<PlayerGameStats> created = new List<PlayerGameStats>();
@@ -66,6 +65,7 @@ namespace NBAMvc1._1.Services
             for (DateTime d = startDate; d <= endDate; d = d.AddDays(1))
             {
                 List<PlayerGameStats> stats = await _dataService.FetchGameStatsAsync(d.ToString("yyyy-MMM-dd"));
+                _logger.LogDebug("Fetching stats for {0}", d.ToShortDateString());
                 foreach (var p in stats)
                 {
                     if (!await PlayerGameStatsExist(p.StatID))
