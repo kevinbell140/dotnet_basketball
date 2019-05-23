@@ -29,7 +29,7 @@ namespace NBAMvc1._1.Services.Timers
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Update timer started");
-            _timer = new Timer(Update, null, TimeSpan.FromSeconds(20), TimeSpan.FromDays(1));
+            _timer = new Timer(Update, null, TimeSpan.FromSeconds(20), TimeSpan.FromHours(1));
             return Task.CompletedTask;
         }
 

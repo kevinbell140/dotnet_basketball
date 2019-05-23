@@ -97,8 +97,17 @@ namespace NBAMvc1._1.Services
         {
             var response = await _httpClient.GetAsync("news");
             response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsAsync<List<News>>();
-            return result;
+            var responseString = await response.Content.ReadAsStringAsync();
+
+            //there were null date time values in response string today, the settings ignored the exception
+            var settings = new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
+            var news = JsonConvert.DeserializeObject<List<News>>(responseString, settings);
+
+            return news;
         }
     }
 }

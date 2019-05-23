@@ -24,7 +24,7 @@ namespace NBAMvc1._1.Services.Timers
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Fetch timer started");
-            _timer = new Timer(Fetch, null, TimeSpan.Zero, TimeSpan.FromDays(1));
+            _timer = new Timer(Fetch, null, TimeSpan.Zero, TimeSpan.FromHours(12));
 
             return Task.CompletedTask;
         }

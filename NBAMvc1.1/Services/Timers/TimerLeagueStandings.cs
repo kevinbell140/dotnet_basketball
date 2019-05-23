@@ -24,7 +24,7 @@ namespace NBAMvc1._1.Services.Timers
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogDebug("Standings update timer started");
-            _timer = new Timer(Update, null, TimeSpan.FromSeconds(60), TimeSpan.FromDays(1));
+            _timer = new Timer(Update, null, TimeSpan.FromSeconds(60), TimeSpan.FromHours(1));
             return Task.CompletedTask;
         }
 

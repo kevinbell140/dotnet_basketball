@@ -24,7 +24,7 @@ namespace NBAMvc1._1.Services.Timers
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _timer = new Timer(UpdateWeeks, null, TimeSpan.FromSeconds(10), TimeSpan.FromDays(1));
+            _timer = new Timer(UpdateWeeks, null, TimeSpan.FromSeconds(10), TimeSpan.FromHours(1));
 
             return Task.CompletedTask;
         }

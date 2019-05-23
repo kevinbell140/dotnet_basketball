@@ -61,14 +61,14 @@ namespace NBAMvc1._1.Services
             {
                 if (!await NewsExistsAsync(n.NewsID))
                 {
-                    if (n != null)
+                    if (n != null && _context.Player.Any(x => x.PlayerID == n.PlayerID))
                     {
                         created.Add(n);
                     }
                 }
                 else
                 {
-                    if (n != null)
+                    if (n != null && _context.Player.Any(x => x.PlayerID == n.PlayerID))
                     {
                         updated.Add(n);
                     }
