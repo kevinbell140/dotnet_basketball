@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NBAMvc1._1.Data;
+using NBAMvc1._1.Models;
 using NBAMvc1._1.Services;
 using NBAMvc1._1.Services.Interfaces;
 using NBAMvc1._1.ViewModels;
@@ -104,6 +105,65 @@ namespace NBAMvc1._1.Controllers
                 }
             }
             return View(viewModel);
+        }
+
+        public async Task<ActionResult> RefreshViewModel([FromQuery]int id)
+        {
+
+            var matchup = await _fantasyMatchupService.GetMatchupByIDAsync(id);
+
+            var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(matchup.FantasyLeagueID, matchup.Week);
+            var date = matchupWeek.Date;
+
+            var homeRosterTask = _playerMyTeamService.GetRosterDictionaryAsync(matchup.HomeTeamID.Value);
+            var awayRosterTask = _playerMyTeamService.GetRosterDictionaryAsync(matchup.AwayTeamID.Value);
+            IDictionary<string, Player> homeRoster = new Dictionary<string, Player>();
+            IDictionary<string, Player> awayRoster = new Dictionary<string, Player>();
+            var rosterTasks = new List<Task> { homeRosterTask, awayRosterTask };
+            while (rosterTasks.Any())
+            {
+                Task finsihed = await Task.WhenAny(rosterTasks);
+                if (finsihed == homeRosterTask)
+                {
+                    rosterTasks.Remove(homeRosterTask);
+                    homeRoster = await homeRosterTask;
+                }
+                else if (finsihed == awayRosterTask)
+                {
+                    rosterTasks.Remove(awayRosterTask);
+                    awayRoster = await awayRosterTask;
+                }
+                else
+                {
+                    rosterTasks.Remove(finsihed);
+                }
+            }
+
+            var homeStatsTask = _fantasyMatchupService.GetGameStatsDictionaryAsync(homeRoster, matchupWeek);
+            IDictionary<string, PlayerGameStats> homeStats = new Dictionary<string, PlayerGameStats>();
+            var awayStatsTask = _fantasyMatchupService.GetGameStatsDictionaryAsync(awayRoster, matchupWeek);
+            IDictionary<string, PlayerGameStats> awayStats = new Dictionary<string, PlayerGameStats>();
+            var viewTasks = new List<Task> { homeStatsTask, awayStatsTask };
+            while (viewTasks.Any())
+            {
+                Task finished = await Task.WhenAny(viewTasks);
+                if (finished == homeStatsTask)
+                {
+                    viewTasks.Remove(homeStatsTask);
+                    homeStats = await homeStatsTask;
+                }
+                else if (finished == awayStatsTask)
+                {
+                    viewTasks.Remove(awayStatsTask);
+                    awayStats = await awayStatsTask;
+                }
+                else
+                {
+                    viewTasks.Remove(finished);
+                }
+            }
+
+            return Json(new { homeRoster = homeRoster, homeStats = homeStats, awayRoster = awayRoster, awayStats = awayStats });
         }
 
         [Authorize(Policy = "AdminOnly")]

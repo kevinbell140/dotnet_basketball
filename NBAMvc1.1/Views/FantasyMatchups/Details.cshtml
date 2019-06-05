@@ -1,12 +1,12 @@
 ﻿@model NBAMvc1._1.ViewModels.FantasyMatchupDetailsViewModel
-
+    
 @{
     ViewData["Title"] = "Details";
     string winner = (Model.HomeScore > Model.AwayScore ? "home" : "away");
     
 }
 
-
+    <script src="~/js/matchupajax.js"></script>
     <div class="container container-fluid bg-white">
         <div class="row">
             <div class="col-md-12 text-center">
@@ -20,6 +20,7 @@
                     <span class="@(Model.HomeScore > Model.AwayScore ? "matchup-header-winner" : " ")">
                         @Model.FantasyMatchup.HomeTeamNav.Name : @Model.HomeScore
                     </span>
+                    <span id="matchID">@Model.FantasyMatchup.FantasyMatchupID</span>
                 </h6>
                 <hr />
             </div>

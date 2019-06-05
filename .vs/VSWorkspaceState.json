@@ -2,8 +2,10 @@
   "ExpandedNodes": [
     "",
     "\\NBAMvc1.1",
+    "\\NBAMvc1.1\\Areas",
+    "\\NBAMvc1.1\\Models",
     "\\NBAMvc1.1\\Services"
   ],
-  "SelectedNode": "\\NBAMvc1.1.sln",
+  "SelectedNode": "\\NBAMvc1.1\\Models\\Game.cs",
   "PreviewInSolutionExplorer": false
 }
