@@ -49,7 +49,6 @@ namespace NBAMvc1._1.Controllers
 
             var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(viewModel.FantasyMatchup.FantasyLeagueID, viewModel.FantasyMatchup.Week);
             viewModel.Date = matchupWeek.Date;
-
             return View(viewModel);
         }
 
