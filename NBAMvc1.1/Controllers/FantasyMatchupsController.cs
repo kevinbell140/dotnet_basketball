@@ -115,7 +115,6 @@ namespace NBAMvc1._1.Controllers
                     viewTasks.Remove(finished);
                 }
             }
-
             return PartialView("_DetailsPartial", viewModel);
         }
 
