@@ -1,17 +1,20 @@
 ﻿$(document).ready(function () {
-    $.ajax({
-        url: "/FantasyMatchups/RefreshViewModel",
-        type: "GET",
-        dataType: "json",
-        data: {
-            "id": $("#matchID").html(),
-        },
-        success: function (data) {
-            alert(JSON.stringify(data));
-        },
-        error: function (request, error) {
-            alert("Request:" + JSON.stringify(request));
-        }
-
-    });
+    function update() {
+        $.ajax({
+            url: "/FantasyMatchups/GetRoster",
+            type: "GET",
+            data: {
+                "matchId": $("#matchID").text(),
+            },
+            success: function (data) {
+                $("#rosterPartial").html(data);
+                alert("Success!");
+            },
+            error: function (request, error) {
+                alert("Error:" + JSON.stringify(error));
+            }
+        });
+    }
+    update();
+    setInterval(update, 5000);
 });

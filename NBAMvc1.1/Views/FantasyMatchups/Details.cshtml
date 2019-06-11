@@ -2,12 +2,29 @@
     
 @{
     ViewData["Title"] = "Details";
-    string winner = (Model.HomeScore > Model.AwayScore ? "home" : "away");
-    
+    //string winner = (Model.HomeScore > Model.AwayScore ? "home" : "away");
 }
 
+
     <script src="~/js/matchupajax.js"></script>
+
     <div class="container container-fluid bg-white">
+        <div class="row">
+            <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
+            <span id="matchID">@Model.FantasyMatchup.FantasyMatchupID</span>
+            <h6>Week (@Model.FantasyMatchup.Week) -- @Model.Date.ToShortDateString()
+                <span class="@(Model.FantasyMatchup.Status == "In Progress" ? "in-progress": "not-in-progress")">@Model.FantasyMatchup.Status</span> 
+                <span id="homeScore">###</span>
+                <span style="color:red">VS</span>
+                <span id="awayScore">###</span>
+            </h6>
+            <hr />
+        </div>
+        <div id="rosterPartial"></div>
+    </div>    
+    
+
+    @*<div class="container container-fluid bg-white">
         <div class="row">
             <div class="col-md-12 text-center">
                 <h3><a asp-controller="FantasyLeagues" asp-action="Details" asp-route-id="@Model.FantasyMatchup.FantasyLeagueID">@Model.FantasyMatchup.FantasyLeagueNav.Name</a></h3>
@@ -173,4 +190,4 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>*@

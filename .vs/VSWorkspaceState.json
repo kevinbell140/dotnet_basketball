@@ -2,10 +2,11 @@
   "ExpandedNodes": [
     "",
     "\\NBAMvc1.1",
-    "\\NBAMvc1.1\\Areas",
-    "\\NBAMvc1.1\\Models",
-    "\\NBAMvc1.1\\Services"
+    "\\NBAMvc1.1\\Controllers",
+    "\\NBAMvc1.1\\Services",
+    "\\NBAMvc1.1\\Views",
+    "\\NBAMvc1.1\\Views\\FantasyMatchups"
   ],
-  "SelectedNode": "\\NBAMvc1.1\\Models\\Game.cs",
+  "SelectedNode": "\\NBAMvc1.1.sln",
   "PreviewInSolutionExplorer": false
 }
