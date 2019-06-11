@@ -206,5 +206,5 @@ C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreap
 C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.pdb
 C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\NBAMvc1.1.csproj.CopyComplete
 C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\Home\Error.g.cshtml.cs
-C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\__DetailsRoster.g.cshtml.cs
 C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\_DetailsPartial.g.cshtml.cs
+C:\Users\kebell\Source\Repos\dotnet_basketball_2.0\NBAMvc1.1\obj\Debug\netcoreapp2.2\Razor\Views\FantasyMatchups\_DetailsScores.g.cshtml.cs

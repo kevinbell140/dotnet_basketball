@@ -18,5 +18,6 @@ namespace NBAMvc1._1.Services.Interfaces
         Task SetRecordedAsync(List<FantasyMatchup> matchups, bool status);
         Task UpdateCurrentWeek(IEnumerable<FantasyMatchup> matchups);
         Task UpdateScoresAsync(IEnumerable<FantasyMatchup> matchups);
+        Task<decimal[]> CalculateScoreAsync(FantasyMatchup matchup);
     }
 }

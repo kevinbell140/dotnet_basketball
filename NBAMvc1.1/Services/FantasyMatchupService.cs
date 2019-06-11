@@ -193,7 +193,7 @@ namespace NBAMvc1._1.Services
         }
 
 
-        private async Task<decimal[]> CalculateScoreAsync(FantasyMatchup matchup)
+        public async Task<decimal[]> CalculateScoreAsync(FantasyMatchup matchup)
         {
             var matchupWeek = await _fantasyMatchupsWeeksService.GetFantasyMatchupWeekByLeagueAsync(matchup.FantasyLeagueID, matchup.Week);
             decimal homeScore = 0;

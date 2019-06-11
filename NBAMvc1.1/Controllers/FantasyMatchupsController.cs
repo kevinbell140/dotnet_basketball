@@ -119,6 +119,13 @@ namespace NBAMvc1._1.Controllers
             return PartialView("_DetailsPartial", viewModel);
         }
 
+        public async Task<IActionResult> UpdateScores(int matchId)
+        {
+            var matchup = await _fantasyMatchupService.GetMatchupByIDAsync(matchId);
+            decimal[] scores = await _fantasyMatchupService.CalculateScoreAsync(matchup);
+            return Json(new { homeScore = scores[0], awayScore = scores[1] });
+        }
+
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<IActionResult> Create(int leagueID)
