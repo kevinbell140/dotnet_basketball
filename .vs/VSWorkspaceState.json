@@ -1,12 +1,12 @@
 {
   "ExpandedNodes": [
-    "",
-    "\\NBAMvc1.1",
-    "\\NBAMvc1.1\\Controllers",
-    "\\NBAMvc1.1\\Services",
-    "\\NBAMvc1.1\\Views",
-    "\\NBAMvc1.1\\Views\\FantasyMatchups"
+    "\\Local settings (.vs)",
+    "\\Local settings (.vs)\\NBAMvc1.1",
+    "\\Local settings (.vs)\\NBAMvc1.1\\v15",
+    "\\Local settings (.vs)\\NBAMvc1.1\\v15\\Server",
+    "\\Local settings (.vs)\\NBAMvc1.1\\v15\\Server\\sqlite3",
+    "\\NBAMvc1.1"
   ],
-  "SelectedNode": "\\NBAMvc1.1.sln",
+  "SelectedNode": "\\Local settings (.vs)\\NBAMvc1.1\\v15\\Server\\sqlite3\\db.lock",
   "PreviewInSolutionExplorer": false
 }
